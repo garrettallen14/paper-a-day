@@ -1,0 +1,32 @@
+Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift
+
+------------------------------------
+
+"Internal Covariate Shift":
+- The outputs of a given layer are the inputs of another. 
+- If the distribution of one layer changes, the next layer has to essentially relearn everything.
+- Also, in certain activation functions this can lead to saturation which can result in gradient vanishing and reduced learning capacity.
+
+Brief detailed explanation:
+A Deep Neural Network consists of multiple layers, where each layer's output becomes the input for the next layer.
+During training, we use backpropagation & gradient descent to update weights and biases. These updates are based on the loss gradient.
+Internal Covariate Shift: When parameters (weights and biases) of a layer change, the distribution of the layer's outputs change. Since the output of one layer is the input of another layer, this also changes the distribution of all subsequent layers.
+Due to the internal covariate shift, layers deep within the network are constantly adapting to new, shifting input distributions. This slows down the training process, as each layer needs to relearn the new distribution every time.
+This shift can be particularly problematic for certain activation functions (like sigmoid or tanh) where significant changes in the input distribution can lead to saturation (values at the extremes flattening out). When an activation function saturates, two main issues arise:
+1. Gradient vanishing: In backpropagation, the gradients of these functions are very small in the saturated regions (the derivative of the sigmoid or tanh funtion is close to zero at the extreme values of the input)
+2. Reduced learning capacity: When a neuron's output saturates, it becomes less capable of differentiating between different input patterns.
+Normalization techniques: To mitigate the issue of internal covariate shift
+
+------------------------------------
+
+Abstract
+Training Deep Neural Networks is complicated by Internal Covariate Shifts.
+This slows down training by requiring lower learning rates and careful parameter initialization.
+Address this problem by normalizing layer inputs.
+
+The method draws its strength from making normalization a part of the model architecture and performing the normalization for each training mini-batch.
+
+Allows us to use much higher learning rates and be less careful about initialization.
+Also acts as a regularizer, some cases eliminating the need for dropout.
+
+Batch normalization achieves the same accuracy as SOTA image classifier in 14 fewer training steps & beats the original model by a significant margin.
