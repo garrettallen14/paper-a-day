@@ -1,0 +1,87 @@
+An Introduction to Convolutional Neural Networks
+
+Abstract
+- Artificial Neural Networks far exceed the performance of previous forms of AI.
+- Convolutional Neural Networks are an impressive form of the ANN architecture.
+- CNNs are primarily used to solve difficult image-driven pattern recognition tasks.
+- Precise yet simple.
+
+1. Introduction:
+- Artificial Neural Networks can be modeled as: input -> input layer -> hidden layer -> output layer -> output
+- CNNs are similar to traditional ANNs in that: comprised of neurons that self-optimize through learning.
+- Each neuron receive an input and perform an operation (such as a scalar product followed by a non-linear function)
+- From input raw image vectors to the final output of the class score, the entire network will still express a single perceptive score function (the weight).
+- The last layer will contatin loss functions associated with the classes, and all of the regular tips / tricks developed for ANNs will still apply.
+
+- CNNs allow us to encode image-specific features into the architecture, making the network more suited for image-focused tasks & further reducing the parameters required to set up the model.
+
+- ANNs struggle with the computational complexity required to compute image data.
+- MNIST dataset: 28x28 image dimensionality -> a single neuron in the first hidden layer will contain 784 weights.
+- Color images: 64x64 image dimensionality -> a single neuron in the first hidden layer will contain 12,288 weights.
+- Also, to deal with the scale of input, the network will also need to be a lot larger than one used to classify colour-normalised MNIST digits.
+
+1.1 Overfitting:
+- Surely we can just increase the number of hidden layers in our network & number of neurons in them?
+- No, 1. computational power and time
+- 2. We need to reduce the effects of overfitting. The less parameters required to train, the less likely the network will overfit.
+
+2. CNN Architecture:
+- In this paper, they focus on CNNs where the input is images.
+- Neurons in CNNs are organized into three dimensions: height, width, and depth (a third dimension of activation volume).
+- Neurons within any given layer will only connect to a small region of the layer preceding it.
+- In practice, this means that for the color image example, the input volume is 64x64x3 (height, width, depth), leading to a final output layer of 1x1xn (where n is the possible number of classes).
+
+2.1 Overall Architecture:
+- CNNs are comprised of three types of layers. These are convolutional layers, pooling layers, and fully-connected layers.
+- When layers are stacked, a CNN architecture is formed.
+- A simplified CNN architecture for MNIST classification (comprised of just 5 layers): 
+(input image -> convolution with ReLu -> pooling -> full-connected with ReLu -> fully-connected -> output (0-9))
+- The basic functionality of the example CNN can be broken down into four key areas:
+1. The input layer will hold the pixel values of the image.
+2. The convolutional layer determines the output of neurons connected to local regions of the input. They compute the scalar product between their weights and the region connected to the input volume. A ReLu is commonly used for applying an 'element-wise' activation function.
+3. Pooling layers: these layers perform downsampling along the spatial dimension of the input, which helps in reducing the number of parameters and computational complexity.
+4. Fully-connected layers: Similar to standard ANNs, these layers attempt to produce class scores from the activations, which are used for classification.
+- Overall, CNNs transform the original input layer by layer using convolutional and downsampling techniques to produce class scores for classification and regression purposes.
+
+2.2 Convolutional Layer:
+- Convolutional Layer: The core element of CNNs. It uses learnable kernels (small matrices) to extract features from the input data. As the kernel moves across the input, it performs element-wise multiplication and summing up, creating a feature map or activation map.
+- Kernels: These are small, learnable matrices in convolutional layers. They convolve across the input data to detect features like edges, textures, or more complex patterns in later layers.
+- Activation Map: The output of a convolution operation. Each map represents the presence of specific features detected by a kernel at different spatial positions of the input.
+- Receptive Field: Refers to the local region of the input volume that a neuron in a convolutional layer is connected to. It's a small window of the input data.
+- Stride: A hyperparameter that defines the step size at which the kernel moves across the input. A larger stride reduces the spatial dimensionality of the output, while a smaller stride increases it.
+- Zero-Padding: Adding zeros around the border of the input. This allows control over the output volume's spatial dimensions and ensures the kernel can operate at the borders of the input.
+- Parameter Sharing: Assumes that if a feature is useful in one region of the image, it's likely useful in another. Each neuron in a convolutional layer shares the same weights and biases, reducing the number of parameters and thus, the computational complexity.
+- Output Volume Depth: Determined by the number of kernels or filters in the convolutional layer. Each filter detects different features, and their outputs are stacked to form the full output volume.
+- Dimensionality Reduction: Convolutional layers can significantly reduce the number of parameters compared to fully connected layers. This is achieved through local connectivity (receptive field) and parameter sharing.
+- Complexity Management: The convolutional layer reduces the complexity of the model through its structure and operation, making it feasible to train large models, especially for image data.
+
+- A Convolutional layer's parameters focus aroung the use of learnable kernels.
+- Kernels are small in spatial dimensionality, but spreads along the entirety of the depth of the input.
+- When data hits a convolutional layer, the layer convolves each filter across the spatial dimensionality to produce a 2D activation map.
+- Activation maps can be visualized 
+
+2.3 Pooling Layer:
+- Aim to gradually reduce the dimensionality of the representation.
+- Operates over each activation map in the input, and scales the dimensionality using the "max" funciton.
+- In most CNNs, this comes in a max-pooling layer, with kernels of a dimensionality 2x2 applied with a stride of 2 along the spatial dimensions of the input. This scales the activation map down to 25% the original size -- whilst maintaining the depth volume.
+- Due to the destructive nature of the pooling layer, there are only two generally observed methods of max-pooling.
+- Stride and filters of the pooling layers are both set to 2x2, allowing the layer to extend through the entirety of the spatial dimensionality of the input.
+- Overlapping pooling may be utilised, where the stride is set to 2 with a kernel size set to 3. A kernel size above 3 may greatly decrease the performance of the model.
+
+2.4 Full-connected layer:
+- Contains neurons of which are directly connected to the neurons in the two adjacent layers, without being connected to any layers within them.
+- This is analogous to the way that neurosn are arranged in traditional forms of ANN.
+
+3. Recipes:
+- Despite the relatively small number of layers required to form a CNN, there is no set way of formulating a CNN architecture.
+Examples:
+1. Convolutional layers are stacked, followed by pooling layers in a repeated manner before feeding forward to fully-connected layers.
+2. Stack two convolutional layers before each pooling layer. Strongly recommended: stacking multiple conv layers allows for more complex features of the input vector to be selected.
+(input -> conv w/ReLU -> conv w/ReLU -> pooling -> conv w/ReLu -> conv w/ReLU -> pooling -> conv w/ReLU -> conv w/ReLU -> pooling -> fully-connected w/ReLu -> fully-connected -> output)
+
+- It is also advised to split large conv layers up into many smaller sized conv layers to reduce the amount of computational complexity within a given layer.
+Ex: Stacking three conv layers with a receptive field of 3x3. Each neuron of the first layer will have a 3x3 view of the input vector.
+- A neuron in the second conv layer will have a 5x5 view of the input vector
+- A neuron in the third: 7x7 view of input vector.
+- These stacks feature non-linearities which in turn allows us to express stronger features of the input with fewer parameters. But, it is important to understand that this comes with a distinct memory allocation problem...
+- 

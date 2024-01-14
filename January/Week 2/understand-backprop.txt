@@ -1,0 +1,27 @@
+Q: Why do we have to understand the backward pass when PyTorch does it for us?
+A: Backprop is a leaky abstraction...
+
+Vanishing gradients on sigmoids:
+Sloppy weight initialization can lead to saturation in the activation layer.
+If our initialization is too large, the output of the matrix multiplication between weights and input can be very large range.
+If the results are too large, this can casue outputs in our vector z to be binary like only 0 or only 1.
+
+Also a fun fact about sigmoid function: the maximum value occurs of 0.25 when z = 0.5. SO, this implies that the function squashes everything down by a factor of 0.25 or more.
+
+With basic SGD, your lower layers train far more slowly.
+
+Dying ReLUs:
+ReLUs threshold neurons at zero or below.
+
+In the forward pass, if a neuron gets clamped to zero (z = 0, it doesn't fire), then we have a "dead ReLU" problem.
+
+The neuron will never fire, all because of poor initialization.
+
+Exploding gradients in RNNs:
+If you take a number a and multiply it by some b (ie a*b*b*b*b*b...) this sequence goes to zero if |b| < 1 or explodes to infinity if |b| > 1.
+
+The same thing happens in the backward pass of an RNN, except b is a matrix and not just a number, so we have to reason about its largest eigenvalue instead.
+
+Spotted in the Wild -- DQN Clipping:
+
+These guys messed up and didn't consider they were saturating their activation layer essentially

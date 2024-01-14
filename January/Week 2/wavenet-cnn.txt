@@ -1,0 +1,93 @@
+WAVENET: A GENERATIVE MODEL FOR RAW AUDIO
+
+Abstract
+- WaveNet: Deep Neural Network for generating raw audio waveforms
+- Fully probabalistic & autoregressive
+- When applied to TTS, yields SOTA performance
+- When trained to model music, it generates novel & highly realistic musical fragments
+
+1. Intro
+- Work explores raw audio generation
+- Wideband raw audio are signals w/high temporal resolution, at least 16,000 samples per second.
+Main paper contributions:
+- WaveNet can generate raw speech signals w/subjective naturalness never before seen in TTS.
+- Develop new architectures based on long-range temporal dependencies needed for raw audio generation.
+- When conditioned on a speaker entity, a model can generate different voices.
+- Shows strong results in speech recognition.
+
+2. WaveNet
+- Joint probabilities of a waveform are factorized as a product of conditional probabilities.
+- Each xt is conditioned on the samples at all previous timesteps.
+- This conditional probability distribution is modeled as a stack of convolutional layers.
+- No pooling layers, and output of model has same time dimensions as the input.
+- Model outputs a categorical distribution over the next value xt with a softmax layer.
+- Optimized to maximize log likelihood.
+
+2.1 Dilated Causal Convolutions
+- Main ingredient of WaveNet: Causal Convolutions
+- Causal Convolutions: special type of convolution that respects sequential order of the data.
+- The prediction p(xt|x1...xt-1) does not depend on any xt+1,...,xT in the future.
+- Implemented by shifting the output of a normal convolution by a few timesteps.
+- At training time, the model has access to the entire sequence of ground truth data (x) at once.
+- This allows for parallel processing of the sequence. (ie the model can make predictions for all timesteps simultaneously because it already knows the actual values for each timestep)
+- No recurrent connections, so faster to train than RNNs.
+- Problem of causal convs: require many layers or large filters
+- Solution: use dilated convolutions to increase the receptive field by orders of magnitude.
+
+- Receptive field: the size of the area in the input that influences the neuron's output.
+- Filter: (aka a kernel) is a small matrix used to extract features from input data... the filter is slid over the input data to perform a convolution operation, which involves element-wise multiplication of the filter with the input.
+
+- Dilated Convolutions: 'convolutions with holes'... the filter is applied over a larger area than its actual size by skipping input values at a certain step.
+- This method is more efficient than using a larger filter, effectively dilating the original filter with zeros.
+- Maintain the same output size as the input. Useful for operating at a coarser scale without losing resolution.
+- Key advantage: enable networks to have large receptive fields with just a few layers.
+- Stacked dilated convolutions enable networks to have very large receptive fields with just a few layers, while preserving the input resolution throughout the network.
+
+2.2 Softmax Distributions
+- Mixture models for audio processing: proposed for modeling conditional distributions of audio samples. These models are statistical methods used to represent complex distributions as combinations of simpler ones.
+- Capture the varied nature of audio data (different tones, pitches, etc.) using a blend of simpler models, each responsible for a specific pattern in the data.
+- This approach is not as good as softmax.
+- Softmax distribution performs better for audio sample values.
+- Audio data, often stored as 16-bit ints, implies a massive number of possible values for each timestep in a sequence.
+- Solution: apply a m-law companding transformation followed by quantization...
+- Result: reduces the number of possible values to 256. This simplifies the data while maintaining quality.
+- The reconstructed signal sounded very similar to the original.
+
+2.3 Gated Activation Units
+- Gated activation unit: z = tanh(Wf,k @ x) . sigmoid(Wg,k @ x)   where k is the layer index, f and g denote filter and gate.
+- The gated activation unit, used in the gated PixelCNN, combines a tanh function and a sigmoid function through element-wise multiplication. 
+- Ensures that only relevant data passes through each layer.
+
+2.4 Residual and Skip Connections
+- Residual connections: help to overcome the vanishing gradient problem. Involves adding the output of one layer to the output of a layer further down the network.
+- Skip connections: similar to residual connections, as they provide alternative pathways for the gradient during backpropagation. They skip over more layers compared to residual connections.
+- Useful in networks where deeper layers might need information from earlier layers.
+- The architecture uses both residual and skip connections.
+
+2.5 Conditional WaveNets
+- WaveNets can be conditioned on additional inputs to model the conditional distribution of audio.
+- This conditioning allows the generation of audio with specific characteristics (a speaker's voice in a multivoice setting or specific linguistic features in TTS systems)
+- Global conditioning: Involves a single latent representation 'h' that influences the entire output distribution across all timesteps.
+- Local conditioning: Deals with a secondary timeseries 'ht' which may have a lower sampling frequency.
+
+2.6 Context Stacks
+- Increases the receptive field size, allowing the WaveNet to process a larger portion of the audio.
+
+3. Experiments
+- Evaluate WaveNet on: multi-speaker speech generation, TTS, and music audio modelling.
+- Samples here: https://deepmind.google/discover/blog/wavenet-a-generative-model-for-raw-audio/.
+
+3.1 Multi-speaker Speech Generation
+- Free form speech generation (not conditioned on text).
+- Sounds like babbling.
+- A single WaveNet was able to model speech from any of the speakers by conditioning it on a one-hot encoding of a speaker.
+- Breathing and mouth movements appear in the audio as well.
+
+3.2 Text-to-Speech
+- Single-speaker speech databases from which Google's TTS systems are built. 24.6 hours of English, 34.8 hours of Chinese.
+- WaveNets for TTS were locally conditioned on linguistic features derived from input texts.
+- Continues on about implementation.
+
+3.3 Music
+- Conditioned on two datasets: MagnaTagATune dataset => 200 hrs of music audio & YouTube piano dataset => 60 hrs of solo piano.
+- Enlarging the receptive field was crucial to obtain samples that sounded musical.

@@ -30,3 +30,18 @@ Allows us to use much higher learning rates and be less careful about initializa
 Also acts as a regularizer, some cases eliminating the need for dropout.
 
 Batch normalization achieves the same accuracy as SOTA image classifier in 14 fewer training steps & beats the original model by a significant margin.
+
+
+2 Towards Reducing Internal Covariate Shift
+Network training converges faster if its inputs are whitened (linearly transformed to have zero means and unit variances and decorrelated)
+Zero mean / Unit variance is done through normalization
+By whitening the inputs to each layer, we would take a step towards achieving the fixed distributions of inputs that would remove the effects of the internal covariate shift.
+
+3 Normalization via Mini-Batch Statistics
+
+Normalization of inputs can limit the layer's representational power.
+
+To overcome this limitation, there are two parameters to shift/scale the normalized value and restore the networks ability to represent more complex functions
+Both shift and scale are learnable parameters and adjusted during the training process.
+
+In practice, each mini-batch's mean and variance are used for normalization
