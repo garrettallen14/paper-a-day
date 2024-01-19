@@ -1,0 +1,35 @@
+Short-Term Memory and Long-Term Memory are Still Different 
+Dennis Norris 2017
+
+
+- Representation types refer to the various ways in which information is encoded / stored in the brain:
+1. Sensory representations: Direct representations of sensory inputs
+2. Semantic representations: Representations of information tied to the meaning of things
+3. Episodic representations: Representations of memories of events or personal experiences.
+4. Procedural representations: Information represented as skills/sequences of actions required to accomplish a task
+5. Abstract representations: Ideas / concepts that are not tied to concrete sensory experiences like mathematical concepts or philosophical theories.
+6. Symbolic representations: Representation of symbols like language or symbols where a symbols stands for something other than itself.
+
+- Understanding these representation types is important for several reasons:
+- Storage + Retrieval: Different types of representations may be stored / retrieved differently
+- Binding Problem: different aspects of a single memory (sound and visual appearance of a word) are linked together in the brain.
+- Complexity: STM is not just about activating these representations in LTM but might involve more complex processes without a direct counterpart in LTM.
+
+- STM system must store complex representational structures that are new and unfamiliar.
+- This includes novel sequences of words, or unique combinations of visual features.
+- Such representations cannot already exist in the LTM, as they cannot be stored by merely activating pre-existing LTM representations.
+
+- A fundamental requirement for any memory system: the ability to store multiple tokens of the same type... essential for tasks like serial recall, where one needs to remember a sequence of items in order
+- STM does not function simply by activating types in LTM. 
+- If LTM were a store of type representations, this would imply unnecessary duplication of representations in LTM and STM, very inefficient.
+- Standard solution: Memory either contains multiple copies of representations or contains pointers to single types in LTM.
+- This ensures that only the representations currently retained are duplicated.
+
+- Simple pointers from STM to LTM are not enough to solve binding problem.
+- There must be a mechanism for constructing and storing more complex representations, something like variable binding.
+
+- Key question: what exactly is stored in STM?
+- If contains pointers, its information capacity depends on the address space - the range of LTM representations that can be stored (pointed to) in STM.
+- The more extensive the address space, the more bits are required to hold these pointers.
+
+- Any model emphasizing storage by activated LTM must be supplemented by an additional mechanism that can represent multiply tokens in serial order.

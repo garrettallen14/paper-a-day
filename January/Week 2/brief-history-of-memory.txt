@@ -1,0 +1,212 @@
+A Brief History of Memory Research
+Gordon H. Bower
+May 2000
+In book: The Oxford Handbook of Memory (pp.3-32)
+
+**Background: Associationism**
+
+- The study of memory / learning arose from philosophical questions regarding how people come to know things about their world.
+- Learning is the primary way we acquire knowledge, and remembering is the primary way we support knowledge claims (ie witness testimony)
+
+- Empiricism: sensory experiences are the only source of knowledge.
+- People's ideas are alleged to derive from sense impressions as simple copies or combinations of simple ideas.
+- This gave birth to the fundamental theory of Association by Contiguity: complex ideas are formed in the mind by connecting together in memory simple ideas based on sensations that are experienced contiguously in time and/or space.
+- A memory that sensory quality/event A was experienced together with, or immediately preceding, sensory or quality event B is recorded in the memory bank as an association from idea a to b.
+- Reviving these associative sequences from memory (when recurrence of event A makes us think of event B) is the presumed method by which people's past experiences cause their later thoughts to progress from one idea to the next.
+- This brings about the Basic Abilities of the mind:
+- This basic notion can account for the way humans develop coordinated expectations about causal sequences of events, predictions about future events, explanations of how or why something came about, and plans of action designed to bring about particular outcomes.
+
+- Associations vary in:
+1. Strength: according to vividness or distinctiveness of the original experience
+2. Duration: study time
+3. Frequency: repetitions
+4. Interest: for the observer
+
+- Retrieval of associations from memory varies in:
+1. Resemblance of the stimulating cue to the memory
+2. Recency of the experience
+3. Coexistence of fewer alternative associates to the cue (called "inference")
+4. Temporary diversities of state: intoxication, delirium, depression
+
+
+Behaviorism and S-R Psychology
+
+The Behaviorist Philosophy:
+- Behaviorism argues that all observers can ever know about other people/animals is provided by close observations of their overt actions / behaviors in specific situations.
+- To predict someone's behavior, all you need is a catalog of specific facts / generalizations about his / her past responses to situations resembling the present one.
+- These generalizations are carried out in the nervous system as a set of stimulus-response (S-R) habits.
+
+Ebbinghaus and the Rote Learning Tradition:
+- Difficulty in learning a list of characters increases disproportionately with the length of the list being learned.
+- Degrees of learning (or forgetting) are measurable: ((# trials to originally learn) - (# trials to relearn)) / (# trials to originally learn)
+- Ebbinghaus used his degrees of learning (forgetting) to plot a forgetting curve.
+- Very rapid losses occur over first few hours / days, with more gradual and steady decline over subsequent days, weeks, months.
+- Forgetting a list decreased with multiple relearnings of it.
+- Overlearning increased retention.
+- Widely distributed study trials (say, 1 per hour) >>> closely packed trials (1 per minute)
+
+- Later adaptations of this research say Memories established can be tested by:
+1. Recall
+2. Recognition
+3. Reconstruction
+
+
+Analysis of Laboratory Rote Learning Tasks
+- Three learning paradigms: serial learning, paired-associate learning, and perceptual-motor skill learning.
+
+Serial Learning:
+- The task Ebbinghaus used is called serial learning: subjects are asked to remember both the items and their serial order.
+- Retrieval is tested by asking subjects to recall all items in the order presented, or recall what item followed a specific item cued to them, or to reconstruct the presented order when given in scrambled order.
+- Increasing study trials + time per item increases learning.
+- Increasing time subjects are given to anticipate the next successor in the series improves their performance.
+- Items at beginning / end of lists are easier to remember.
+
+Paired Associates Learning:
+- Subjects study pairs of discrete units (syllables, words, pictured objects) and asked to recall a specific member of the pair (the "response") when tested by presenting the other member of the pair (the "stimulus")
+- The retrieval test might also request discrimination "recognition"
+- Paired associate learning involves three distinct / overlapping phases:
+1. learning the nominal response terms as integrated units (eg syllables, french words)
+2. discriminating and reducing confusions among the stimulus terms of the pairs being learned
+3. associating the correct response term to its appropriate stimulus
+- Increasing the prior familiarity and meaningfulness of the response terms (eg English vs Turkish words) makes learning the terms easier (phase 1)
+- Increasing the similarity of the words makes phase 2 easier (discrimination)
+- Using words that are weakly associated help phase 3
+
+Skills:
+1. perceptual motor Skills (imparted by imitation)
+2. cognitive Skills (imparted by instruction)
+- Development of skills takes a huge amount of practice.
+- Early hypothesis: skills represented by a chain of associations in which proprioceptive (and external) feedback following a given response component provided the stimulus for the next response in the chain.
+- Replaced by new hypothesis: hierarchical control of integrated motor programs (rosenbaum, 1991)
+- P = aN^b  where P is performance, N is number of practice trials, b (negative when P is time) determines the rate of improvement per trial.
+1. "No pain no gain" function ^^^^
+2. As practice proceeds, the skill can be carried out w/progressively less attention and cognitive effort...
+3. The basis for most perceptual motor skills is largely nonconscious, not available for conscious introspection (feature or bug?)
+
+
+The Nature of S-R Theory for Rote Learning
+- Considering each paired associate alone, the idea is that reinforced repetitions of the pair gradually build up its associative strength toward a maximum.
+- Associative strength: probability and latency of the correct response and resistance to forgetting later...
+- There are certain thresholds that S-R maintains exist to resist forgetting things...
+- ...
+
+
+Transfer of Knowledge:
+- Adult learners always come into a learning situation with considerable knowledge, learning strategies, and specific associations they use as best they can to optimize performance on a given task.
+- Transfer effects include both general methods of attack for solving particular learning problems, and more specific associations among units employed in the new task.
+
+Nonspecific transfer:
+- General transfer includes strategies for studying particular kinds of materials, selecting discriminating cues from the nominal stiumuli, composing mediators for particular materials, optimizing use of immediate memory, and adjusting to the temporal pacing of the study and test trials in the laboratory task.
+
+Specific transfer:
+- Perceptual system divides or segregates stimuli into discrete groups or "chunks" and looks for a match in memory to these perceptual chunks.
+- A chunk is defined as a familiar collection of more elementary units that have been interassociated and stored in memory repeatedly and that act as a coherent integrated group when retrieved.
+- The brain's mechanism for learning: Begins the operation of association formation by linking together elementary units into larger chunks.
+- Novel material will be remembered more easily the fewer chunks contained in it.
+
+Forgetting:
+Reasons:
+1. autonomous decay in the strength of the S-R association due to physiological / metabolic processes (progressive erosion of synapses)
+2. Performance loss due to ....
+3. Other associations may come over time to compete with and interfere with retrieval of the target material.
+
+
+**Cognitive Psychology**
+
+Information Processing Perspective
+- Human perceptual system analyzed the stimulus array, extracted information from it in the form of neural codes (visual or auditory modalities)
+- These codes entered into mental programs to: store in memory, reason, make decisions, and guide actions.
+
+Computer Models of Cognition
+- Allen Newell + Herbert Simon
+- Tried to simulate details of the thought processes that people go through as they solve various problems.
+- Such programs need:
+1. Very large memories of structured domain knowledge (rules of chess)
+2. Have a means for putting new information into the system (an opponent's chess move)
+3. A means for reasoning about the current situation (short term memory)
+4. A means for reporting out the "actions" the program decided to take (move on the chess board)
+- Newell + Simon noted: S-R approaches were no help for deciding how to structure the knowledge base to carry out efficient retrieval, or reason effectively.
+- Now began research outside of S-R into theories of perceptual + attentional processes & strategies + knowledge structures that were learned/used to acquire new knowledge.
+
+
+Popularity of Different Memory Tasks
+Free Recall:
+- There are differing powers in different retrieval cues.
+- Suggests that when a memory is claimed to have been forgotten, the claim should be limited to the particular kind of retrieval task that failed.
+- If one retrieval cue fails, then perhaps a more potent set of cues could be found that would revive the temporarily inaccessible memory.
+
+...
+
+
+Short-Term Memory Models
+- Study of immediate (or "short-term") memory
+- People very rapidly forget a few unrelated letters/words that they have just read if they are distracted and occupied with another task for just a few seconds.
+- Suggests that "short-term" memory is extremely fragile, lasting only a few seconds once the subjects attention is drawn elsewhere.
+- Constrast this with the "long-term" memory for information that people have stored in their knowledge base.
+
+A Popular Model of Short-Term Memory
+- A sensory store that held briefly glimpsed (or heard) messages for a couple seconds before their traces decayed. Stimulus traces in the sensory store that are attended to, identified and encoded are thereby entered into a short-term memory (STM).
+- The STM is of limited capacity, holding at most only a few items. If the items are to be learned, the central-control processes initiate a plan for memorizing, such as covert rehersal (silently going over the words).
+- The model also assumes that each rehersal cycle also transfers into the model durable long-term memory information about the associations being studied.
+- Information transferred to long-term memory can also be forgotten, but at a much slower rate than the information in STM.
+- A to-be-remembered item will be eventually displaced or lost from STM since newly arriving information enters STM and bumps out the earlier items.
+
+Flow Chart:
+
+Environmental input -> Sensory registers (visual, auditory,..., haptic) -> STM Temp working memory (control processes: rehersal, coding, decisions, retrieval strategies) <-> LTM Permanent Memory store
+STM Temp -> Response output
+
+
+Episodic / Semantic Memory:
+- Episodic Memory: a specific event that occured at a time/place
+- "I just got a ticket at the stop light."
+- Semantic Memory: the "mental thesaurus, organized knowledge a person possesses"
+- Semantic memories are the abstracted words, concepts, and rules stored in our long-term memory whose context of acquisition was long ago forgotten
+Endel Tulving:
+- Episodic are more prone to being forgotten. 
+- Retrieval is usually accompanied by an explicit or implicit reference to / image of the time/place of the episode.
+- Retrieval of any information is itself another episode that creates its own episodic memory.
+- Autobiographic memories are typically dated episodic memories. (although people often have abstract generalizations about long stretches of their life) (eg, people know they went to college for four years, but they don't necessarily know specifics...)
+- Tulving (1983) believed that differences between episodic and semantic memories were sufficiently striking and hard-wired that he hypothesized the existence of two different memory systems: Episodic and Semantic
+- He later added a procedural memory system in recognition of perceptual memory skills.
+- See the discussion around Tulving 1986, in Brain and Behavioral Sciences...
+
+
+Knowledge Structures in Long-Term Memory
+Propositions:
+- Concern in memory systems based on Language Models: "How are knowledge units to be represented?"
+- Early proposal: elementary propositions (subject-predicate structures)
+- Propositional structures may be either one place predicates (..)
+- All these are old, you can just do it in natural language now...
+
+*** Concepts and Schemas:
+- What are concepts and how are they structured in Human memory?
+- Concepts are represented in terms of their associated properties, perceptual features, intended uses or functions, and relations to other concepts.
+- Early view: concepts should be represented in memory as a set of defining features that are all necessary and jointly sufficient to recognize instances (eg the concept of a triangle)
+
+- Schemas are good candidates for how LTM might be structured...
+- Schemas capture clusters of organized expectations and represent abstract knowledge about some domain.
+- Schemas can be of any "size" or "grain".
+- Some schemas can be embedded within other schemas (eyes and mouth are within human face)...
+- Common examples:
+- Common objects, ethnic / personality stereotypes, routine actions.
+- Each stereotyped activity is composed of an ordered sequence of actions to achieve some goal, and it "runs off" in behavior (and in recall chunks) more or less automatically.
+
+- People use their schema knowledge to guide actions and understand those of others.
+- Through experience people acquire schemas regarding novel activities.
+- They also acquire schemas for familiar narrative forms, their coherence, and genre of different narratives.
+- People understand events (or their narration) by being able to explain them by fitting them into familiar schemas.
+- Ex. People understand immediately why a sherrif in a Western movie jumps on his horse to chase bank robbers: his motivations flow from his role and his plans along with contraints imposed by his limited resources.
+
+- A final point: these structured schemas can be viewed as simply large clusters of elementary associations (or expectations).
+- When a subject hears a sentence asserting new relationships, a person records into memory a novel set of associations that the subject did not have before. (eg "President Clinton is now visiting South Africa.")
+- These are associations which can be used to answer questions ("where is clinton now?") and draw inferences using other knowledge (eg "He's probably not speaking at the UN today...")
+- Also: associations are labeled according to their logical type or schematic role...
+- Canary => bird, yellow, legs, and Tweety
+- These relations are appreciated as rapidly as the items themselves...
+
+Visual Imagery:
+- Words differ greatly in the extent to which they evoke Imagery
+- The imagery arousing nature of a word was the most potent determinant of its rate of learning
+- This implies imagery is a huge component of memory...
+- Imagery memory store is more durable than the verbal memory store.

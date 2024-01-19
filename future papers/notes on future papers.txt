@@ -1,0 +1,6 @@
+*** See (Baars B. J., 1988)2 and (Baars B. J., 2019)
+The CTM is inspired by Alan Turing’s simple yet 
+powerful model of computation, the Turing Machine (TM), by Bernard Baars’ GWT, and by the Global Neuronal 
+Workspace Theory (GNWT) of (Dehaene & Changeux, 2011) and (Mashour, Roelfsema, Changeux, & Dehaene, 
+2020).
+Facing up to the problem of consciousness (chalmers 1995)

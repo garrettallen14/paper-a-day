@@ -1,0 +1,88 @@
+VOYAGER: An Open-Ended Embodied Agent with Large Language Models
+Oct 2023
+
+Abstract
+- VOYAGER, the first LLM-powered embodied lifelong learning agent in Minecraft.
+- Continuously explores, acquires diverse skills, makes novel discoveries w/o human intervention.
+- Components:
+1. Automatic curriculum maximizing exploration.
+2. Ever-growing skill library of executable code for storing / retrieving complex behaviors.
+3. A new iterative prompting mechanism that incorporates environment feedback, execution errors, and self-verification for program improvement.
+- Skills developed by VOYAGER are temporally extended, interpretable, and compositional.
+- This compounds the agent's abilities rapidly and alleviates catastrophic forgetting.
+- VOYAGER shows strong in-context lifelong learning... exhibits exceptional proficiency in playing Minecraft.
+- VOYAGER is able to utilize the learned skill library in a new Minecraft world to solve novel tasks from scratch.
+
+
+1. Introduction
+- Classical approaches to this problem employ RL
+- A lifelong learning agent should have similar capabilities to human players:
+1. Propose suitable tasks based on current skill level and world state (eg learn to harvest sand, cactus before iron if it finds itself in a desert rather than a forest)
+2. Refine skills based on environmental feedback and Commit mastered skills to memory for future reuse in similar situations
+3. Continually explore the world and seek out new tasks in a self-driven manner.
+
+VOYAGER has three key modules:
+1. Automatic cirriculum that maximizes exploration
+2. A skill library for storing / retrieving complex behaviors
+3. A new iterative prompting mechanism that generates executable code for embodied control
+- Use code as the action space instead of low-level motor commands because programs can naturally represent temporally extended and compositional actions essential for many long-horizon tasks in Minecraft.
+- VOYAGER uses automatic cirriculum as an in-context form of novelty search.
+- Each program is indexed by the embedding of its description, which can be retrieved in similar situations in the future.
+- Complex skills can be synthesized by composing similar programs, compounding VOYAGER's capabilities rapidly over time.
+
+
+2. Method
+
+2.1 Automatic Curriculum
+- Automatic curriculum capitalizes on the internet-scale knowledge contained within GPT-4 by prompting it to provide a steady stream of new tasks / challenges.
+- Input prompt to GPT-4:
+1. Directives encouraging diverse behaviors and imposing constraints, "My ultimate goal is to discover as many diverse things as possible ... The next task should not be too hard since I may not have the necessary resources ..."
+2. The agent's current state
+3. Previously completed and failed tasks
+4. Additional context: Leverage GPT-3.5 to self-ask questions based on the current state and exploration progress to self-answer questions.
+- Use GPT-3.5 instead of 4 for standard NLP tasks.
+
+2.2 Skill Library
+- It is essential to have a skill library that serves as a basis for learning and evolution.
+- We represent each skill with executable code that scaffolds temporally extended actions for completing a specific task proposed by the automatic curriculum.
+- The input prompt to GPT-4 consists of the following components:
+1. Guidelines for code generation, such as "Your function will be reused for building more complex functions. Therefore, you should make it generic and reusable."
+2. Control primitive APIs, and relevant skills retrieved from the skill library, which are crucial for in-context learning to work well (?)
+3. The Generated code from the last round, environment feedback, execution errors, and critique based on which GPT-4 can self-improve.
+4. The agent's current state.
+5. Chain-of-thought prompting to do reasoning before code generation.
+- We iteratively refine the program through a novel iterative prompting mechanism, incorporate it into the skill library as a new skill, and index it by the embedding of its description.
+- For skill retrieval, we query the skill library with the embedding of self-generated task plans and environment feedback. By continuously expanding and refining the skill library, VOYAGER learns
+
+2.3 Iterative Prompting Mechanism
+- Self-improvement through three types of feedback:
+1. Environment feedback: illustrates the intermediate progress of program execution. ("I cannot make iron chestplate bc I need: 7 more iron ingots") highlights the cause of failure in crafting an iron chestplate.
+- We use bot.chat() inside control primitive APIs to generate environment feedback and prompt GPT-4 to use this function as well during code generation.
+2. Executive errors from the program interpreter that reveal any invalid operations or syntax errors in programs, which are valuable for bug fixing.
+3. Self-verification for checking task success: Instead of manually coding success checkers for each new task proposed by the automatic curriculum, we instantiate another GPT-4 agent for self-verification.
+- By providing VOYAGER's current state and task to GPT-4, we ask it to act as a critic and inform us whether the program achieves the task.
+- If task fails, it provides a critique by suggesting how to complete the task. Our self-verification is more comprehensive than self-reflection by both checking success and reflecting on mistakes.
+
+
+Appendix:
+
+A.3.4 Full Prompt
+- First, we have GPT-3.5 Q/A to gather some basic information about the situation.
+- Input other contextual information
+- You should follow the following criteria: ...
+- RESPONSE FORMAT: 
+- Reasoning: "Based on the information above, do reasoning about what the next task should be."
+- Task: "The next task."
+
+GPT-3.5 Q/A prompt:
+- Contextual information
+- Follow the following criteria:
+1. You should ask at least 5 questions (no more than 10) to help decide the next immediate task to do.
+2. Question should be specific to a concept in Minecraft.
+3. Your questions should be self-contained and not require any context. (could actually change this)
+4. List of tasks that are too hard to do
+- Response format: 
+Reasoning, Question 1 + Concept 1,..., Question 5 + Concept 5
+
+Skill Library:
+- 

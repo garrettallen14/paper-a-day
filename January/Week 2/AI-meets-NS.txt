@@ -1,0 +1,37 @@
+Artificial Intelligence Meets Natural Stupidity
+Drew McDermott 1976
+
+- AI has always been on the border of respectability, and therefore on the border of crackpottery.
+- Our tolerance for sloppy thinking has led us to repeat many mistakes over and over.
+- If we are to retain any credibility, this must stop.
+
+- This paper is an effort to ridicule some of these mistakes...
+
+Wishful Mnemonics
+- A major source of simple-mindedness in AI programs is the use of mnemonics like "UNDERSTAND" and "GOAL" to refer to programs and data structures.
+- However, in AI, our programs are problems rather than solutions.
+- If a researcher tries to write an "understanding" program, it isn't because he has thought of a better way of implementing this well-understood task, but because he thinks he can come closer to writing the first implementation.
+- If he calls the main loop of his program "UNDERSTAND", he is merely begging the question & may mislead a lot of people, including himself.
+- Instead: refer to this main loop as "G0034" and see if he can convince himself that this implements some sort of understanding...
+
+- GPS (Ernst and Newell 1969) = "General Problem Solver"
+- Caused way too much hype/distraction
+- Should have been called: Local-Feature-Guided Network Searcher.
+
+- Be careful in using names and terms which sound too grand...
+
+- As AI progresses, this malady gets worse.
+- Example: Systems we label as an "understander"
+- Many researchers have fallen into using simple connections like IS-A...
+Ex: Happiness -IS-A-> State-of-Mind  can lead to suspiciously wishful networks like Greater-Than -IS-A-> Binary-Transitive-Relation...
+- This is an illustration of "contagious wishfulness": because one piece of a system is labeled impressively, the things it interact with inherit grandiosity.
+
+- A program called "THINK" is likely inexorable to acquire data structures called "THOUGHTS"
+- A disciplined programmer will use gensyms in key places to see if he still admires his system.
+- Ex. Happiness -INHERITS-INDICATORS-> G1073 looks far more dubious...
+
+- Concepts borrowed from human language must shake off a lot of surface-structure duest before they become clear.
+
+Unnatural Language
+- More sloppiness: tendency to see in natural language a natural source of problems and solutions.
+- 

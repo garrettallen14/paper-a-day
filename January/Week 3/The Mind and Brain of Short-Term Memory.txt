@@ -1,0 +1,150 @@
+The Mind and Brain of Short-Term Memory
+Jonides et al Annu.Rev.Psychol.2008.59:193–224
+https://www.annualreviews.org/doi/abs/10.1146/annurev.psych.59.103006.093615
+
+
+Abstract
+- Past 10 years have brought near-revolutionary changes in psychological theories of STM.
+- Here we critically examine major theories of the mind of STM & how they relate to evidence about underlying brain mechanisms.
+- Three features must be addressed by any theory of STM:
+1. Examine evidence for the architecture, special attention to questions of capacit and how--or whether--STM can be separated from LTM.
+2. Ask how components of that architecture enact processes of encoding, maintenance, and retrieval.
+3. Describe the debate over the reason about forgetting from STM (is it bc of inference or decay)
+- We close with a conceptual model tracing the representation of a signle item through a STM task, describing the biological mechanisms that might support psychological processes on a moment-by-moment basis.
+
+
+Introduction:
+- Mentally add 324 and 468:
+1. Create a temporary representation in memory for the two numbers. This representation must survive for several seconds to complete the task.
+2. Allocate your attention to different portions of the representation so that you can apply the rules of arithmetic required by the task.
+3. While attending to local parts of the problem, you must also keep accessible the parts which are not in the current focus of attention.
+- There is hardly a task that can be completed without the involvement of STM. It is a critical component of cognition.
+
+- Questions any adequate account of STM must address:
+1. What is the structure?
+- Essential to provide a mechanism that allows a representation to exist beyond the sensory stimulation or the process that retrieved the representation from the LTM.
+- Should be clear about psychological constructs & neural mechanisms that implement them.
+2. What processes operate on the stored information?
+- Candidate processes: encoding and maintenance, rehersal, shifts of attention from one part to another, retrieval.
+- Often called executive functions
+3. What causes forgetting?
+- Traditionally: decay + inference
+
+- Most models fall between two extremes:
+1. Multistore models view STM and LTM as architecturally separate and rely on distinct representations.
+2. Unitary-store models view STM and LTM as relying largely on the same representations but differ by (a) level of activation of these representations and (b) some of the processes that normally act upon them.
+
+- Representation in memory: consists of a bundle of features that define a memorandum.
+- This bundle includes context in which that memorandum was encountered.
+
+
+What is the Structure of STM?
+
+Multistore Models that Differentiate STM and LTM:
+- The short term (primary) memory is qualitatively different from long-term (secondary) memory.
+- Baddeley's model:
+- There are separate buffers for different forms of information.
+- All of these buffers are separate from LTM.
+- A verbal buffer (phonological loop) holds information that can be rehearsed verbally (eg. letters, digits)
+- A visuospatial sketchpad is assumed to maintain visual information and can be further fractionated into visual/object and spatial stores.
+- An episodic buffer that draws on the other buffers and LTM has been added to account for the retention of multimodel information.
+- A central executive is proposed to organize the interplay between the various buffers & LTM.
+- Multistore implies:
+(a) STM is distinct from LTM
+(b) STM can be stratified into different informational buffers based on information type
+(c) Storage + Executive processes are distinguishable
+- There must be some representational space that allows for the integration of information stored in the phonological loop at LTM.
+
+.......
+.......
+.......
+
+Summary:
+- We favor the implication that the representational bases for perception, STM and LTM are identical. 
+- The same neural representations initially activated during the encoding of a piece of information show sustained activation during STM (or retrieval from LTM to STM)
+- These neural reprisentation are the repository of long-term representations.
+- It is reasonable to expect that the STM will have an organization by type of material as well.
+- Memory in the short term: consists of items in the focus of attention + recently attended representations in the LTM.
+- The items in the focus of attention number no more than four, and may be limited to just a single representation.
+
+
+***What Processes Operate on the Stored Information?***
+- Debate about the nature of STM has been dominated by discussion of structure + capacity.
+- Rehearsal likely represents a complex strategy rather than a primitive STM process.
+- Candidate processes: encoding + maintenance, attention shifts, spatial rehearsal, up-dating, overwriting, cue-based parallel retrieval and interference-resolution.
+- Will not navigate this complex list...
+- Instead, focus on the concept of a limited focus of attention:
+- There is a distinguishable focus of attention in which representations are directly accessible and available for cognitive action...
+- Here are the processes that control the transition of memory representations into and out of this focused state:
+
+The Three Core Processes of STM:
+- Assume: a limited focus of attention is a key feature of short-term storage.
+- Processing related to this limited focus amounts to understanding three basic types of cognitive events:
+1. Encoding processes that control the transition from perceptual representations into cognitive/attentional focus
+2. Maintenance processes that keep info in the focus (protect from interference and decay)
+3. Retrieval processes that bring info from the past back into the cognitive focus
+
+# Taking a perception & putting it into focus
+Encoding of items into the focus:
+- Encoding processes are the traditional domain of theories of perception and are not treated explicitly in any of the current major accounts of STM.
+- We outline three implicit assumptions about encoding processes made in most accounts of STM:
+1. Cognitive focus: includes contents from the immediate present as well as contents retrieved from immediate past.
+2. Perceptual encoding into the focus of attention results in a displacement of other items from the focus.
+3. Perceptual encoding into the focus of attention does not automatically access the focus of attention.
+- This last one implies that the focus of attention is regulated due to its limited capacity
+- A controlled mechanism is necessary to select aspects of the perceptual present and cognitive past for focused attention.
+- Prefrontal regions can regulate posterior perceptual areas to maintain task relevant memory traces.
+
+# Keeping focus organized
+Maintenance of items in the focus:
+- Once an item is in the focus, what keeps it there?
+- If item is in the perceptual present: attention-modulated, perceptual encoding.
+- But what keeps something in the cognitive focus when it is not currently perceived?
+- For many, this is the central question of STM -- how is information held in the mind for the purpose of future action after the perceptual input is gone?
+- There is evidence of a process of active maintenance that keeps representations alive and protects them from irrelevant incoming stimuli or intruding thoughts!
+- Maintenance operations may modulate perceptual encoding to prevent incoming stimuli from distrupting the focused representation in the posterior cortex.
+- Major challenge in computational models: engaging in active maintenance of representations in posterior cortex while simultaneously processing incoming perceptual material.
+
+# Retrieving an item from LTM to focus on
+Retrieval of items into the focus:
+- Items outside of the focus which are brought into focus by switching attention onto these items.
+- STM retrieval is a rapid, parallel, content-addressable process
+
+Neural Mechanisms of STM and LTM Retrieval:
+- Cue-based retrieval processes described for STM are very similar to those posited for LTM.
+- Retrieval failures in STM and LTM often result from similarity-based interference / cue overlap
+- Similarity-based interference: (ie remembering too many people's names at a party)
+- Cue overlap: same or similar cues are associated with multiple memory traces.
+- Interference plays a major role in forgetting over both STM and LTM.
+
+Relationship of STM to Rehearsal:
+- Rehearsal is simply a controlled sequence of retrievals and re-encodings of items into the focus of attention.
+
+
+Why do we forget?
+- What accounts for failures to retrieve something we just encoded seconds ago?
+- Two main theories: 1. time-based decay 2. similarity-based interference
+- These may ultimately result from the same underlying principles!
+
+Decay Theories:
+- Time passes and memory erodes
+
+# In an Agent, you should maybe have a module which acts to combat interference!
+Interference Theories:
+- Interference: info in the brain competes / conflicts with other information, leading to difficulties in memory recall or learning new information.
+- There are two main types of interference:
+1. Proactive Interference: Older memories hinder the recall of newer memories. (knowledge of French may interfere with your ability to recall new Spanish words, driving on a new side of the road effecting your habits)
+2. Retroactive Interference: New information interferes with the ability to recall older information. (recent learning of Spanish makes it harder to recall the previously learned French words, getting a new phone number and memorizing it can make your previous phone number be forgotten)
+- The ability to overcome interference might largely determine the capacity of STM and variation among individuals.
+
+
+A Summary of Principles and Illustration of STM at Work
+
+Principles of STM
+The Mind of STM:
+- Memories are stored as collections of various features, including aspects that represent the context in which the memory was formed.
+- Memory representations have different levels of activation. Long-term memories typically remain dormant until recalled, while recent perceptions or retrievals can activate these memories to varying degrees.
+- information can be actively held in our attention, making it readily accessible for cognitive tasks. This attentional focus is usually limited to a single 'chunk' of information at a time, where a 'chunk' is a group of items linked by a common context.
+- Items enter our attention either through direct perception or through cue-based retrieval from long-term memory (LTM).
+- Items within our attention are maintained through controlled processes, such as rehearsal. This involves sequential allocation of attention to these items.
+- Forgetting happens when items leave our attention. They then must compete with other items to regain attention (interference) or be forgotten over time due to a natural decline in the representation's fidelity (decay).

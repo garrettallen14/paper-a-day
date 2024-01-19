@@ -1,0 +1,138 @@
+A Theory of Consciousness from a Theoretical Computer Science Perspective:  
+Insights from the Conscious Turing Machine  
+Lenore Blum and Manuel Blum
+
+Abstract
+- The quest to understand consciousness, examined from the perspective of Theoretical Computer Science (TCS)
+- TCS, a branch of mathematics concerned with understanding the underlying principles of computation and complexity
+
+- Not looking for a complex model of the brain nor of cognition
+- Seeking a simple substrate independent computational model of (the admittedly complex concept of) consciousness
+
+- We define the Conscious Turing Machine (CTM), also called Conscious AI
+- Define consciousness and related notions in the CTM.
+- Only mathematical definitions, but we suggest why the CTM has feelings of consciousness.
+- The TCS perspective provides a simple framework to employ tools form computational complexity theory and ML to help us understand consciousness + related concepts
+
+- Previously we explored explanations for feelings of pain / pleasure in the CTM. Here we consider additional phenomena generally associated with consciousness
+- Start with three examples related to vision (blindsight, inattentional blindness, and change blindness)
+- We follow then with a discussion of dreams, altered states, and free will.
+- We give explanations derived from the model and draw confirmation from consistencies at a high level -- well above the level of neurons -- with the psychological and neuroscience literature.
+
+
+Introduction: Why a Theoretical Computer Science Perspective?
+- Humanity getting closer to understanding how the brain achieves consciousness (?)
+- Bernard Baars -- Global Workspace Theory (GWT) of the brain.
+
+- We study consciousness from the perspective of Theoretical Computer Science
+- A branch of math concerned with understanding the underlying principles of computation.
+- These principles largely include the complexity of computation
+- This deals with the consequences and unexpected usefulness of taking resource limitations into account.
+
+- We claim that TCS perspective and unique insights add to the understanding of consciousness and related concepts such as qualia and free will.
+- We give a simple abstract substrate-independent computational model of consciousness that we call the Conscious Turing Machine (CTM)
+- The CTM is inspired by Turing Machine, GWT, and Global Neuronal Workspace Theory (GNWT)
+
+- Not looking to model the brain or suggest neural correlates of consciousness
+- Simply looking to understand consciousness and how a machine might experience feelings.
+- Intent is to come to terms with the hard problem (Chalmers 1995)
+
+- Our view: consciousness is a property of all properly organized computing systems (!), flesh and blood or metal and silicon.
+
+What is Theoretical Computer Science?
+- Turing "On computable numbers" presents a formal mathematical definintion of a Turing Machine.
+- Turing Machine -> P=?NP research -> TCS which defined computational complexity of problems
+
+- We illustrate the concept of a computer-generated random sequence, called a pseudo-random sequence.
+- Pseudo-random sequence: a polynomial time program for generating sequences which cannot be distinguished from truly random sequences by any feasible computer program.
+- So, in the polyn time world we live, pseudo-random sequences are "truly" random.
+- This understanding was impossible w/o TCS
+
+- An application of the above ideas: replace the use of random sequences in the CTM by sequences produced by pseudo-random generators supplied with (short) random seeds.
+- If the probabilistic CTM has "free will", as will be argued, then so does this deterministic CTM.
+- The free will of a deterministic CTM is counter to some and perhaps much of the thinking on determinism.
+
+Now for consciousness:
+- The TCS perspective is employed in the definition of the CTM, a simple machine that formalizes a modified version of the GWT of consciousness.
+- Baars describes consciousness through a theater analogy as the activity of actors in a play performing on the stage of Working Memory. 
+- Their performance under observation by a huge audience of unconscious processors sitting in the dark
+- In the CTM, the stage is represented by a STM that at any moment in time contains CTM's conscious content.
+- The audience members are an enormous collection of powerful processors -- each with its own expertise -- that make up CTM's LTM.
+- These LTM processors make predictions and get feedback from CTM's world.
+- Based on this feedback, learning algorithms internal to each processor improve that processor's behavior.
+
+- LTM processors, each with their own specialty, compete to get their questions, answers, and information in the form of chunks on the stage for immediate broadcast to the audience.
+- Conscious awareness (elsewhere called attention) is defined formally in the CTM as the reception by the LTM processors of the broadcast of CTM's conscious content.
+- These processors become connected by links over time, turning conscious communication (through STM) into unconscious communication (thru links) between LTM processors.
+- Ignition: communication via links about a broadcasted chunk reinforces its conscious awareness
+
+Complexity considerations enter into fixing the detailed definition of CTM:
+1. Chunk: the information that each LTM processor puts into the competition for consciousness at each and every tick of the clock.
+2. Probabilistic competition algorithm: selects which one of the many competing chunks reaches consciousness
+3. ML algorithms in each processor that use feedback from global broadcasts, other processors, and outside world to update the CTM's competitiveness & reliability
+4. Memory in each LTM processor is random access rather than linear access (FILO) of Turing machine tapes, because random access is needed for things like fast binary search.
+
+- Complexity considerations, particularly ones of consequences of limited resources, play a crucial role in our high level explanations for consciousness-related phenomena such as change blindness & feeling of free will.
+
+- What gives CTM its "feeling of consciousness" is the Global Workspace architecture, predictive dynamics, rich multi-modal inner language, and certain special LTM processors including an Inner generalized speech processor and Model-of-the-World processor
+
+- Not looking for model of brain, but model of consciousness
+- CTM again too simple for that.
+
+
+1. The CTM Model
+1.1 Basic Structure + Definition of "Consciousness in the CTM"
+- CTM is a device defined by a 7-tuple: < STM, LTM, Up-Tree, Down-Tree, Links, Input, Output >
+- CTM has a clock measuring time in discrete clock ticks (10 ticks per second, the alpha rhythm of the brain)
+- CTM has a finite lifetime, born at t=0, dies at T=0.
+
+1.1.1 STM & LTM processors
+- In the CTM, the stage (conscious arena) is represented by a Short Term Memory. This is a small memory capable of holding a single chunk.
+- The audience (in the unconscious arena) is represented by a massive collection of N > 10^7 powerful parallel random-access processors, each with their own random-access memory, each large enough to hold a small multiple of T chunks.
+- This makes up the LTM. Each LTM processor runs a number of algorithms, one of which is the processor's personal Sleeping Experts algorithm.
+- All processors are in the LTM, none in the STM.
+- When we say processor, we always mean LTM processor.
+
+- Certain special LTM processors are particularly responsible for CTM's "feelings of consciousness". These include a Model-of-the-World processor, among others...
+
+1.1.2 The Up-Tree & Down-Tree
+- Up-Tree: Up-directed binary tree of height h with N leaves, one leaf per LTM processor, and a single root in STM.
+- Every directed path from leaf up to the root is of length h.
+- Info in the Up-Tree travels from the leaves below to the root above.
+- Down-Tree: simple down-directed tree of height 1, with a single root in STM and N edges directed from that root to the N leaves, one edge per processor, which carry information from the root to all N leaves.
+
+- LTM processors, each with their own specialty, compete via the Up-Tree competition to get their Qs, As, and info in the form of chunks into STM.
+- The competition takes h clock ticks.
+- At each time t, all LTM processors submit information to the competition for STM.
+- One of those processors wins access to STM at time t+h, and all processors recieve the winning broadcast from STM at time t+h+1 (?)
+
+1.1.3 Conscious Content, Conscious Awareness & Streams of Consciousness
+- The chunk that wins the Up-Tree competition (to get into the STM) that began at time t-h is called the conscious content of CTM at time t.
+- We say that CTM becomes consciously aware of that conscious content, which appeared at time t in STM, when this conscious content is recieved by all LTM processors at the time t+1.
+- Conscious awareness: the reception by all the LTM processors of STM's broadcast, rather than as the appearance in STM of the winning chunk
+- This emphasizes the feeling of consciousness arises after all processors receive the broadcast and already act on it
+
+- Our definition of conscious awareness aligns roughly with what cognitive neuroscientists call "attention"
+- Ignition ~ Reverberation of chunks via processor links immediately following reception
+- Reason to keep # of chunks in STM small: ensure all processors focus on the same information in the broadcast from the STM. (also keep model simple)
+
+- CTM is constantly bubbling with the activity of chunks competing for STM, its winners being constantly broadcast from STM to LTM.
+- Time-ordered chunks broadcast from STM to LTM form a stream of consciousness. This stream is part of the subjective "feeling of consciousness"
+
+1.1.4 Links, Unconscious Communication & Global Ignition
+- All communication between any two processors occurs initially (at birth and until links are formed) via STM.
+- Processor A can submit a query to the Up-Tree competition. If the query wins the competition, it is broadcast to all processors.
+- Processor B may then submit an answer via the competition, which if it wins gets broadcast, and so on.
+- If A acknowledges that B's answer is useful (this occurs sufficiently often), then a bi-directional link forms (or existing one is strengthened between A and B)
+
+- In addition to processors putting chunks into the Up-Tree competition, processors can send chunks through links.
+- When chunks are sent though links taht formerly went through STM, conscious communication (thru STM) between A and B turns into unconscious communication between A and B.
+- Links are channels for transmitting information between processors. Those chunks can reinforce / sustain conscious awareness. (!!!!!)
+- Global ignition in the Global Neuronal Workspace Theory (GNWT)
+
+1.1.5 Input / Output Maps, Sensors & Actuators
+- CTM environment (Env) is a subset of Rm(t) (t is time)
+- Input maps take environmental information acquired by CTM's sensors and send it to designated processors to convert into chunks.
+- Output maps take chunks from designated processors, convert to command instructions, send to actuators to act on the environment.
+
+1.1.6 Summary of Connections
