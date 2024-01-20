@@ -1,0 +1,38 @@
+1. Where are we?
+Thumbnail sketch of the Theory:
+- There is no single, definitive "stream of consciousness".
+- There is no central HQ, no cartesian theater where "it all comes together" for the perusal of a Central Meaner.
+- Instead of such a single stream, there are multiple channels in which specialist circuits try, in parallel pandemoniums, to do their various things, creating Multiple Drafts as they go.
+- Most of these fragmentary drafts of "narrative" play short-lived roles in the modulation of current activity
+- Some get promoted to further functional roles by the activity of a virtual machine in the brain.
+- The seriality of this machine is not a "hard-wired" design feature, but the upshot of a succession of coalitions of these specialists.
+
+- The basic specialists are part of our animal heritage.
+- These specialists were developed to perform animal instincts -> ducking, predator-avoiding, face-recognizing, etc...
+- They are often opportunistically enlisted in new roles, for which their native talents more or less suit them.
+- The result is not bedlam only because the trends imposed on all this activity are also the product of design.
+- Some of this design is innate
+- But it is augmented, and sometimes even overwhelmed in importance, by microhabits of thought that are developed by the individual, partly idiosyncratic
+
+
+2. Orienting ourselves with the Thumbnail Sketch:
+- In Baars (1988), he summarizes what he sees as a "gathering consensus" that consciousness is accomplished by a "distributed society of specialists that is equipped with a working memory, called a global workspace, whose contents can be broadcast to the system as a whole."
+
+- In AI, there is an importance placed on narrativelike sequences.
+
+- Many have remarked on the relatively slow, awkward pace of conscious mental activity, and the suggestion has long lurked that this might be because the brain was not really designed--hard wired--for such activity.
+- Human consciousness might be the activity of some sort of serial virtual machine implemented on the parallel hardware of the brain
+
+- Some claim the neural architecture the brain is a medium in which structures get built as a function of the brain's interactions with the world.
+- It is with these built structures, more than the innate structures, that must be cited in order to explain cognitive functioning.
+
+- The basic specialists (hordes of specialists) are attested to by many different theories
+- The size, roles, and organization of these specialists is hotly debated
+- Many hard-wired circuits exist in monkeys, etc
+- One viewpoint: the mind is a coalition of semi-independent agencies (Gazzaniga and Ledoux 1978, Gazzaniga 1985)
+- Another: Fodor (1983) has argued that large parts of the human mind are composed of modules: hard-wired, special purpose, "encapsulated" systems of input analysis (and output generation)
+- Dennett doesn't like Fodor very much, calls him a bureaucrat.
+
+- Minsky's Agents & Humunculi
+
+- Soar productions ~ VOYAGER Minecraft paper

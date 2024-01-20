@@ -136,3 +136,110 @@ Complexity considerations enter into fixing the detailed definition of CTM:
 - Output maps take chunks from designated processors, convert to command instructions, send to actuators to act on the environment.
 
 1.1.6 Summary of Connections
+Env -> LTM: directed edges from the environment via sensors to processors of the sensory data
+LTM -> STM: via the Up-Tree edges
+STM -> LTM: via the Down-Tree edges
+LTM -> LTM: bi-directional edges (links) between processors
+LTM -> Env: directed edges from specific processors (like those that generate instructions for finger movement) to the environment via actuators (like the fingers that receive instructions from these processors) that act on the environment. 
+
+1.2 Brainish (CTM Multi-Model Inner Language), Chunks & Gits
+- Brainish is the language used to communicate between processors (competition or thru links)
+- Express inner speech, vision, sensations, imaginings, dreams.
+- Includes coded representations of inputs / outputs
+- All expressed w succinct multi-modal Brainish words and phrases called gists.
+- Gists:
+- can hold the essence of a scene or (high level expandable) idea of a proof.
+- Can be an answer to a query
+- An insight of some sort
+- A dream image
+- Description of pain...
+- etc...
+- Brainish can express and manipulate:
+- images, sounds, tactile sensations, and thoughts (including unsymbolized thoughts)
+- Does this BETTER than spoken outer languages
+- Claim that an expressive inner language is an important component of the feeling of consciousness
+
+- Information is carried on all edges between LTM processors, between STM and LTM, from input to LTM, and from LTM to output, by chunks.
+- A chunk is a 6-tuple: < address, t, gist, weight, intensity, mood > where
+1. Address is the address of the LTM processor that produced the chunk
+2. t is the time the chunk was produced (put into competition)
+3. Gist is the information "concisely expressed" in Brainish.
+4. Weight is a valanced real number that the processor gives the gist
+5. Intensity starts off as |weight|
+6. Mood starts off as weight.
+
+- Note: the size of a chunk (and hence the size of its components, including its gist) will necessarily be bounded by computational complexity considerations.
+
+1.3 (Probabilistic) Up-Tree Competition, Coin-Flip Neuron & Competition Functions
+- Up-Tree competition: determines which LTM processor gets its chunk into STM.
+- At each clock tick t = 0,1,...,T the t competition starts with each processor p putting its chunk into its leaf of the Up-Tree.
+- After a chunk is submitted, address,t,gist,weight remain unchanged, but intensity and mood are updated to incorporate ever more global information
+- Deciding whether or not a chunk moves up one level or drops out is made by a fast tiny parallel circuit
+- The probabilistic Up-Tree is the proper one to consider
+- At each clock tick, the circuit in a non-leaf node runs a local competition that probabilistically selects one of v's two (sibling) children based on a comparison of the chunks they contain
+- Moves (a variant) of that chunk into v. This chunk is the winner of the local competition at v.
+
+- The local competition employs the Up-Tree's competition function f, mapping chunks to non-neg real numbers.
+
+- Current mood of CTM at time t is defined to be the mood of the chunk that is broadcast from STM at time t...
+
+- Definition: competition f is Additive if f(chunk(v)) = f(chunkL(v)) + f(chunkR(v))
+- Theorem: If the competition fucntion is additive, then every chunk submitted to the Up-Tree competition gets a fraction of time in STM 
+- As a consequence, for additive f, the permutation chosen has no effect on the sequence of broadcasts from STM
+
+1.4 Complexity of Computation & Time Delay for Conscious Awareness
+...
+
+1.5 Memories & the High Level Story
+- Assume each processor p stores in its internal memory at time t:
+1. the chunk(p,t,0) submitted to the competition
+2. the chunk recieved by broadcast from the STM
+3. a select subset of chunks it received from links or from Input maps.
+- These stores are a substantial portion of CTM's memories...
+
+1.6 Predictive Dynamics = Prediction + Feedback + Learning (Sleeping Experts Algorithm)
+- Processors require feedback to assert correctness, detect errors, and learn how to boost correctness!
+1. Predictions in CTM are made by LTM processors both within their internal algorithms and implicitly when they submit chunks elsewhere (to STM, other processors thru links, or to actuators to effect the environment)
+2. Feedback comes from chunks that are received in broadcasts from STM, thru links, and from sensors of the environment via Input maps, indicating correctness or detecting errors in predictions.
+3. All learning / error correcting takes place within processors
+
+- There is a continuous cycling of prediction, feedback, and learning within CTM.
+- The CTM needs to be alert to anything unusual, surprises of any kind, in order to deal with things if necessary and understanding the world in any case.
+- Prediction errors (eg "surprises") are minimized by this cycling.
+
+- Processors especially need to know if they were too timid or bold in setting their |weights|, so they can correct their weight-assigning algorithms
+- Sleeping Experts Algorithms (SEA): a class of learning algorithms employed by LTM processors to do just that.
+
+- SEA will embolden its processor -- pushing it to raise the intensity it gives its chunks - if
+1. its chunk did not get into the STM, and
+2. its information is more valuable (in the SEA's opinion) than what got into the STM.
+
+- SEA will hush its processor -- lowering the intensity of chunks - if
+1. its chunk got into STM, and
+2. the info in that chunk is found to be less valuable than that of another chunk that failed to get into the STM.
+
+- SEAs play a role in whether or not processors get their chunks into the STM. 
+- They also play a role in whether or not processors "pay attention" to gists in chunks that are sent to them via links.
+- The |weight| of a chunk is an indication of how important the processor that created the chunk believes its gist to be, and this will influence whether or not a processor that receives the chunk will pay attention to it.
+
+1.7 Comparing CTM w/GWTM
+- For simplicity, have removed/simplified many features in GWT.
+- Ex. CTM has just one "actor" on stage holding just one chunk at a time.
+- In the CTM, all processors are in the LTM.
+- We have eliminated the Central Executive, bc all of its actions can just come from the processors.
+- In the CTM, inputs & outputs go directly to and from LTM processors, not directly thru STM.
+
+2. The Feeling of Consciousness
+- The feeling of consciousness is due principally to Brainish + architecture + special processors + predictive dynamics (cycles of prediction, feedback, learning)
+1. Brainish: describes the sensory world as it is perceived
+2. Architecture: Up-Tree comp + Down-Tree broadcast of the winner
+3. Special processors: Here are a few processors with specialized algorithms built in at birth:
+a. Model-of-the-World: Constructs models of CTM's worlds. Has direct output maps to CTM actuators.
+- Has an inner world (approximate map of itself)
+- Has an outer world (map it creates of the current environment)
+- MotW processor tags parts of its models of the world (inner + outer) with labels and descriptions annotated in Brainish gists with sensations they can have and actions they can perform
+b. Inner Speech: extracts whatever speech is encoded in the gist broadcast by STM, sends it to the same locations that the Input map sends gists of outer speech
+c. Inner Vision, hearing, sensation: map STM broadcasts to whatever locations the Input maps send outer scenes and outer sensations...
+4. Predictive dynamics: the continuous cycling through prediction, feedback, and learning + the stream of consciousness play a role in CTMs feelings of consciousness
+5. A minimal ability to think and make plans
+6. Motivation (= energy + drive) to make a plan and pursue it

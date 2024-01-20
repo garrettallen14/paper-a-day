@@ -4,3 +4,6 @@ powerful model of computation, the Turing Machine (TM), by Bernard Baars’ GWT,
 Workspace Theory (GNWT) of (Dehaene & Changeux, 2011) and (Mashour, Roelfsema, Changeux, & Dehaene, 
 2020).
 Facing up to the problem of consciousness (chalmers 1995)
+
+
+Read LoRA
