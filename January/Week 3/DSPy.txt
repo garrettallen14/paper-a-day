@@ -1,0 +1,58 @@
+DSPY: COMPILING DECLARATIVE LANGUAGE MODEL CALLS INTO SELF-IMPROVING PIPELINES
+
+5 Oct 2023
+
+Abstract
+- ML Community is exploring techniques for prompting LM and stacking them into pipelines to solve complex tasks.
+- Existing LM pipelines are implementing using hard-coded "prompt templates"
+- We introduce DSPy, a programming model that abstracts LM pipelines as text transformation graphs
+- These are imperative computation graphs where LMs are invoked through declarative modules.
+- DSPy modules are parameterized: They can learn how to apply compositions of prompting, fine-tuning, augmentation, and reasoning techniques.
+
+- We design a compiler that will optimize any DSPy pipeline to maximize a given metric.
+- We show DSPy programs can express and optimize sophisticated LM pipelines that reason
+- Within minutes of compiling, a few lines of DSPy allow GPT-3.5 and llama2 to self-bootstrap pipelines that outperform standard few-shot prompting and pipelines with expert-created demonstrations.
+
+
+Introduction
+- LMs are sensitive to how they are prompted for each task
+- This is exacerbated in pipelines where multiple LM calls have to interact effectively
+- Currently, hard-coded prompt templates are used
+
+- Towards a more systematic approach: DSPy
+- Pushes building new LM pipelines away from manipulating free-form strings and closer to programming
+
+DSPy programming model:
+- First, translate string-based prompting techniques into declarative modules that can carry natural-language typed signatures.
+- DSPy modules are task-adaptive components that abstract any particular text transformation, like answering a question or summarizing a paper.
+- We parameterize each module so that it can learn its desired behavior by iteratively bootstrapping useful demonstrations within the pipeline.
+- Pipelines are expressed by: 1. declaring the modules needed, 2. using these modules in any logical control flow
+
+DSPy compiler:
+- Optimizes any DSPy program to improve quality or cost
+- Inputs: the program, a few training inputs (optional labels), a validation metric
+- Compiler simulates versions of the program on the inputs and bootstraps example traces of each module for self-improvement
+- Optimization is highly modular: conducted by teleprompters (general-purpose optimization strategies)
+
+
+The DSPy Programming Model: 
+Natural Language Signatures can abstract prompting and fine-tuning:
+- Instead of free-form string prompts, DSPy programs use natural language signatures (dspy.Predict("question -> answer"))
+- Signatures offer two benefits over prompts:
+1. Can be compiled into self-improving and pipeline-adaptive prompts or finetunes (primarily done by bootstrapping useful demonstrating examples for each signature).
+2. They handle structured formatting and parsing logic to reduce brittle string manipulation in user programs.
+- english document-> french translation would prompt for English to French translation.
+
+Parameterized & templated Modules can abstract prompting techniques:
+The Predict Module:
+- The core module for working w/ signatures in DSPy is Predict
+- Predict stores the supplied signature, an optional LM to use, and a list of demonstrations for prompting (initially empty)
+- Behaves as a callable function: 
+- Takes in keyword args corresponding to the signature input fields,
+- Formats a prompt to implement the signature and includes the appropriate demonstrations,
+- Calls the LM,
+- Parses the output fields
+- In compile mode, it also internally tracks input/output traces to assist the teleprompter at bootstrapping the demonstrations...
+
+
+...
