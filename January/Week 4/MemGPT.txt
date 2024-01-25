@@ -1,0 +1,84 @@
+MemGPT: Towards LLMs as Operating Systems
+
+12 Oct 2023
+
+Abstract
+- LLMs are constrained by limited context windows
+- Propose virtual context management
+- Draws inspiration from hierarchical memory systems in traditional OS
+- Provide the appearance of large memory resources through data movement between fast/slow memory
+
+- MemGPT: intelligently manages different memory tiers to effectively provide extended context within the LLM's limited context window
+- Utilizes interrupts to manage control flow between itself and the user.
+- We evaluate our OS-inspired design in two domains: document analysis and multi-session chat...
+
+- Code & data: www.memgpt.ai
+
+
+Introduction
+- Naively extending the context window incurs a quadratic increase in computational time & memory cost
+- Our approach borrows from the idea of Virtual Memory paging which enables applications to work on datasets that far exceed the available memory
+- Traditional OSes' heirarchical memory management "pages" in and out information between context windows & external storage.
+- MemGPT manages the control flow between the memory management, the LLM processing module and the user
+- This allows for repeated context modifications during a single task, allowing the agent to more effectively utilize its limited context.
+
+- Context windows: a constrained memory resource
+- Design a memory heirarchy for LLMs analogous to memory tiers in traditional OSes
+- Applications in traditional OSes interact with virtual memory (provides an illusion of there being more memory resources than there actually available in physical memory)
+- OS pages overflow data to disk and retrieves data back into memory when accessed by applications.
+- We allow the LLM to manage what is placed in its own context via and 'LLM OS' we call MemGPT
+- MemGPT module retrieves relevant historical data missing from what is placed in-context, similar to an OS page fault.
+
+- Agent can iteratively modify what is in context for a single task, in the same way a process may access virtual memory repeatedly.
+
+
+Memory-GPT (MemGPT)
+- Two primary memory types: Main context (RAM), External context (Disk)
+- Main context is the standard fixed-content window in LMs.
+- External context is any information held outside of the context window.
+
+Main Context
+- In LLM-based conversational agents, a significant portion of main context tokens is generally used to hold a 'system message' or 'preprompt'
+- Preprompt is the main way to enable the system to adopt various distinct personas w/o finetuning the base model.
+- (Fictional character cards)
+- Preprompt can take up ~1000 tokens.
+- Recursive summarization is a simple way to address overflowing context windows, however this is inherently lossy and eventually leads to large holes in the memory
+
+- We divide main context into 3 components:
+1. System instructions: hold base LLM instructions (fixed)
+2. Conversational context: holds a FIFO queue of recent event history (read only, with a special evication policy)
+3. Working context: serves as a working memory scratchpad for the agent. (writable by LLM processor via function calls)
+
+External Context
+- This is the out-of-context-window storage
+- Not visible to the LLM processor, but can be brought into main context through appropriate function calls.
+- We use databases to store text documents and embeddings/vectors
+- Provide several ways for the LLM processor to query external context: timestamp-based search, text-based search, embedding-based search
+- Two types of external context:
+1. Recall storage: stores the entire history of events processed by the LLM processor (ie the full uncompressed queue from active memory)
+- Allows MemGPT to find past interactions related to a particular query or within a specific time period.
+2. Archival storage: a general read-write datastore that the agent can utilize as overflow for the in-context read-write core memory.
+- Allows MemGPT to store facts, experiences, preferences, etc.
+- Search over (and add to) an expansive document database
+
+Self-directed Editing and Retrieval
+- Data moves between main context and external context via function calls from LLM processor.
+- Memory edits / retrieval are entirely self-directed.
+- MemGPT autonomously updates and searches thru its own memory based on the current context
+- Ex: it decides when to move items between contexts so to modify the main context to better reflect its evolving understanding of its current objectives and responsibilities.
+- Instructions given in the preprompt...
+- Two main components:
+1. detailed description of the memory hierarchy + respective utilities
+2. a function schema (complete with their natural language descriptions)
+- During each inference cycle: LLM processor takes main context as input, generates an output string.
+- Awareness of context limits is a key aspect in making the self-editing mechanism work effectively
+
+Control Flow and Function Chaining
+- Events trigger LLM inference
+- Events: generalized inputs to MemGPT
+- MemGPT processes events with a parser to convert into plain text messages to be appended to main context
+- Many practical tasks require calling multiple functions in sequence (navigating multiple pages of results from a single query or collating data from different documents in main context from separate queries)
+- Function chaining: allows MemGPT to execute multiple function calls sequentially before returning control to the user.
+
+- In MemGPT, functions can be called with a special flag that requests control be immediately returned to the processor after the requested function completes execution.
+- If this flag is present, MemGPT will add the function output to main context and (as opposed to pausing processor execution),

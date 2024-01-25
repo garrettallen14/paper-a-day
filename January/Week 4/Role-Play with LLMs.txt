@@ -1,0 +1,26 @@
+Role-Play with Large Language Models
+
+25 May 2023
+
+Abstract
+- We must develop ways to describe dialogue Agent's behavior in high-level terms without falling into anthropomorphism
+- In this paper, we foreground the concept of role-play
+- Casting dialogue agent behavior in terms of RP allows us to draw on familiar folk psychological terms, without ascribing human characteristics to LMs
+- Two imporant cases of dialogue agent behavior are addressed here:
+1. (apparent) deception
+2. (apparent) self-awareness
+
+
+Introduction
+- The conceptual framework we use to understand other humans is ill-suited to LLM-based dialogue agents
+- We need an alternative conceptual framework, a new set of metaphors that can productively be applied to these exotic mind-like artefacts
+- Propose two basic metaphors:
+1. A dialogue agent as Roleplaying a single character
+2. A dialogue agent is a superposition of simulacra within a multiverse of possible characters.
+
+
+Dialogue Agents and Role-Play
+- The love triangle is a familiar trope, so a suitably prompted dialogue agent will begin to role-play the rejected lover. 
+- Likewise, a familiar trope in science-fiction is the rogue AI system that attacks humans to protect itself. 
+- A suitably prompted dialogue agent will begin to role-play such an AI system.
+

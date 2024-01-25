@@ -1,0 +1,93 @@
+Large Language Models are Superpositions of All Characters: Attaining
+Arbitrary Role-play via Self-Alignment
+
+23 Jan 2024
+
+Abstract
+- LLMs inherently harbor RP capabilities
+- We introduce Ditto, a self-alignment method for RP
+- Ditto capitalizes on character knowledge, enouraging an instruction-following LLM to simulate RP dialogues as a variant of reading comprehension
+- Creates a RP training set comprising 4000 characters, surpassing the scale of currently available datasets by tenfold regarding the number of roles.
+- Subsequently, we fine-tune the LLM using this self-generated dataset to augment its RP capabilities!
+- Ditto consistently maintains a consistent role identity and provides accurate role-specific knowledge in multi-turn role-play conversations.
+- We present the first comprehensive cross-supervision alignment experiment in the RP domain
+- The RP styles can easily be acquired with the guidance of smaller models.
+
+
+Introduction
+- LLMs lack experiential events and emotions.
+- Face limitations in facilitating engaging / extensive conversations with users.
+- We infuse emotional value into user interactions through Role-play LLMs
+- RP LLMs empower users to define / create profiles for their preferred characters
+
+- We enable LLM RP through self-alignment and named this method Ditto
+- Eliminate the need for distilling outputs from more potent RP models
+- We perceive an LLM as a superposition of characters.
+- To elicit RP capabilities in a general LLM, only need:
+1. Provide attributes / profiles about characters
+2. Conceal character information & align the LLM to summon intrinsic character knowledge, then internally adjust the generated style and content!
+
+- Have explored 4,000 characters available on Wikipedia, generating a self-simulated RP dataset called WikiRole... 10x larger than any publicly available RP dataset to date
+
+- Efficient / reproducible evaluation of RP remains elusive. So, we assess:
+1. Whether the model can maintain consistent role identity
+2. Whether the model can provide accurate role-related knowledge
+3. If the model can reject unknown questions beyond the character's background (!)
+- Use an LLM judger for all tasks.
+
+- Paper contributions
+1. Propose Ditto, the first self-alignment method empowering LLMs with strong RP capabilities through knowledge augmentation + dialogue simulation
+2. Design a set of objective RP evaluations
+3. Analyze the dissection of RP by cross-supervision... display knowledge boundedness in strong-to-weak imitation learning and the weak-to-strong generalization in RP styles.
+
+
+Methods
+
+Problem Defintion:
+- Roleplay: necessitates LLMs to engage in dialogue, embodying characters to facilitate immersive interaction.
+- Must exhibit unwavering self-awareness and possess extensive character-specific knowledge in adherence to query instructions.
+- Method Overview: Ditto is a self-alignment method for arbitrary RP scenarios.
+- We decompose RP into two components
+1. Consistent self-awareness
+2. Role-specific knowledge
+- To do these, Ditto comprises three steps for constructing datasets tailored for RP alignment:
+1. Character knowledge collection
+2. Dialogue simulation
+3. Supervised fine-tuning
+- Ditto simulates RP dialogue by reformulating it as a reading comprehension task, utilizing role profiles sourced from open-access knowledge bases to generate a RP dataset
+- We fine-tun the LLM using this self-generated dataset to imbue it with RP capabilities.
+
+Character Knowledge Collection
+- Ditto gathers comprehensive profiles from open-source knowledge bases.
+- Wikipedia + Wikidata
+
+Dialogue Simulation
+- RP simulation is structured into two consecutive reading comprehension tasks:
+1. Generating queries
+2. Responding
+- Query Simulation:
+- Use LLM to generate role-related / role-contrastive queries to maintain consistent role identity and reject unknown questions for each character.
+- Role specific queries ask for information closely related to the background of characters.
+- To efficiently generate such queries on a large scale, we pair characters in our pool / provide detailed profiles for LLMs to generate queries one character can answer but is unsuitable for another.
+- Try to maintain coherence as to what they can/cannot answer
+- Response Simulation:
+- We conceptualize the response simulation as a reading comprehension task.
+
+Supervised Finetuning
+- We finetune the LLM on the self-generated dataset to inject RP capabilities.
+- During finetuning we remove injected knowledge and only retain a very brief introduction of the character.
+- Helps the LLMs not only retrieve character profiles from a given context, but also inherent knowledge.
+
+
+Dissecting RP by Cross Supervision
+- A strong LLM supervising itself yields better results compared to a weak LLM self-alignment.
+- But enhancement in conversational style is limited.
+- Raises two questions:
+1. Is improvement in performance attributed to higher quality of supervision, larger capability of seed model, or both?
+2. Is high-quality supervision necessary to simulate RP style?
+
+
+Conclusion
+- Ditto consistently outperforms all existing OS RP models.
+- Showcases performance levels comparable to proprietary LLMs like GPT-4 Turbo
+- 
