@@ -1,0 +1,61 @@
+A Gentle Introduction to 8-bit Matrix Multiplication for transformers at scale 
+using Hugging Face Transformers, Accelerate and bitsandbytes
+
+
+Introduction
+- LMs are getting larger
+- Models hard to run on easily accessible devices
+- To do inference on BLOOM-176B, you need 8 A100 GPUs
+- To fine-tune BLOOM-176B, you need 72 A100s
+
+- Need to reduce the requirements while preserving model performance
+- Int8 inference does not degrade predictive performance & reduces the memory footprint by a factor of 2x.
+
+
+Common datatypes
+- Precision: float32, float16, or bfloat16
+- In FP16, largest possible number is 64,000.. if you go above, then end up with a NaN and break your model
+- bfloat16 (BF16) was created to avoid these constraints
+- In BF16, we retain the same dynamic range as FP32, but lose 3 bits of precision wrt FP16
+
+- Ideally, training and inference is done in FP32, but this is two times slower than FP16/BF16
+- So, a mixed precision approach is used:
+    - Weights are held in FP32 as precise "main weights"
+    - In computation in a fwd / bwd pass, we use FP16/BF16 to enhance training speed.
+    - FP16/BF16 gradients are then used to update the FP32 main weights.
+- With this, we can use half the GPUs to accomplish the same training
+
+- To calculate model size in bytes, one multiplies the num of parameters by the size of the chosen precision in bytes.
+- Ex: Using BF16 model of BLOOM-176B, 176*10**9 x 2 bytes = 352GB,
+- Quite a challenge to fit this into a few GPUs
+
+
+Model Quantization
+- Instead of using 4-byte FP32 precision, we can get identical inference outcome with 2-byte BF16/FP16 half-precision
+- This halves the model size. We would like to go further, but this drops the inference quality dramatically.
+
+- 8-bit quantization: uses a quarter precision, needing only 1/4th of the model size.
+- Quantization: "rounding" from one dtype to another.
+- Ex: One dtype has range 0...9 and another has range 0...4. Then the value "4" in datatype one would be rounded to 2 in datatype two.
+- Quantization is a noisy process that can lead to information loss (a sort of lossy compression)
+
+- The two most common 8-bit quantization techniques are zero-point quantization and absolute max (absmax) quantization.
+- Zero-point: map FP values into more compact int8 (1 byte) values
+    - If my range is -1.0...1.0 and I want to quantize into the range -127...127, I want to scale by the factor of 127 and round into the 8-bit precision
+    - Seemingly tiny errors tend to accumulate and grow as they get propagated through the models layers
+- Absmax: calculate mapping between FP16 and corresponding int8 number, first divide by the absolute maximum value of the tensor, then multiply by the total range of the dtype
+    - Ex: assume you want to apply absmax quantization to [1.2, -0.5, -4.3, 1.2, -3.1, 0.8, 2.4, 5.4]
+    - First, extract the absolute maximum: 5.4,
+    - Int8 has a range of [-127, 127]. Divide 127 by 5.4 and obtain 23.5 for the scaling factor
+    - We then get: [28, -12, -101, 28, -73, 19, 56, 127]
+    - No errors in going back and forth.
+- Implementing these usually leads to a drop in accuracy for larger models
+- LLM.int8() implementation in HF and Accelerate does not degrade performance
+
+
+Summary of LLM.int8(): zero degradation matrix mult for LLMs
+- LLM.int8() seeks to complete the matrix mult computation in three steps:
+    1. From input hidden states, extract outliers
+    2. Perform matrix mult of outliers in FP16 and non-outliers in int8
+    3. Dequantize the non-outlier results and add both outlier & non-outlier results together to receive the full result in FP16.
+

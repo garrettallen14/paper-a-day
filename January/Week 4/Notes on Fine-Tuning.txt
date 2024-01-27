@@ -1,0 +1,23 @@
+NOTE: Not a paper, but just a collection of useful notes for fine-tuning
+
+https://www.reddit.com/r/LocalLLaMA/comments/18n2bwu/i_will_do_the_finetuning_for_you_or_heres_my_diy/
+
+Notes on Fine-tuning:
+
+Data Collection / Preparation
+1. Use OpenAI Chat JSONL format: https://platform.openai.com/docs/guides/fine-tuning/preparing-your-dataset
+2. HF tokenizer.apply_chat_template can read JSONL easily (https://huggingface.co/docs/transformers/main/en/chat_templating)
+- Ensure your tokenized data length fits within the model's context length limits...
+
+Framework Selection for FT
+https://github.com/OpenAccess-AI-Collective/axolotl
+
+Training Monitoring
+https://wandb.ai/home
+
+Model Management
+https://huggingface.co/docs/transformers/model_sharing
+
+
+Fine-tune Llama 2 with DPO
+https://huggingface.co/blog/dpo-trl
