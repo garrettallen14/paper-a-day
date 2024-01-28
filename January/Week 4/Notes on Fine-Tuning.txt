@@ -21,3 +21,11 @@ https://huggingface.co/docs/transformers/model_sharing
 
 Fine-tune Llama 2 with DPO
 https://huggingface.co/blog/dpo-trl
+
+
+
+Gemnini API:
+https://colab.research.google.com/github/google/generative-ai-docs/blob/main/site/en/tutorials/python_quickstart.ipynb#scrollTo=Vxku7mzSObfZ
+
+Agent Function Calling LM:
+https://huggingface.co/jondurbin/airoboros-l2-70b-2.2.1#agentfunction-calling

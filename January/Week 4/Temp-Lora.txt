@@ -1,0 +1,36 @@
+With Greater Text Comes Greater Necessity:
+Inference-Time Training Helps Long Text Generation
+
+21 Jan 2024
+
+Abstract
+- Long text generation presents significant challenges to current LMs.
+- Existing methods focus on extending model's context window.
+- Current approaches demand substantial hardware resources
+
+- Temp-Lora:
+    - Instead of relying on Key-Value cache to store all context information, T-L embeds this information directly in parameters.
+    - In the process of long text generation, we use a temporary Lora module, progressively trained with the text generated previously
+    - Efficiently preserves contextual knowledge, while preventing permanent alteration to the model's parameters (Lora module is discarded)
+
+- Experiments on the PG19 LM benchmark & GuoFeng discourse-level translation benchmark validate
+    - T-L substantially enhances generation quality for long texts 
+    - 13.2% decrease in perplexity on a subset of PG19
+    - 29.6% decrease in perplexity and 53.2% increase in BLEU score on GuoFeng
+- T-L is compatible with and enhances most existing long text generation methods
+- T-L can greatly reduce computational costs by shortening the context window
+- T-L ensures a slight improvement in generation quality, enables a reduction of 70.5% in FLOPs required for inference and 51.5% decrease in latency (?)
+
+
+Introduction
+- Existing methods: length extrapolation, context window extension
+    - Aim to store extensive text information within the Key-Value cache
+    - Demand significant hardware resources during training and/or inference.
+    - In many applications where LMs are frequently queries for long text processing, users often resort to other strategies (memory or summarization)
+- Temp-Lora:
+    - We store the context information in a temporary Lora module that only exists during long text generation.
+    - We update this module in a streaming fashion during the generation process, using the generated content as training data.
+    - This achieves the goal of storing knowledge in the model params.
+    - Once inference is complete, we discard the module to avoid permanently impacting the model's parameters.
+    - Allows us to efficiently store nearly infinite context information without extending the context window.
+

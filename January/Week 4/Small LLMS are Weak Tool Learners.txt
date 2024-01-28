@@ -1,0 +1,116 @@
+Small LLMs Are Weak Tool Learners: A Multi-LLM Agent
+
+14 Jan 2024
+
+Abstract
+- The challenge of tool use demands that LLMs:
+    - Understand user queries
+    - Generate answers
+    - Excel in task planning 
+    - Memory management
+    - Tool invocation
+    - Result summarization
+- Traditional approaches focus on training a single LLM to do all of this
+- The entire LLM may require retraining when the tools are updated
+- Proposal: a new strategy that decomposes the aforementioned capabilities into a planner, called, and summarizer
+- Each component is implemented by a single LLM that focuses on a specific capability and collaborates with other components to accomplish the task
+
+- This modular framework facilitates individual updates and the potential use of smaller LLMs for building each capability
+- Introduce two-step training paradigm:
+    1. Fine-tune a backbone LLM on the entire dataset without discriminating sub-tasks. Provides the model with comprehensive understanding of the task
+    2. The fine-tuned LLM is used to instantiate the planner, caller, and summarizer respectively. Each are continually fine-tuned on respective sub-tasks
+- Evaluation illustrates the proposed multi-LLM framework surpasses the traditional single-LLM approach.
+
+
+Introduction
+- Challenge of tool learning demands sufficiently large and complex LLMs
+- A multi-LLM framework, alpha(a)-UMi decomposes the capabilities of a single LLM into three components:
+    1. Planner
+        - Weighs between selecting the caller or summarizer to generate downstream output, or terminating the execution
+    2. Caller
+        - Directed by the rationale and responsible for invocating specific tools to interact with.
+    3. Summarizer
+        - Guided by the planner to craft the ultimate user answer based on execution trajectory.
+    
+- To train this multi-LLM framework, we introduce a novel two-stage fine-tuning strategy:
+    1. Backbone LLM is trained on original training dataset without discriminating between sub-tasks.
+    2. Three copies of this LLM back-bone are created to instantiate the planner, caller, and summarizer, respectively.
+        - Training dataset is reorganized into new datasets tailored to each LLM's role in tool use
+        - Continual fine-tuning of the planner, caller, and summarizer is performed
+- Employ LLaMA-2 series to implement the LLM backbone, and evaluate our a-UMi on several agent benchmarks.
+
+
+Methodology
+alpha(a)-UMi Framework:
+- Mplan, Mcall, Msum are our three LLMs
+- Workflow of a-UMi:
+    1. User instruction q -> planner
+    2. Planner -> rationale -> caller or summarizer
+    3. caller -> planner or summarizer
+- Planner:
+    - Central decision-making unit
+    - Takes inputs: Plan Prompt, user instruction (q), and previous execution trajectory.
+    - Generates a rationale (rt) for the next action.
+    - Depending on this rationale, the planner decides whether to activate the Caller, Summarizer, or terminate the session
+- Caller:
+    - Interacts with external tools (code interpreters, APIs)
+    - Takes user instruction (q), previous execution trajectory, and planner's rational to generate an action.
+    - The Caller is specialized in handling tool interactions without interfering with the system's reasoning or response generation capabilities
+- Summarizer:
+    - Uses a concise prompt (Psum) along with the last execution trajectory, user instruction (q) and most recent rationale to summarize the process and present the final answer to the user.
+
+Global-to-Local Progressive Fine-Tuning:
+- In the a-UMi framework, it is pivotal to effectively fine-tune these LLMs.
+- Global Fine-Tuning:
+    - A backbone LLM is fine-tuned on the entire original dataset.
+    - Training does not differentiate between sub-tasks, but instead focuses on sequentially outputting rationale, action, and answer.
+    - This stage aims to enhance the model's overall understanding of the task.
+- Local Fine-Tuning:
+    - The training dataset is reorganized into new datasets, each tailored to the specific roles of planner, caller, and summarizer.
+    - Each copy of the backbone LLM is then fine-tuned on its respective dataset to enhance its capabilities in its specific sub-task.
+    - This stage involves adjusting the training data format and refining system prompts.
+
+
+Implementation Details:
+- LLaMA-2-chat-7B, and LLaMA-2-chat-13B
+- First stage, conduct fine-tuning with a lr of 5e-5 for 2 epochs.
+- Second stage, create 3 copies to instantiate the planner, caller, and summarizer
+- Fine-tune with a reduced learning rate of 1e-5.
+- The planner and caller undergo fine-tuning for 1 epoch.
+- Summarizer undergoes fine-tuning for 2 epochs.
+- Global batch size = 48, employ DeepSpeed ZeRO Stage3 to speed up the fine-tuning process
+- All results are obtained using greedy decoding, with max seq length = 4096
+
+
+Interesting Appendix Details:
+
+Pplan:
+"""You have assess to the following apis:
+{doc}
+The conversation history is:
+{history}
+You are the assistant to plan what
+to do next and whether is caller’s or
+conclusion’s turn to answer.
+Answer with a following format:
+The thought of the next step, followed by
+Next: caller or conclusion or give up."""
+
+Pcall:
+"""You have assess to the following apis:
+{doc}
+The conversation history is:
+{history}
+The thought of this step is:
+{thought}
+Base on the thought make an api call in
+the following format:
+Action: the name of api that should be
+called in this step, should be exactly in
+{tool_names},
+Action Input: the api call request."""
+
+Psum:
+"""Make a conclusion based on the
+conversation history:
+{history}"""
