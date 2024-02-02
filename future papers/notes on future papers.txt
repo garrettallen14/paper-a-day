@@ -5,3 +5,8 @@ Workspace Theory (GNWT) of (Dehaene & Changeux, 2011) and (Mashour, Roelfsema, C
 2020).
 Facing up to the problem of consciousness (chalmers 1995)
 
+Learning Universal Predictors
+DeepSeek-Coder LLM Programming
+SliceGPT
+Mixed-input matrix multiplication google
+Beyond Surface Statistics
