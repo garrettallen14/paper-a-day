@@ -1,0 +1,73 @@
+Memory, Space, and Planning:
+Multiscale Predictive Representations
+
+16 Jan 2024
+
+
+Abstract 
+- Memory intertwines with prediction and planning
+- Behavior in agents is influenced by the interplay of learning from the past and predicting the future.
+- Cognitive maps, representing the relational structure of experiences, are crucial.
+- Memory structures are multiscale, predictive, and compact, located in the hippocampal and prefrontal cortex hierarchies.
+- These structures facilitate recall of past episodes and generalization for prediction and planning.
+- Insights have implications for understanding brain mechanisms and advancing AI systems.
+
+Planning a Trip:
+- You could consider the plan in exhaustive detail
+- Could consider it in high-level by jumping over many steps
+- Either way, you easily use representations of the world that are organized in your memory at multiple scales.
+
+Central Thesis:
+- We can move back and forth across representations of the world
+- We can remember the past, and image and plan the future at different scales of abstraction
+- These are crucial to the structure of memory and its use in prediction and planning.
+
+- Question: what should these memory structures look like to enable planning and how do we study them?
+- Learnt structures of events (spatial structure of an environment or relational structure of a social network)
+- are organized in memory as predictive representations that are multistep and multiscale.
+- Brain regions can organize the same memories with different predictive horizons or scales.
+- The ability to navigate between different scales of abstraction in memory is essential for prediction and planning
+
+
+Memory Structures for Planning
+- What should memory structures enabling planning look like?
+- How to study them?
+- Structures of events and environments are organized in memory as predictive representations.
+- These representations are multiscale and multistep, reflecting in hippocampal and prefrontal cortex hierarchies.
+
+
+Cognitive Maps
+- Cognitive maps: representations of latent relational structures facilitating efficient retrieval, planning, reasoning, and inference.
+- The brain may store step-by-step maps for planning
+- Alternatively, memory's representational structure might be multistep and multiscale, allowing for temporal abstraction
+
+
+Temporal Abstraction
+- As we navigate through the world, events leave traces in memory, leading to associations among closely timed events, enabling efficient planning and prediction.
+- Activation of one event partially activates its successor, facilitating prediction based on temporal associations.
+
+
+Model-Based vs. Model-Free Reinforcement Learning
+Model-Free RL (MFRL):
+- Agent learns to associate states or actions directly with rewards and does not model the environment's dynamics.
+- Caches the value of each state and action, based on past rewards and doesn't maintain any representation of the environment's structure
+- Effective for simple tasks
+
+Model-Based RL (MBRL):
+- Agent learning a model of the environment's dynamics, understanding how actions lead to future states and rewards.
+- It captures the transition probabilities between states (p(S’|S, a)) and the rewards associated with state-action pairs. This allows the agent to simulate future states and make decisions that consider long-term outcomes.
+- Suited for complex tasks where planning and foresight are required
+- Requires more compute and slower decision making
+
+Successor Representation (SR):
+- A hybrid approach that focuses on predicting future states based on current actions without explicitly modeling the entire environment.
+- SR captures the expected future occupancy of states from a given state under a specific policy, effectively combining the benefits of both model-free and model-based approaches.
+- More RL though
+
+
+Experimental Tasks: Model vs Human
+- How are memory representations structured for prediction and planning?
+
+...
+
+Role of Replay: Prioritized replay, especially as conceptualized in the PARSR model is key for adapting memory and planning in dynamic environments

@@ -1,0 +1,47 @@
+Foundation Model Sherpas:
+Guiding Foundation Models through Knowledge and Reasoning
+
+2 Feb 2024
+
+Abstract
+- Foundation Models have revolutionized AI with remarkable performance in various tasks
+- Exhibit limitations preventing broader adoption
+- No guarantee that the model's output aligns with user preferences
+- Propose: conceptual framework by which agents could interact with FMs and guide them for a set of tasks, particularly through knowledge augmentation / reasoning
+- The framework elucidates agent role categories like:
+    - Updating the underlying FM
+    - Assisting with prompting the FM
+    - Evaluating FM output
+- We also categorize several SOTA approaches into agent interaction protocols
+- Provides guidance for future directions to realize the power of FMs in practical AI systems
+
+
+Introduction
+- We introduce a conceptual framework where agents/modules that interact with FMs behave as sherpas
+- Sherpas guide FMs to tackle user-specified tasks
+- Sherpas can leverage knowledge and reasoning
+- Framework emphasizes the roles played by various agents as they interact with FMs to pursue user-specified tasks
+
+Agents and FMs
+- We stress the autonomy of agents and do not regard tools/APIs to be agents (like langchain and autogen)
+
+
+Agent Roles in the Sherpas Framework
+- Input is provided to an FM, which is invoked to generate a completion
+- Solving a task may require multiple FM calls
+- May be opportunity to leverage external knowledge / reasoning via one or more sherpas
+
+FM Updaters
+- FM Updaters are sherpas that modify the underlying transformer
+- Modified Pretraining
+- Fine/Instruction tuning
+
+Prompt Assistants and Sequencers
+
+Assessors and Explainers
+
+Knowledge Curators
+
+
+Agent Interaction Protocols
+- 

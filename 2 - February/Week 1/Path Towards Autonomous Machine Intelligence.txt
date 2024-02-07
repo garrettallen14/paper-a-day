@@ -1,0 +1,334 @@
+A Path Towards Autonomous Machine Intelligence 
+Version 0.9.2, 
+2022-06-27
+
+Abstract
+- How could machines learn as efficiently as humans and animals?
+- How could machines learn to reason and plan?
+- This paper proposes an architecture and training paradigms to construct autonomous intelligent agents
+- Combines concepts such as configurable predictive world model, 
+- Behavior driven through intrinsic motivation, and 
+- Hierarchical joint embedding architectures
+
+
+Introduction
+- World models are at the center of human and animal ability
+- Three main challenges AI research must address today:
+    1. How can machines learn to represent the world, predict and act, largely by observation?
+        - Interactions in the real world are expensive and dangerous
+        - Machines should be able to learn through observation
+    2. How can machine reason and plan in ways compatible with gradient based learning?
+    3. How can machines learn to represent percepts and action plans in a hierarchical manner, at multiple levels of abstraction, and multiple time scales?
+        - Humans and many animals can have multi-level abstractions with long-term predictions and long-term planning can be performed by decomposing complex actions into sequences of lower-level ones.
+- This paper proposes an architecture for intelligent agents with possible solutions to all three challenges:
+    1. Overall cognitive architecture in which all modules are differentiable and many are trainable
+    2. JEPA and Hierarchical JEPA: a non-generative architecture for predictive world models that learn a hierarchy of representations
+    3. A non-contrastive self-supervised learning paradigm that produces representations that are simultaneously informative and predictable
+    4. A way to use H-JEPA as the basis of predictive world models for hierarchical planning under certainty
+
+
+Learning World Models
+- Animals learn enormous amounts of background knowledge through observation and a small amount of interactions in a task-dependent unsupervised way
+- This accumulated knowledge may constitute the basis for what is called common sense
+- Common sense: a collection of world models that tell an agent what is likely, plausible, and impossible
+- With world models, animals can learn new skills with very few trials
+- Can predict consequences, reason, plan, explore, and image new solutions to problems
+- Avoid making dangerous mistakes
+
+- Forward models: predict the next state of the world
+- Common sense knowledge allows animals to predict future outcomes, but also fill in missing information
+- Allows animals to produce interpretations of percepts that are consistent with common sense.
+- Can dismiss impossible interpretations
+
+- Devising learning paradigms and architectures to allow machines to learn world models, and use these to predict, reason, and plan is one of the main challenges today
+- How do you devise trainable world models that can deal with complex uncertainty in the predictions?
+
+Humans and Animals learn Hierarchies of Models
+- Humans and non-humans learn basic knowledge about how the world works in the first days, weeks months of life
+- First months
+    - Learn the world is 3d
+    - Every source of light, sound, touch has a distance from us
+    - Parallax motion makes depth obvious. Depth makes objects obvious
+- Once existence of objects is established, they can be assigned to broad categories as a function of their appearance or Behavior
+- Objects do not spontaneously appear, disappear, change shape, teleport... move smoothly and can only be at one place at a time
+- This implies objects are static, some have predictable trajectories, some behave in somewhat unpredictable ways, some seem to obey different rules
+- Notions of intuitive physics such as stability, gravity, inertia can emerge on top of this.
+- The effect of animate objects on the world can be used to deduce cause and effect relationships
+
+- Equipped with this knowledge of the world, combined with simple hard-wired behaviors and intrinsic motivations/objectives, animals can quickly learn new tasks, predict consequences of their actions and plan ahead.
+
+- One hypothesis: animals have only one world model engine, which is dynamically configurable for the task at hand
+- With a single configurable world model, knowledge about how the world works may be shared across tasks
+
+
+A Model Architecture for Autonomous Intelligence
+Some definitions:
+All modules are assumed to be differentiable (a module feeding into another one can get gradient estimates of the cost's scalar output wrt its own output)
+Configurator module: takes inputs from all other modules and configures them to perform the task at hand
+    - Modulates their parameters and attention circuits
+    - Primes the perception, world model, and cost modules to fulfill a particular goal
+
+Perception module: Receives signals from sensors and estimates the current state of the world
+    - For a given task, only a small subset of the perceived state of the world is relevant / useful
+    - Perception module may represent the state of the world in a hierarchical fashion, with multiple levels of abstraction
+    - The configurator primes the perception system to extract the relevant information from the percept for the task at hand.
+
+World Model module: predicts possible future world states as a function of imagined action sequences proposed by the actor
+    - Most complex piece. Role is twofold:
+        1. estimate missing info about the state not provided by perception
+        2. predict plausible future states
+    - May predict natural evolutions of the world, or may predict future world states resulting from a sequence of actions proposed by the actor
+    - May predict multiple plausible world states
+    - This is a kind of "simulator" of the relevant aspects of the world
+    - What aspects of the world state is relevant depends on the task at hand
+    - The configurator configures the world model to handle the situation at hand.
+    
+    - Must be able to represent multiple possible predictions of the world state.
+    - Two essential questions to answer when building proposed architectures:
+        1. How to allow the world model to make multiple predictions and represent uncertainty
+        2. How to train the world model
+
+Cost module: computes a single scalar output called "energy" that measures the level of discomfort of the agent.
+    - Intrinsic cost: computes the immediate energy of the current state, pain,pleasure,hunger,etc. (not trainable)
+    - Critic: predicts future values of the intrinsic cost (trainable)
+    - GOAL OF THE AGENT: Minimize intrinsic cost over the long run
+        - The design of the intrinsic cost module determines the nature of the agent's behavior
+        - The robot feels "good" (low energy) when standing up to motivate a legged robot to walk, etc.
+        - Energy is "high" when facing a painful situation or an easily-recognizably dangerous situation
+        - The intrinsic cost module may be modulated by the configurator to drive different behavior at different times
+    - The trainable critic module predicts an estimate of future intrinsic energies.
+        - The input is either the current state of the world or possible states predicted by the world model
+        - The critic module is trainable (past states + subsequent intrinsic costs stored in the associative memory module)
+        - Trains itself to predict the latter from the former
+        - Function can be dynamically configured by the configurator to direct us towards a sub-goal as a part of a bigger task
+    - Both submodules are differentiable, so the gradient of the energy can be back-propagated through the other modules (WM, actor, perception)
+
+Short-term memory module: keeps track of the current and predicted world states and associated intrinsic costs
+    - Stores relevant information about the past, current, future states of the world, and the corresponding value of intrinsic cost
+    - World model accesses and updates the STM while temporally predicting future (or past) states of the world
+    - World model sends queries to the STM and receives retrieved values, or stores new values of states
+    - May be similar to KV Memory networks
+
+Actor module: computes proposals for action sequences. The world model and critic compute the possible resulting outcomes.
+    - Can find an optimal action sequence that minimizes the estimated future cost, and output the first action in the optimal sequence.Some definitions:
+All modules are assumed to be differentiable (a module feeding into another one can get gradient estimates of the cost's scalar output wrt its own output)
+Configurator module: takes inputs from all other modules and configures them to perform the task at hand
+    - Modulates their parameters and attention circuits
+    - Primes the perception, world model, and cost modules to fulfill a particular goal
+
+Perception module: Receives signals from sensors and estimates the current state of the world
+    - For a given task, only a small subset of the perceived state of the world is relevant / useful
+    - Perception module may represent the state of the world in a hierarchical fashion, with multiple levels of abstraction
+    - The configurator primes the perception system to extract the relevant information from the percept for the task at hand.
+
+World Model module: predicts possible future world states as a function of imagined action sequences proposed by the actor
+    - Most complex piece. Role is twofold:
+        1. estimate missing info about the state not provided by perception
+        2. predict plausible future states
+    - May predict natural evolutions of the world, or may predict future world states resulting from a sequence of actions proposed by the actor
+    - May predict multiple plausible world states
+    - This is a kind of "simulator" of the relevant aspects of the world
+    - What aspects of the world state is relevant depends on the task at hand
+    - The configurator configures the world model to handle the situation at hand.
+    
+    - Must be able to represent multiple possible predictions of the world state.
+    - Two essential questions to answer when building proposed architectures:
+        1. How to allow the world model to make multiple predictions and represent uncertainty
+        2. How to train the world model
+
+Short-term memory module: keeps track of the current and predicted world states and associated intrinsic costs
+    - WM accesses and updates the STM while predicting future / past states of world
+    - The WM can send queries to the STM and receive retrieved values
+    - Similar to KV Memory Networks
+Actor module: computes proposals for action sequences. The world model and critic compute the possible resulting outcomes.
+    - Can find an optimal action sequence that minimizes the estimated future cost, and output the first action in the optimal sequence.
+
+    - The actor proposes a sequence of actions to the WM. The WM predicts future world state sequences from the action sequence, and feeds it to the cost
+    - Given a goal defined by the cost (configured by Configurator), the cost computes the estimated future energy associated with the proposed action sequence
+    - The actor has access to the gradient of the estimated cost wrt the proposed action sequence, so it can compute an optimal sequence that minimizes the estimated cost
+    - If the action space is discrete, dynamic programming may be used to find optimal action sequence
+    - Once optimization completed, the actor outputs the first action to the effectors
+
+    - Actor may comprise two components:
+        1. a policy module that directly produces an action from the World State estimate produced by the perception and retrieved from the STM
+        2. The action optimizer for model-predictive control
+    - The first is system 1 thinking, second is system 2 thinking.
+
+Typical Perception-Action Loops:
+- There are two possible modes that the model can employ for a perception-action episode
+- First involves no complex reasoning, and produces an action directly from the output of the perception and STM access (Mode-1)
+- Mode-2 involves reasoning and planning through the WM and the cost.
+- "reasoning" => constraint satisfaction (energy minimization)
+
+Mode 1: Reactive behavior
+    - The perception module, through an encoder module, extracts a representation of the state of the world s[0] = Enc(x)
+    - This encoding contains relevant information for the task at hand
+    - A policy module (component of the actor) produces an action as a function of the state a[0] = A(s[0])... this resulting action a[0] is sent to the effectors
+    - The function of the policy module is modulated by the configurator, and is configured for the task at hand
+    - The policy module is a purely reactive policy. Does not involve deliberate planning nor prediction through the WM
+    - Structure can still be quite sophisticated
+        - Ex: in addition to the states s[0], the policy module may access the STM
+    - The cost module is differentiable, but the output f[0] = C(s[0]) is indirectly influenced by previous actinos through the external world
+    - Since the world is not difftble, one cannot back-prop gradients from the cost through the chain cost <- perception <- world <- action...
+    - So, gradients of the cost f[0] wrt actions can only be estimated by polling the world w/multiple perturbed actions
+    - This is slow and potentially dangerous
+    - During Mode-1 the system can optionally adjust the WM.
+        - Runs the WM for one step, predicting the next state s[1], then waits for the next percept resulting from the action taken, and uses the observed world state as target for the predictor
+    - With the use of a WM, the agent can imagine courses of actions and predict their effect and outcome, 
+        - This lessens the need to perform an expensive and dangerous search for good actions and policies by trying multiple actions in the external world and measuring the result
+
+Mode 2: Reasoning and Planning using the WM
+    1. Perception: The perception system extracts a representation of the current state of the world s[0] = P(x). The cost module computes and stores the immediate cost associated with that state.
+    2. Action Proposal: The actor proposes an initial sequence of actions to be fed to the WM for eval (a[0], ..., a[T])
+    3. Simulation: The WM predicts one or several likely sequence of world state representations resulting from the proposed action sequence (s[1],...,s[T])
+    4. Evaluation: The cost module estimates a total cost from the predicted state sequence, generally as a sum over time steps F(x) = sum(C(s[t]))
+    5. Planning: The actor proposes a new action sequence with lower cost. This can be done through a gradient-based procedure in which gradients of the cost are back-propagated
+        - Full optimization may require iterating steps 2-5
+    6. Acting: After converging on a low-cost action sequence, the actor sends the first action (or first few) in the sequence to the effectors
+        - The entire process is repeated for the next perception-action episode
+    7. Memory: After every action, the states and associated costs from the intrinsic cost and the critic are stored in the STM. These pairs can be used later to train or adapt the critic
+
+    - This is essentially what is known as Model-Predictive Control (MPC) with receding horizon in the optimal control literature
+        - The difference lies in that the WM and Cost function are learned
+    - In principle, any form of optimization strategy can be used for step 5
+        - Gradient based optimization methods can be efficient when the WM and cost are well-behaved, but situations in which the action-cost mapping has discontinuities may require to use other optimization strategies
+    
+    - The process was described in the deterministic case (ie no need to handle the possibility of multiple predictions for s[t+1] resulting from a given initial state s[t] and action a[t].)
+        - In real situations, the world is likely to be somewhat unpredictable
+        - Multiple states may result from a single initial stat
+
+From Mode-2 to Mode-1: Learning New Skills
+    - Using mode-2 is onerous
+    - Agent only possesses one WM "engine"
+        - The WM engine is configurable by the configurator for the task at hand, but it can only be used for a single task at a time
+        - The Agent can only focus on one complex task at a time
+    - Mode-1 is considerably less onerous. Only requires a single pass through a policy module
+    - The agent may possess multiple policy modules working simultaneously, each specialized for a particular set of tasks
+    - A policy module A(s[t]) can be trained to produce approximations of the optimal actions resulting from Mode-2 reasoning
+        - The system is run on Mode-2, producing an optimal sequence (a`[0],...,a`[T]).
+        - Parameters of the policy module A(s[t]) are updated to minimize a divergence measure between its output and the optimal action at that time.
+        - D(a`[t], A(s[t]))
+        - Once properly trained, the policy module can be used to directly produce an action in Mode-1 a`[0] = A(s[0])
+        - It can also be used to recursively compute an initial action sequence proposal before Mode-2 optimization
+        - s[t+1] = Pred(s[t], a[t]); a`[t+1] = A(s[t+1])
+    - This process allows the agent to use the full power of the WM and reasoning capabilities to acquire new skills that are "compiled" into a reactive policy module that no longer requires careful planning
+
+Reasoning as Energy Minimization
+    - The process of elaborating a suitable action sequence in Mode-2 can be seen as reasoning
+    - This reasoning is based on:
+        1. simulation using the WM
+        2. optimization of the energy wrt action sequences
+    - "actions" are latent variables representing abstract transformations from one state to the next
+    - This planning through simulation and optimization may constitute the kind of reasoning that is most frequent in NatInt
+    - Many classical forms of reasoning in AI can actually be formulated as optimization problems (constraint satisfaction)
+    
+    - This architecture allows reasoning by simulation and by analogy
+
+The Cost Module as the Driver of Behavior
+    - Cost module is composed of the intrinsic cost module which is immutable ICi(s) and the critic or Trainable Cost TCj(s)
+        - IC and TC are composed of multiple submodules whose output energies are linearly combined
+        - C(s) = IC(s) + TC(s)
+        - IC(s) = sum(ui * ICi(s))
+        - TC(s) = sum(vj * TCj(s))
+    - Each submodule imparts a particular behavioral drive to the agent
+    - The weights in the linear combination, ui and vj are modulated by the configurator module and allow the agent to focus on different subgoals at different times.
+    - IC Module: Where the basic behavioral nature of the agent is defined
+        - "pain", "hunger", "instinctive fears"
+        - Basic drives to help the agent learn basic skills, or accomplish missions
+        - Ex. A legged robot may comprise an intrinsic cost to drive it to stand up and walk. Social drives, Curiosity, etc.
+        - To prevent behavioral collapse or uncontrolled drift towards bad behaviors, IC must be immutable
+    - The role of the critic, TC, is twofold:
+        1. to anticipate long-term outcomes with minimal use of the onerous WM
+        2. to allow the configurator to make the agent focus on accomplishing subgoals with a learned cost
+    - In general, the behavioral nature of the Agent can be specified in 4 ways:
+        1. By explicitly programming a specific behavior is activated when specific conditions are met
+        2. by defining an objective function in such a way that the desired behavior is executed by the agent as a result of finding action sequences that minimize the objective
+        3. by training the agent to behave a certain way through direct supervision. The agent observes the actions of an expert teacher, and trains a Mode-1 policy module to reproduce it.
+        4. by training through imitation learning. The agent observes expert teachers, and infers an objective function that their behavior appears to be optimizing when they act.
+            - This produces a critic submodule for Mode-2 behavior
+            - Inverse reinforcement learning
+        
+Training the Critic
+    - How to train the critic?
+    - TC principal role: predict future values of the IC.
+        - Uses STM module to do so
+        - Associative memory where the IC module stores triplets (time, state, intrinsic energy)
+        - The stored states + IC energies correspond to perceived states or states imagined by the WM during Mode-2 episode
+    - The critic can be trained to predict future intrinsic energy values by retrieving a past state vector s[t] together with an intrinsic energy at a later time IC(s[t+d])
+        - The params of the critic can then be optimized to minimize a prediction loss
+    - STM can be implemented as the memory module in a key-value memory network
+        - A query vector is compared to a number of key vectors, producing a vector of scores
+        - Scores are normalized and used as coefficients to output a linear combination of the scores
+
+
+Designing and Training the WM
+    - These are the real obstacles towards progress in AI over the next decades
+    - Training the WM: self-supervised learning
+        - Basic idea: pattern completion
+    - The primary purpose of WM: predicting future representations of the state of the world
+    - Three main issues to address:
+        1. Quality of WM will greatly depend on the diversity of state sequenes (or state, action, resulting state) it can observe while training
+        2. Because the world is not predictable, there may be multiple plausible WS representations that follow a given WS representation and an action from an Agent.
+            - The WM must be able to meaningfully represent this possibly-infinite collection of plausible predictions.
+        3. The WM must be able to make predictions at different time scales and different levels of abstraction.
+
+Self-Supervised Learning
+    - Train a system to tell us if various parts of the input are consistent with each other
+        - Video prediction: a system is given two video clips and must tell us to what degree the second video clip is a plausible continuation
+        - Pattern completion: System is given part of an input together with a proposal for the rest of the input, and it tells us whether the proposal is a plausible completion
+    - We merely ask the system to tell us if a proposed y is compatible with a given x.
+    - A general formulation can be done with the framework of Energy-Based Models (EBM)
+        - The system is scalar-valued function F(x,y)
+        - Produces low energy values when x and y are compatible
+        - Produces high values when not
+    - To enable Mode-2 planning, a predictive WM should be trained to capture the dependencies between past and future percepts
+        - Should be able to predict representations of the future from representations of the past and present
+        - Given x and y, learn two functions that compute representations:
+            - sx = gx(x)
+            - sy = gy(y)
+                1. sx and sy are maximally informative about x and y
+                2. sy can easily be predicted from sx
+            - This ensures a trade-off between making the evolution of the world predictable in the representation space, and capturing as much information as possible about the WS in the representation.
+        - What concepts should such an SSL system learn by being trained on video?
+            - Our hypothesis: a hierarchy of abstract concepts about how the world works could be acquired.
+        - A depth map is the simplest way to explain how a view of a scene changes when the camera moves slightly
+        - Once the notion of depth has been learned, it would be simple for the system to identify occlusion edges, as well as the collective motion of regions belonging to a rigid object
+        - An implicit representation of 3d objects may emerge
+        - Objects -> permanence -> inanimate vs animate -> intuitive physics -> ...
+
+Handling Uncertainty with Latent Variables
+    - One of the main issues: enabling the model to represent multiple predictions
+    - May require the use of a latent variable: an input variable whos value is not observed but inferred
+    - Can be seen as parameterizing the set of possible relationships between an x and a set of compatible y
+        - Imagine a scenario: x is a photo, y is a photo of the same scene from slightly different viewpoint
+        - To tell whether x and y are views of same scene, one may need to infer the displacement of the camera
+    - In a temporal prediction scenario, the latent variable represents what cannot be predicted about y (the future), solely from x and past observations
+    - I may not know whether the driver in front of me will turn left or right, accelerate or brake, but I can represent these options by a latent variable
+    - A latent-variable EBM (LVEBM) is a parameterized energy function
+        - Ew(x,y,z)
+        - When presented with a pair (x,y) the inference procedure of the EBM finds a value of the latent variable z that minimizes the energy
+            - z` = argmin z Ew(x,y,z)
+        - This latent-variable inference by minimization allows us to eliminate z from the energy function
+            - Fw(x,y) = min z Ew(x,y,z) = Ew(x,y,z`)
+
+Training Energy-Based Models
+    - The definition of EBM does not make any reference to probabilistic modeling
+    - Energy function is viewed as the fundamental object and is not assumed to implicitly represent the unnormalized log of a prob distribution
+    - Training an EBM:
+        - constructing an architecture (dnn) to compute the energy function parameterized with vector w
+        - Training seeks a w vector that gives the right shape to the energy function
+        - For a given x, a well-trained Fw(x,y) will produce lower energies for values of y that are associated with x in the training set
+        - Higher energies to other values of y
+    - Given a training sample (x,y) training an EBM comes down to devising a suitable loss functional L(x,y,Fw(x,y)) which can be expressed directly as a function of the parameter vector L(x,y,w)
+    - Some architectures are susceptible to collapse: the energy landscape becomes "flat", giving all of the same energy to all values of y.
+    - We design the loss to prevent collapse
+
+
+Joint Embedding Predictive Architecture (JEPA)
+    - Not generative: cannot easily be used to predict y from x...
+    - Merely captures the dependencies between x and y w/o explicitly generating predictions of y.
+    - Two variables: x and y are fed to two encoders producing representations sx and sy
+    - A predictor module predicts the representation of y from the representation of x.
+    - JEPA performs predictions in representation space
+    - No need to predict every detail of y
+    - 

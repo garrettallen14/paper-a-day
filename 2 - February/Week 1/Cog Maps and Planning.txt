@@ -1,0 +1,32 @@
+Evaluating Cognitive Maps and Planning in Large
+Language Models with CogEval
+
+25 Sep 2023
+
+Abstract
+- Many studies claim emergent cognitive abilities in LLMs
+- Propose CogEval to evaluate cognitive capacities
+- System to evaluate cognitive maps and planning ability
+
+Introduction
+- Analyzed if LLMs understand the latent structure of planning problems
+- First, operationalized the latent ability (cognitive map and planning)
+    a. latent structure of the tasks' environment
+    b. domain
+    c. multiple planning tasks
+
+- Cognitive map: representation of latent relational structures that underlies a task or environment
+    - Facilitates planning, reasoning, and inference in biological and artifical problems
+    - Comes from rodents' ability to learn maze structures w/o rewards
+- Why would LLMs plan with a cognitive map?
+    - Suggestion: LLMs have learned representations, which are comparable to the hippocampus of the brain and its representations
+    - LLMs are capable of event segmentation of narrative transcripts
+    - SO: LLMs could extract and use cognitive maps, but their current failure in capturing cognitive maps could underlie failure modes in planning
+
+
+Methods
+- CogEval is a protocol for evaluating any cognitive capacity
+    1. Evaluating latent constructs like cognitive maps and adaptive planning
+    2. Operationalization with construct validity through unique experimental tasks
+    3. Employing multiple tasks with varying conditions to robustly measure planning abilities
+    4. Controlling for multiple factors to make informed inferences about abilities

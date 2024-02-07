@@ -1,0 +1,15 @@
+Improving Factuality and Reasoning in Language
+Models through Multiagent Debate
+
+23 May 2023
+
+Abstract
+- Multiple LM instances propose and arrive at a common final answer
+- "Society of Minds"
+
+
+Introduction
+- Minsky! Society of Mind inspired approach
+
+
+Number of debating agents improves quality almost linearly up to 7
