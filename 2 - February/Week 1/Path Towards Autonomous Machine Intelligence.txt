@@ -332,3 +332,70 @@ Joint Embedding Predictive Architecture (JEPA)
     - JEPA performs predictions in representation space
     - No need to predict every detail of y
     - 
+
+Keeping track of the state of the world
+    - A typical action will only modify a small portion of the state of the world
+    - State of the world should be stored in some writable memory
+    - A conventional KV associative memory can be used for this purpose, similar to what has been proposed in memory-augmented networks and entity networks
+    - The output of the WM at a given time step is a set of query-value pairs (q[i], v[i]), which are used to modify existing entries in the world-state memory, or to add new entries
+    - Given a query q, the world-state memory returns
+        Mem(q) = sum(cjvj)
+        c`j = Match(kj,q)
+        c = Normalize(c`)
+    - If the query is distant from all keys, the memory may allocate a new entry whose key is q and corresponding value is r
+    - One can view each entry as representing the state of an entity in the world
+    - Example above: the world may contain keys kbottle, kkitchen, kdining-room,
+    - vbottle encodes its location as "kitchen"
+    - The initial value of vkitchen encodes its content as including the bottle, and the initial value of vdining-room encodes its content as not including the bottle
+    - After the event, the location and contents are updated.
+
+    - All of these operations can be done in a differentiable manner, and would allow to back-prop gradients through them
+
+
+Data Streams
+    - Much knowledge about the world is learnable through pure observation
+    - The laws of motion of physical objects can, in principle, be derived from observation, without the need for intervention
+    - Training a WM efficiently may require more active or "agentive" information gathering
+    - One can list five modes of information gathering with which an agent can learn about how the world works
+    1. passive observation: agent is fed a sensor stream (eg video, audio, etc)
+    2. active foveation: agent is being fed a stream within which the focus of attention can be directed without affecting the enviornment
+        - watching a scene while being able to orient the vision and sound sensors
+        - being fed a wide-angle, high resolution video and/or autio stream within which the focus of attention can be directed.
+    3. passive agency: sensory streams in which another agent acting on the environment is being observed, enabling the inference of causal effects of agent actions on the state of the environment
+    4. active egomotion: agent receives sensory streams from a real or virtual environment. the position of the sensors can be modified w/o affecting the environment
+    5. active agency: sensory streams that are influenced by the agent's actions.
+    - The main open question is how much can be learned from passive observation (1,2,4), how much requires egomotion, how much requires full agency
+
+
+Designing and Training the Actor
+    - Role of the Actor is threefold:
+        1. inferring optimal action sequences that minimize the cost, given the predictions produced by the world model for mode-2 actions
+        2. producing multiple configurations of latent variables that represent the portion of the world state the agent does not know
+        3. training policy networks for producing Mode-1 actions
+    - There is no conceptual difference between an action and a latent variable
+    - the configs of both sets of variables must be explored by the actor
+    - for latent variables, configurations must be explored to plan under uncertainty
+    - for action variables, configurations must be explored to produce an optimal one that minimizes the cost
+    - in adversarial scenarios, the latent configurations must be explored that maximize the cost
+    - in effect, the actor plays the role of an optimizer and explorer
+
+
+Designing the Configurator:
+    - the main controller of the agent
+    - takes the input from all other modules and modulates their parameters and connection graphs
+    - the modulation can route signals, activate sub-networks, focus attention, etc.
+        - in a scenario in which the predictor and the upper layers of the perception encoder are transformer blocks, the configurator outputs may constitute extra input tokens to these transformer blocks
+    - the configurator module is necessary for two reasons:
+        1. hardware reuse
+        2. knowledge sharing
+        - there is an obvious advantage to be able to reuse the same circuit for multiple tasks (particularly if they can be accomplished sequentially)
+        - there is another advantage: knowledge reuse
+            - the WM trained for a given environment can be used for a range of different tasks with minor changes.
+            - one can imagine a generic WM for the environment with a small portion of the parameters being modulated by the configurator for the task at hand
+    - the configurator may prime the perception module for a particular task
+        - the human perceptual system can be primed for a particular task (detecting an item in a cluttered drawer, detecting fruits or preys in a forest, reading, counting certain events, assemblish two parts)
+        - for tasks that require rapid detection of simple motifs, the configurator may modulate the weights of low-level layers in a convolutional architecture
+        - for tasks that involve satisfying relationships between objects, the config may be performed by modulating tokens in high-level transformer modules
+    - the predictor part of the WM must be able to perform a wide range of functions depending on the task at hand
+    - most important function of the configurator: set subgoals for the agent and configure the cost module for each subgoal
+    - question that is left: how can the configurator learn to decompose a complex task into a sequence of subgoals that can individually be accomplished by the agent?

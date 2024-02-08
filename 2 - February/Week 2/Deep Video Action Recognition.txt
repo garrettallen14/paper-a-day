@@ -1,0 +1,35 @@
+A Comprehensive Study of Deep Video Action Recognition
+
+11 Dec 2020
+
+Abstract
+    - Video action recognition is a representative task for video understanding
+    - In this paper, we provide a comprehensive survey of over 200 papers on DL for video action recognition
+    - First, introduce 17 video action recognition datasets
+    - Then, present video action recognition models in chronological order
+
+
+Datasets
+    - Built in the following process
+        1. Define an action list, combining labels from previous action recognition datasets and adding new categories
+        2. Obtain videos from various sources
+        3. Provide temporal annotations manually to indicate the start and end position of the action
+        4. Clean up the dataset by deduping and filtering out noisy classes/samples
+    - Some examples
+        - Moments in Time: one million 3 second video clips, annotated with 339 classes. involves people, animals, objects, natural phenomena
+        - AViD: 410k videos for training, with 3-15 second video clips and 887 action classes
+
+Challenges
+    - Several major challenges in developing effective video action recognition algorithms
+    - Datasets:
+        1. the label space for training action recognition is non-trivial
+            - human actions are usually composite concepts, and the hierarchy of these concepts is not well defined
+        2. annotating videos is laborious and ambiguous
+        3. some popular benchmark datasets only release the video links for users to download, not the actual videos
+    - Modeling:
+        1. Videos capturing human actions have both strong intra- and inter-class variations
+            - people can perform the same action in different speeds under various viewpoints
+            - some actions share similar movement patterns that are hard to distinguish
+        2. recognizing human actions requires simultaneous understanding of short-term action-specific motion information and long-range temporal information
+            - we may need a sophisticated model to handle different perspectives rather than using a single convolutional neural network
+        3. The computational cost is high for both training and inference

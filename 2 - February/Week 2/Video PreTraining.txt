@@ -1,0 +1,31 @@
+Video PreTraining (VPT): Learning to Act by
+Watching Unlabeled Online Videos
+
+23 Jun 2022
+
+Abstract
+    - Internet-scale datasets are noisy, but can train models with broad, general capabilities
+    - Publicly available data does not contain the labels required to train behavioral patterns in the same way
+    - We extend the internet-scale pretraining paradigm to sequential decision domains through semi-supervised imitation learning
+    - Agents learn to act by watching online unlabeled Videos
+
+    - With a small amount of labeled data, we can train an inverse dynamics model accurate enough to label a huge unlabeled source of online data (minecraft)
+    - We can use this model to train a general behavioral prior
+    - This behavioral prior has nontrivial zero-shot capabilities and it can be fine-tuned with imitation learning and reinforcement learning
+    
+    - Our computer agents can craft diamond tools, which can take proficient humans upwards of 20 minutes to accomplish
+
+
+Introduction
+    - existing semi-supervised imitation learning methods aim to learn with few or no explicit action labels
+        - they generally rely on the policy's ability to explore the environment throughout training
+    - most prior semi-supervised imitation learning work was tested in the relatively low data regime (we experiment with far more data ~70k hours of unlabeled video)
+    - We hypothesize we can achieve good performance witha much similar method
+    - Given a large, unlabeled dataset, we propose generating pseudo-labels by gathering a small amount of labeled data to train an inverse dynamics model (IDM) that predicts the action taken at each timestep
+    - Behavioral cloning (BC) can require a large amount of data
+        - Model must learn to infer intent and distribution over future behaviors from only past observations
+    - In contrast, the inverse dynamics modeling task is simpler because it is non-causal
+        - It can look at both path and future frames to infer actions
+    - In most settings, environment mechanics are far simpler than the breadth of human behavior
+
+    
