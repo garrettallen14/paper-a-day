@@ -1,0 +1,59 @@
+SELF-DISCOVER: Large Language Models Self-Compose Reasoning Structures
+
+6 Feb 2024
+
+Introduction
+    - Paper aims at self-discovering the underlying reasoning structure unique to the task
+    - Highly efficient in terms of computation
+    - From a set of atomic reasoning modules "breakdown into subtasks", "critical thinking"
+    - Stage 1: compose coherent reasoning structure intrinsic to the task
+    - Stage 2: solve instances of the task using the discovered structure
+        - LLM simply follows the self-discovered structure to arrive at the final answer
+
+    
+Self-Discovering Reasoning Structures for Problem Solving
+    - Humans use prior knowledge and skills to devise a reasoning program to solve problems
+    - We often search internally what knowledge/skills from prior experiences might be helpful
+    - Attempt to apply relevant knowledge and skills to the task
+    - Finally, connect multiple individual skills and knowledge to solve the problem
+
+    - Stage 1 uncovers the intrinsic reasoning structure for solving each task via meta-reasoning
+        - We use three meta-prompts to guide LLMs to select, adapt, and implement an actionable reasoning structure
+            - No labels or training required
+        - Format the structure in KV pairs similar to JSON
+        - Operates on the task-level, meaning we only need to run Self-Discover once for each task
+    - Stage 2 we can simply use the discovered reasoning structure to solve every instance of the given task
+        - Instruct models to follow the provided structure by filling each key and arriving at a final answer
+
+Stage 1: Self-Discover Task-Specific Structures
+    - Consists of three actions
+        1. SELECT: relevant reasoning modules for task-solving are chosen from the set of reasoning module descriptions
+        2. ADAPT: descriptions of selected reasoning modules are rephrased to be more specific to task at hand
+        3. IMPLEMENT: adapted reasoning descriptions are implemented into a structured actionable plan
+    SELECT
+        - Not every reasoning module is helpful for every task
+        - Select guides the model to select modules that are useful based on task examples
+            - Ex. "reflective thinking" might help search for first-principle theories
+                "creative thinking" helps generating a novel continuation of a story
+                "critical thinking"
+        - Self-Discover first selects a subset of reasoning modules Ds that are useful for solving the tasks
+    ADAPT
+        - Each reasoning module provides a general description of how to solve problems
+
+
+SELECT: 
+    - Select several reasoning modules that are crucial to utilize in order to solve the given Task.
+    - Set of examples
+    - (Select several modules that are crucial for solving the tasks above:)
+ADAPT:
+    - Rephrase and specify each reasoning module so that it better helps solving the task.
+    - Set of examples
+    - (Adapt each reasoning module description to better solve the tasks:)
+IMPLEMENT:
+    - Operationalize the reasoning modules into a step-by-step reasoning plan in JSON format
+    - Paired IMPLEMENT step demonstration...
+    - Set of examples
+    - (Implement a reasoning structure for solvers to follow step-by-step and arrive at correct answers)
+
+Then it will go step by step and answer each question after the IMPLEMENTATION
+Just call the LLM to generate a thing to answer the question
