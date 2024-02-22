@@ -1,0 +1,18 @@
+Speculative Streaming: Fast LLM Inference without Auxiliary Models
+
+16 Feb 2024
+
+Abstract
+    - Speculative decoding involves fine-tuning both draft and target models to achieve high acceptance rates
+    - As number of downstream tasks grows, these draft models add significant complexity
+    - We propose speculative Streaming
+        - A single-model speculative decoding method that fuses drafting into the target model by changing the fine-tuning objective from next token prediction to future n-gram prediction
+    - Speculative streaming speeds up decoding by 1.8-3.1x in a diverse set of tasks, such as summarization, structured queries, and meaning representation w/o sacrificing generation quality
+    - Is parameter efficient, achieving on-par/higher speedups than Medusa style architectures while using ~10000X fewer parameters
+
+
+Method
+Motivation
+    - Most speculative decoding approaches exhibit a distinct separation in the training process of draft and target models
+    - Directly using an off-the-shelf draft model often leads to sub-optimal performance
+    
