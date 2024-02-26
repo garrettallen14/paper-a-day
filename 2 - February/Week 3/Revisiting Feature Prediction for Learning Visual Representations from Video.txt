@@ -1,0 +1,151 @@
+Revisiting Feature Prediction for Learning Visual
+Representations from Video
+
+14 Feb 2024
+
+Abstract
+    - Explores feature prediction as a stand-alone objective for unsupervised learning from video
+    - Introduces V-JEPA, a collection of vision models trained solely using a feature prediction objective (no pretrained image encoders, text, negative examples, reconstruction, etc)
+    - Models are trained on 2 million videos from public datasets and are evaluated on downstream image / video tasks
+    - Learning by predicting video features leads to versatile visual representations that perform well on motion and appearance-based tasks w/o adaptation of model params
+
+
+Introduction
+    - Humans can map low-level signals from the retina into a semantic spatio-temporal understanding of the world
+    - What are the principles / objectives that guide unsupervised learning in humans?
+    - One hypothesis: predictive feature principle: representations of temporally adjacent sensory stimuli should be predictive of each other
+
+    - We revisit feature prediction as a standalone objective for unsupervised learning of visual representations from video
+    - V-JEPA is based solely on feature prediction
+    - Seek to answer: How effective is feature prediction as a stand-alone objective for unsupervised learning from video w/modern tools?
+    - Findings suggest that feature prediction can indeed serve as an effective stand-alone objective for unsupervised learning
+        - Feature prediction leads to versatile visual representations that perform well across downstream tasks
+        - Models trained w/feature prediction are superior to pixel prediction approaches under a frozen evaluation protocol
+        - More label-efficient than pixel prediction approaches. Decreasing the available number of labeled examples results in an increase in the performance gap between V-JEPA and pixel-reconstruction methods
+
+
+Related Works
+    - Slow Features:
+        - One way to encourage temporally adjacent representations to be predictive of each other is to ensure they vary slowly over time
+        - Explore feature prediction using masked modeling
+    - Predictive Features:
+        - Train a predictor network to map the representation of a frame or clip at one time-step to a distinct representation at another time-step
+        - Train such a video feature predictor network on top of a frozen pretrained image / video encoder
+        - Unfreezing the target feature extractor, several methods train the video encoder and the predictor network simultaneously
+        - The idea of learning a representation by predicting missing information in feature space is also core to JEPA
+        - We extend JEPA to video
+    - Advances in Self-Supervised Learning:
+        - The use of vision transformers has become standard practice in self-supervised learning w/Joint-emb architectures
+        - Unlocked masked image modeling in pixel space by paraming the pixel decoder as a transformer w/learnable mask tokens
+
+
+Methodology: Video-JEPA
+    - Goal: Explore effectiveness of feature prediction as a stand-alone objective for learning visual representations from video
+    - JEPA: learn by predicting the representation of an input y from the representation of another input x
+    - The basic architecture: 
+        - Encoder Et(.) computes the representation of the inputs
+        - Predictor Pp(.) predicts the representation of y from the representation of x, conditioned on a variable z indicating the transformation (or corruption) between x and y.
+        - Conditioning on z enables the generation of distinct predictions for various transformations of x
+
+Training Objective
+    - We train our visual encoder Et(.) to satisfy the constraint that representations computed from one part of the video, y, should be predictable from representations computed from another part, x.
+    - Pp(.), which maps the representation of x to the representation of y, is trained simultaneously with the encoder, and is provided specification of the spatio-temporal positions of y through the conditioning variable z<-deltay
+
+    - Naively implementing the objective using the regression:
+        minimize t,p ||Pp(Et(x), delta y) - Et(y)||
+    - Would admit a trivial solution, where the encoder outputs a constant representation, regardless of its input
+    
+    - In practice, we use the following modified objective to prevent representation collapse:
+        (1) minimize t,p ||Pp(Et(x), delta y) - sg(E`t(y))|| 
+    - Where sg(.) denotes a stop-gradient operation, which does not backpropagate through its argument
+    - E`t(.) is an exponential moving avg of the network Et(.)
+    - The use of an exponential moving avg feature extractor along with a stop-gradient and a predictor has been used as a collapse prevention strategy for image pre-training
+    - The objective in eqn (1) is similar to another loss used from image pretraining, but we modify it to use an l1 regression, which we found to be more stable
+
+    Theoretical motivation
+        - A theoretical motivation for the effectiveness of this collapse prevention strategy was proposed in the BYOL method Grill (2020)
+        - 1D Representations:
+            - Denote the representation E`(y) by a random variable Y.
+            - The optimal predictor under eqn (1) is then given by the following functional expression:
+                P*(Et(x)) = argminP||P(Et(x)) - Y||,
+                          = median(Y|Et(x))
+            - Substituting this expression for the optimal predictor into the loss function and evaluating the expected gradient of the encoder gives:
+                ∇tE ∥P*(Et(x)) − Y∥1 
+                = ∇θMAD(Y|Et(x))
+                where MAD(. | Et(x)) is the median absolute deviation of a RV conditioned on Et(x)
+        - Thus, in the case where the predictor is optimal, the encoder must learn to capture as much information about the video as possible to minimize the deviation of the target
+        - The hypothesis is that incorporating an exponential moving average to compute the representation of y ensures that the predictor evolves faster than the encoder and remains close to optimal, thereby preventing collapse
+
+
+Figure 3: V-JEPA,
+- Training operates on a video clip of T frames with spatial resolution HxW, flattened into a sequence of L tokens.
+- We first obtain the input of the x-encoder by dropping tokens from the video clip.
+- The x-encoder then processes the masked video sequence, and outputs and embedding vector for each input token.
+- Next, the outputs of the x-encoder are concatenated with a set of learnable mask tokens containing positional embeddings of the masked spatio-temporal patches
+- The predictor network processes the combined token sequence, and outputs an embedding vector for each mask token.
+- The outputs of the predictor are then regressed to the prediction targets w/an L1 loss.
+- The prediction targets correspond to the output of the y-encoder.
+ 
+
+Prediction Task: Predicting y from x
+    - The feature prediction task is based on a masked modeling formulation: regions x and y from the video are sampled using masking
+    - To sample y from a video:
+        - we sample several (possibly overlapping) spatially continuous blocks with various aspect ratios
+        - We repeat the spatial blocks across the entire temporal dimension of the video
+    - x is taken to be the complement
+
+    - Masking a large continuous block that covers the full temporal dimension limits information leakage due to the spatial and temporal redundancy of videos, and results in a harder prediction task
+        - Isolating a significant portion of the video data across the frame and across time.
+        - The masked block isn't limited to just a small part or a few frames, it spans the entire length of the video from start to finish
+        - The algorithm won't have access to any direct information from this block throughout the video's duration
+        - Limits information leakage due to spatial and temporal redundancy: Videos often contain a lot of redundant information,
+            - Spatial redundancy: similar or repetitive information across different areas of a single frame
+            - Temporal redundancy: similarity or repetition of information across different frames over time
+        - By masking a large block that covers the full temporal dimension, the technique reduces the algorithm's ability to cheat
+        - This difficulty forces the model to learn a more robust representation of the data
+    
+    - We leverage two types of masks:
+        1. Short range masks: take the union of 8 randomly sampled target blocks covering 15% of each frame
+        2. Long range masks: take the union of 2 randomly sampled target blocks covering 70% of each frame
+    - In both cases, the aspect ratio for all sampled blocks is randomly chosen in the range (0.75, 1.5)
+    - Given that both short-range and long-range masks are produced by sampling many blocks and taking their union, the result is an average masking ratio of ~90%. 
+        - Masking ratio: the proportion of the video data that is obscured or hidden from the model during the training phase
+
+Network Parameterization
+    - We use a Vision Transformer (ViT) as our video backbone.
+    - To process a video with a transformer network, we split the video into a 3D grid of L spatio-temporal patches
+    - Each patch consists of 16x16 pixel block spanning 2 consecutive frames
+        - We refer to these spatio-temporal patches as Tokens.
+    - This sequence of tokens is then directly processed by the stack of transformer blocks.
+    - Inputs x and y correspond to masked regions of a video, we apply the video masks by simply dropping a subset of the tokens
+    - We apply masking at the input of the x-encoder, and at the output of the y-encoder to construct contextualized targets (Baevski 2022b)
+    - The encoder is parameterized using standard ViT networks, while the predictor is a narrow transformer implemented using 12 blocks with an emb dim of 384
+    - Taking inspiration from masked Autoencoders, our predictor takes as input:
+        1. the sequence of embeddings produced by the x-encoder
+        2. a sequence of learnable mask tokens with positional embeddings indicating the spatio-temporal positions of the y tokens
+    - The output of the predictor is an embedding vector for each mask token
+
+Pretraining Data and Evaluation Setup
+Pretraining
+    - We combine several public datasets to construct an unsupervised video pretraining dataset: VideoMix2M
+    - We train a ViT-L/16, ViT-H/16, and a ViT-H/16(384) transformer model on VideoMix2M
+    - Use a batch size of 3072 for ViT-L/16, ViT-H/16
+    - Use a batch size of 2400 for the ViT-H/16(384)
+    - Each model takes as input a video clip of 16 frams sampled with a frame-skip of 4
+        - Corresponds to about 3 second clips on average
+    - The ViT-L/16 and ViT-H/16 process the video at a spatial resolution of 224
+    - ViT-H/16(384) uses input resolution of 384
+
+Evaluations
+    - Pretrained models are evaluated on downstream video and image tasks:
+        - Action recognition: appearance-based understanding
+        - Motion classification: temporal understanding
+        - Action localization: ability to understand and localize motions
+
+...
+
+Evaluating the Predictor
+    - In qualitatively inspecting the V-JEPA models, we freeze the pretrained encoder and predictor networks and train a conditional diffusion decoder to map the V-JEPA predictions to interpretable pixels
+    - The decoder is only fed the representations predicted for the missing regions of the video
+
+    - Given a masked video, we use the V-JEPA pretrained models to predict the representations of the missing regions, then use the decoder to project the representations to pixel space

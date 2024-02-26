@@ -1,0 +1,28 @@
+AN IMAGE IS WORTH 16X16 WORDS:
+TRANSFORMERS FOR IMAGE RECOGNITION AT SCALE
+
+22 Oct 2020 (last revised 3 Jun 2021)
+
+Abstract
+    - In vision, attention is either applied in conjunction w/conv nets, or used to replace certain components of conv nets while keeping their structure in place
+    - We show this reliance on CNNs is not necessary, and a pure transformer can perform very well on image classification tasks.
+    - ViT attains excellent results compared to SOTA conv nets while requiring substantially fewer computational resources
+
+
+Introduction
+    - We apply the transformer to images
+    - Split an image into patches and provide the sequence of linear embeddings of these patches as an input to a Transformer
+    - Image patches are treated the same way as tokens in an NLP application
+    - A large scale training trumps inductive bias
+
+
+Figure 1: Model overview. 
+- We split an image into fixed-size patches, linearly embed each of them, add positional embeddings, and feed the resulting sequence of vectors to a standard Transformer encoder.
+- To perform classification, we use the standard approach of adding an extra learnable "classification token" to the sequence.
+
+
+Method
+Vision Transformer (ViT)
+    - The standard Transformer receives as input a 1D sequence of token embeddings
+    - To handle 2D images, we reshape the image x in R(HxWxC) into a sequence of flattened 2D patches: xp in R(Nx(P^2*c))
+      where (H, W) is the resolution of the original image C is the number of channles (P, P) is the resolution of each image patch, and N = 
