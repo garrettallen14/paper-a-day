@@ -1,0 +1,43 @@
+VideoCLIP: Contrastive Pre-training for
+Zero-shot Video-Text Understanding
+
+1 Oct 2021
+
+Abstract
+	- VideoCLIP, a contrastive approach to pre-train a unified model for zero-shot video / text understanding
+	- No labels on downstream tasks
+	- VideoCLIP trains a transformer for video and text by contrasting temporally overlapping positive video-text pairs with hard negatives from nearest neighbor retrieval.
+	- Experiments on a diverse series of downstream tasks exhibit SOTA
+	
+
+Introduction
+	- Different from CLIP that scales pre-training data for zero-shot transfer to image classification on an explicitly assembled dataset using a simple contrastive objective
+	- This paper uses a publicly established pre-training dataset, HowTo100M for zero-shot video understanding.
+	- We show that the resulting pre-trained model can be either directly applied to, or fine-tuned on, a series of video-text tasks at both the global sequence and local clip/token level.
+	- Straightforward objectives lead to poor results, and hypothesize that learning fine-grained associations between video and text is crucial for success of zero-shot transfer to end tasks.
+	- Since end tasks may require different granularities of video-text correspondence.
+	- Granularity can be about sequence length and semantics
+	- VideoCLIP aims to pre-train a unified video-text representation with contrastive learning using two key techniques to compute the training objective:
+		- First, we aim to improve association of video and text with different sequence lengths. Although the majority of video clips and text transcriptions are not semantically aligned, current video-text models are trained with exact temporal alignment.
+			- Instead, we pre-train with temporally overlapped pairs of video and text clips of varying length, thereby greatly increasing the quality and quantity of the video-text alignment.
+		- Second, we learn fine-grained video-text similarity from a contrastive loss with a new method for gathering (implicitly) harder negative pairs.
+			- We propose retrieval augmented pre-training approach to retrieve a cluster of videos that are similar to each other for each training batch... RA Pre-Training performs retrieving video clusters and uses these
+			
+
+VideoCLIP Pre-training
+	- Key challenge is to learn fine-grained association in-between video and text to cover the diverse needs of end tasks.
+	- We cover VideoCLIP pre-training in this section, and discuss the needs of zero-shot transfer to different end tasks in the next section
+
+Video and Text Encoding
+	- VideoCLIP consumes pairs of video and text clips (v,t) as inputs
+	- Makes no assumptions on the encoder architectures
+	- Video features are extracted by a CNN then fed into video tokens before fed into video transformer
+Video and Text Transformers
+	- Let cv be a video clip of a sequence of cts frames. We feed cv into a (frozen) pre-trained video encoder and apply a trainable MLP to obtain video tokens xv
+	- Vectors for text tokens xt are obtained via embedding lookup as in BERT
+	- 
+	
+Contrastive Loss
+	- We use a contrastive loss to learn the correspondence between video and text
+	- We minimize the sum of two multimodal contrastive losses:
+		L = -sum(log

@@ -1,0 +1,47 @@
+Learning Transferable Visual Models From Natural Language Supervision
+
+28 Feb 2021
+
+Abstract
+	- SOTA CV systems are trained to predict a fixed set of predetermined object categories
+	- This fixed nature limits their generality and usability
+	- Learning directly from raw text about images is a promising alternative which leverages a much broader source of supervision
+	- The simple pre-training task of predicting which caption goes with which image is an efficient and scalable way to learn SOTA image representations from scratch on a dataset of 4400 million (image, text) pairs
+	- After pre-training, Natural language is used to reference learned visual concepts, enabling zero-shot transfter to downstream tasks
+	- We benchmark on over 30 different existing computer vision datasets
+	
+
+Figure 1: Summary of our approach:
+	- Standard image models jointly train an image feature extractor and a linear classifier to predict some lable, CLIP jointly trains an image encoder and a text decoder to predict the correct pairings of a batch of (image, text) training examples. At test time, the learned text encoder synthesizes a zero-shot linear classifier by embedding the names or descriptions of the target dataset's classes.
+	- "Description" -> Text encoder \in R^N
+	- Image -> Image encoder \in R^NT
+	- Text * Image \in R^NxN
+	
+
+Approach
+NL Supervision
+	- At core of our approach is learning perception from supervision contained in NL.
+	- As discussed, this is not at all a new idea
+
+Selecting an Efficient Pre-Training Method
+	- Training efficiency was key to successfully scaling natural language supervision
+	- We selected our final pre-training method based on this metric
+	- Initial approach: trained an image CNN and text transformer from scratch to predict the caption of an image
+	- Both these approaches share a key similarity: they try to predict the EXACT words of the text accompanying each image.
+	- This is a difficult task due to the wide variety of descriptions, comments, and related text that co-occur with images.
+	- Recent work in contrastive representation learning for images has found that contrastive objectives can learn better representations than their equivalent predictive objective.
+	- Although generative models of images can learn high quality image representations, they require over an order of magnitude more compute than contrastive models w/same performance.
+
+	- We explored training a system to solve the potentially easier proxy task of predicting only which text as a whole is paired with which image... not the exact words of that text.
+	- Starting with the same bag-of-words encoding baseline, we swapped the predictive objective for a contrastive objective and observed a 4x efficiency improvement
+	
+	- Given a batch of N (image, text) pairs, CLIP is trained to predict which of the NxN possible (image, text) pairings across a batch actually occured...
+		- CLIP learns a multi-modal embedding space by jointly training an image encoder and text decoder to maximize the cosine similarity of the image and text embeddings of the N real pairs in the batch while minimizing the cosine similarity of the embeddings of the N^2 - N incorrect pairings. 
+		- We optimize a symmetric cross-entropy loss over these similarity scores
+		
+	- Due to the large size of pre-training set, overfitting is not a concern... details of training CLIP are simplified
+	- Train CLIP from scratch w/o initializing the image encoder or text encoder at all
+	
+Choosing and Scaling a Model
+	- We consider two different architectures for the image encoder
+	- First, we use ResNet-50...
