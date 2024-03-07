@@ -1,0 +1,272 @@
+EMBEDDINGS FOR EACH TIMESTEP (CONDITIONAL VECTORS):
+
+Timestep Embedder:
+    - Input: frequency_embedding_size=256 (the size of the temporal embedding dimension)
+    - Outputs a representation of hidden_size.
+
+    - The timestep embedding creates sinusoidal timestep embeddings.
+        - Inspired by the positional encodings used in Transformer models.
+        - Represents the progression of timesteps in a generative model.
+        - Input: 
+            - 1d tensor containing timestep indices for each batch element.
+            - Dimensionality of the output embedding for each timestep.
+            - Max_period=10000: Influences the range of frequencies represented in the embeddings
+                - A frequency refers to how often a wave-like or cyclic pattern repeats within a unit of time
+                - This determines the rate at which the sine/cosine funcitons oscillate.
+        - Output:
+            - The function returns the computed sinusoidal embeddings with shape '(N,D)'
+                - N is number of timesteps provided, and D is the embedding dimension.
+
+    - Forward pass:
+        - Input: t - the 1d tensor containing timestep indices for each batch element
+            - The model invokes the timestep_embedding function, generating sinusoidal embeddings based on these timesteps
+            - The dimensionality of each embedding is specified by frequency_embedding_size
+
+            - MLP Processing: t_emb = self.mlp(t_freq) 
+        - Output: The forward pass produces 't_emb' which is a processed version of the original timestep information
+            - The output captures higher-order temporal dynamics and relationships
+
+
+Label Embedder:
+    - Embeds class labels into vector representations, particularly for classifier-free guidance.
+    - Input:
+        - Num_classes: The number of different classes that can be embedded.
+            - This is used to define the size of the embedding table
+        - Hidden_size: The size of each embedding vector. 
+            - Each class label will be embedded into a vector of this dimensionality
+        - Dropout_prob: The probability of dropping a label to enable classifier-free guidance.
+    - Core Components:
+        - use_cfg_embedding: a boolean flag indicating whether CFG embedding should be used, determined by whether dropout_prob > 0
+        - embedding_table: An nn.Embedding layer that maps each class label (and an additional token for CFG, if applicable) to a hidden_size-dim vector
+    - Label Dropping: ('token_drop' function):
+        - Crucial technique for CFG
+        - Input:
+            - labels: the original labels for each data point in a batch
+            - force_drop_ids: an optional argument to forcefully drop labels at specified indices
+        - Calculates which labels to drop based on dropout_prob, or forcefully drops them
+        - Dropped labels are replaced with self.num_classes, essentially treating them as a {mask} token
+    - Forward pass:
+        - Input:
+            - labels: the labels to embed
+            - train: a boolean indicating whether the model is in training mode
+            - force_drop_ids: optional to forcefully drop given ids
+        - If model is in training mode and label dropout is enabled (dropout_prob > 0), it applies label dropout
+        - Uses the embedding_table to fetch or calculate the embeddings for the possibly modified labels.
+    - This is an implementation of label dropout (CFG)
+        - By occasionally dropping labels during training, the model learns to generate or classify without always relying on explicit labels
+        - Particularly useful in generative models where one might want to generate data without specifying every detail explicitly
+        - Enhance model's ability to perform under partial / noisy data.
+
+
+
+CORE DiT MODEL:
+
+DiT Block:
+    - Input:
+        - hidden_size: The size of the input and output feature dimension
+        - num_heads: The number of attention heads in the multi-head attention mechanism
+        - mlp_ratio=4.0: A multiplier for the hidden layer size of the MLP relative to hidden_size (ex. hidden_size * 4.0)
+        - block_kwargs: Additional keyword arguments passed to the Attention module
+    - Core Components:
+        - norm1 = nn.LayerNorm(hidden_size, elementwise_affine=False, eps=1e-6),
+        - norm2 = nn.LayerNorm(hidden_size, elementwise_affine=False, eps=1e-6): 
+            - Two instances of Layer Normalization (w/o the learnable biases)
+            - Helps us stabilize the inputs to the attention and MLP components
+        - attn = Attention(hidden_size, num_heads=num_heads, qkv_bias=True, **block_kwargs)
+            - An attention module configured with the specified number of heads, and a bias term for qkv matrices
+        - mlp = Mlp(in_features=hidden_size, hidden_features=mlp_hidden_dim, act_layer=approx_gelu, drop=0)
+            - An MLP module with a hidden layer size determined by hidden_size * mlp_ratio and using an approximate GELU activation function for efficiency.
+        - adaLN_modulation = nn.Sequential(
+            nn.SiLU(),
+            nn.Linear(hidden_size, 6 * hidden_size, bias=True)
+        )
+            - Produces parameters for adaptive layer normalization
+
+    - Forward Pass:
+        - Input: 
+            - x: the input features to the DiT block
+            - c: the conditioning vector used to modulate the normalization parameters
+        - Process:
+            - Conditioning vector is transformed by the adaLN_modulation module:
+                - 3 outputs modulate the attention mechanism's output:
+                    - shift, scale for normalization
+                    - a gating factor
+                - 3 outputs modulate the MLP's output
+            - Modulate function applies the shift and scale modulation to the normalized input.
+            - x = x (residual) + gate_msa (value between 0 and 1) * attn( modulate (shift)( norm1(x), shift_msa, scale_msa ) )
+                - So, take the residual + the gated output of the attention mechanism
+                - The attention mechanism is fed a non-learned LN normalized x, which is then shifted by the learned adaLN modulation factors.
+                - This produces our new x, which is fed into the next line
+            - x = x (residual) + gate_mlp (val between 0 and 1) * mlp( modulate( norm2(x), shift_mlp, scale_mlp ))
+                - This is the residual x + a gating vector which gates the output of the mlp
+                - The mlp is fed the static LN normalization of x along with the learned shift and scale for the mlp portion.
+
+    
+Final Layer:
+    - Input:
+        - hidden_size: The 
+        - patch_size:
+        - out_channels:
+    - Core Components:
+        - Norm_final: a Layer Norm of hidden_size which doesn't learn
+        - Linear = nn.Linear(hidden_size, patch_size * patch_size * out_channels, bias=True)
+            - A linear transformation that maps the normalized features to the desired output dimensionality
+            - The output corresponds to patch_size * patch_size * out_channels
+        - adaLN_modulation = nn.Sequential(
+            nn.SiLU(),
+            nn.Linear(hidden_size, 2 * hidden_size, bias=True)
+        )
+            - Another adaLN layer which helps learn to scale on the conditional inputs
+    - Forward Pass:
+        - Input:
+            - x: the input features to the Final Layer (from the DiT blocks)
+            - c: the conditioning vector used to modulate the normalization parameters
+        - Process:
+            - shift, scale = self.adaLN_modulation(c).chunk(2, dim=1)
+                - The adaLN layer learns to shift and scale the distribution of the final output based on the conditional input vector
+            - x = modulate(norm_final(x), shift, scale)
+                - x is normalized over the batch, then shifted and scaled based on the learned adaLN params
+            - x = self.linear(x)
+                - x is simply output (extended to the final output) via a single learned linear transformation
+
+
+THE FULL MODEL:
+
+Diffusion Tranformer (DiT):
+    - Input:    
+        - input_size = 32
+        - patch_size = 2
+        - in_channels = 4
+        - hidden_size = 1152
+        - depth = 28
+        - num_heads = 16
+        - mlp_ratio = 4.0
+        - class_dropout_prob = 0.1
+        - num_classes = 1000
+        - learn_sigma = True
+            - Indicates if the model should learn to predict the noise level ('sigma') in addition to the image reconstruction
+    - Core Components:
+        - x_embedder = PatchEmbed(input_size, patch_size, in_channels, hidden_size, bias=True):
+            - Embeds input images into a sequence of flattened patches, each represented in a high-dim space of hidden_size
+        - t_embedder = TimestepEmbedder(hidden_size)
+            - Provides sinusoidal / cosinal embeddings for each timestep provided
+        - y_embedder = LabelEmbedder(num_classes, hidden_size, class_dropout_prob)
+            - Provides conditional class embeddings
+        - num_patches
+        - pos_embed = nn.Parameter(torch.zeros(1, num_patches, hidden_size), requires_grad=False)
+            - A fixed sin-cos embedding
+        - blocks = nn.ModuleList([
+            DiTBlock(hidden_size, num_heads, mlp_ratio=mlp_ratio) for _ in range(depth)
+        ])
+            - Depth DiTBlocks of: Hidden size, number of heads, mlp ratio given
+        - final_layer = FinalLayer(hidden_size, patch_size, self.out_channels)
+            - Processes the final output and applies a final linear transformation to the output size.
+        
+        - self.initialize_weights()
+            - Calls the initialize_weights function to initialize the model's weights
+    
+    - Initialize Weights:
+        - Initialize transformer layers
+            - All linear layers are initialized with xavier uniform
+                - This keeps the signal from exploding or vanishing during the initial phases of training
+                - Sets biases to 0 if they exist, ensuring that initial layers start with no bias towards any specific output value
+        - Initialize (and freeze) pos_embed by sin-cos embedding
+            - This provides information regarding information for relative or absolute position of tokens in the sequence.
+            - requires_grad=False => no training is done on these positional embeddings
+        - Initialize patch_embed like nn.Linear (instead of nn.Conv2d)
+            - Treats the weights of the patch embedding projection similarly to nn.Linear weights, using Xavier uniform initialization
+            - Helps to ensure the initial patch embeddings have a suitable scale.
+            - Sets the bias of the patch embedding projection to 0, following the same rationale as for the transformer layers
+        - Initialize label embedding table
+            - Initializes the weights of the label embedding table w/a normal distribution and std deviation of 0.02
+        - Initialize timestep embedding MLP
+            - Weights of the MLP in the timestep embedder are initialized with a normal distribution, std dev 0.02
+        - Zero-out adaLN modulation layers in DiT blocks
+            - Starts the adaLN modulation sequences to zero.
+        - Zero-out output layers
+            - Initializes the weights/biases of the linear transformation in the final layer to zero
+            - Not common: can lead to a lack of gradient flow, however, in this context, it may be intended to start with a non-influential final layer
+            - Gradually will learn to map the transformer output to the desired image space effectively
+
+    - Unpatchify:
+        - Reconstructs the full image from a tensor of patch embeddings produced by the transformer model
+        - Process is the inverse of converting an image into a series of patches
+        - Input:
+            - x: The input tensor which has shape (N, T, patch_size**2 * C)
+                - N = batch size
+                - T = total num of patches per image
+                - patch_size**2 = num pixels in each patch
+                - C = num channels per pixel
+        - Process:
+            - Determine the image dimensions:
+                - Calculates 'c' (number of output channels) and 'p' (the patch size) directly from the model's attributes
+                - Computes 'h' and 'w' of the reconstructed image by taking the square root of 'T' (the total num of patches)
+            - Reshape 'x':
+                - The tensor 'x' is reshaped to (N, h, w, p, p, c) organizing it into a structure where every patch is positioned in its correct location
+                    - Placed in the grid of 'h' by 'w' patches, each of size 'p' by 'p' with 'c' channels
+            - Rearrange the Patches:
+                - x = torch.einsum('nhwpqc->nchpwq', x) rearranges the dimensions of 'x' to bring all patches into a cts image format
+                - Transforms the tensor from patch-structured format to a full image format
+                - einsum effectively moves and merges the patch dimensions (p and p) and spatial dimensions (h and w) to reconstruct the full image dims
+            - Final Reshape:
+                - Tensor is then reshaped again to (N, c, h*p, w*p) turning the grid of patches into a cts image of height h*p and width w*p with c channels
+                - Converts the patch-based spatial arrangement into the conventional image tensor format used in deep learning models
+        - Output:
+            - imgs: the output imgs is the reconstructed image tensor with shape (N,C,H,W)
+
+    - Forward Pass:
+        - Inputs:
+            - x: (Num images, Channels, Height, Width) tensor of spatial inputs
+            - t: (Num images,) tensor of diffusion timesteps
+            - y: (Num images,) tensor of class labels
+        - Process:
+            - x = self.x_embedder(x) + self.pos_embed  # (N, T, D), where T = H * W / patch_size ** 2
+                - Embed x via patch embedding
+                    - (Number images, T total patches, D is embedding dimension)
+                - Adds in the static positional embedding vector
+            - t = self.t_embedder(t)    # (N, D)
+                - Provides timestep embeddings to be added to the conditional vector
+                - Size (Number images, D embedding dimension)
+            - y = self.y_embedder(y, self.training)    # (N, D)
+                - Creates the label embeddings to be added to the conditional vector
+                - Size (Number images, D embedding dimension)
+            - c = t + y
+                - This is the conditional vector which adaLN will use to adjust the distributions at each adaLN layer
+            - for block in self.blocks:
+                x = block(x, c)         # (N, T, D)
+                - This passes our patch embeddings through each DiT block, conditioned on our conditional vector of label and timestep
+                - x is of size (Num images, T total patches, D embedding size)
+            - x = self.final_layer(x, c)  # (N, T, patch_size ** 2 * out_channels)
+                - x is passed into the final layer, which is a simple linear transformation along with an adaLN layer
+                - x is then of size (N images, T total patch size, patch_size ** 2 * out_channels)
+            - x = self.unpatchify(x)
+                - x is then given to the unpatchify function,
+                - Final x size is (N images, out_channels, output Height, output Width)
+            - return x
+    
+    - Forward Pass with Classifier Free Generation (CFG):
+        - Implements a forward pass with CFG.
+        - Particularly useful in scenarios where the generative model might otherwise produce outputs that are too vague or not sufficiently aligned w/desired conditions.
+        - By blending outputs from both conditioned and unconditioned pathways, the model can achieve a better balance between fidelity to the input conditions and the overall quality of the generated images.
+        - CFG: a technique to improve generation quality of conditional generative models by blending outputs from conditional and unconditional pathways
+        - This method allows the model to leverage information from both conditioned (eg, class labels) and unconditioned contexts to enhance detail and fidelity
+        - Typical approach:
+            - Generate two sets of inputs: 
+                - One set is conditioned on class labels, etc.
+                - Another set is unconditioned (generated w/o conditioning on that specific information)
+        - Inputs:
+            - x: (Num images, Channels, Height, Width) tensor of spatial inputs
+            - t: (Num images,) tensor of diffusion timesteps
+            - y: (Num images,) tensor of class labels
+            - cfg_scale: How strongly the conditioned information influences the final output. Higher values push the model to generate images that more closely match the specified conditions
+        - half = x[: len(x) // 2]
+            - We split the input in half
+            - This is based on the assumption that the batch contains pairs of conditioned and unconditioned inputs.
+        - combined = torch.cat([half, half], dim=0)
+            - Concatenates the two halves
+            - This doubles the unconditioned inputs, preparing them for parallel conditioned and unconditioned processing
+        - model_out = self.forward(combined, t, y)
+            - This generates output that contains transformations for both the conditioned and unconditioned inputs
+        - eps, rest = model_out[:, :self.in_channels], model_out[:, self.in_channels:]
+            - Output is then split into two parts: 'eps' (pertubations) and 'rest'
+        - 

@@ -1,0 +1,51 @@
+Few-Shot Parameter-Efficient Fine-Tuning is Better
+and Cheaper than In-Context Learning
+
+26 Aug 2022
+
+Abstract
+	- Few-shot ICL enables pre-trained models to perform a previously-unseen task w/o any gradient-based training by feeding a small number of training examples as part of the input.
+	- ICL incurs substantial computational, memory, and storage costs.
+	- PEFT offers a solution
+	- A new PEFT method (IA)^3 scales actibations by learned vectors, attaining stronger performance while only introducing a tiny number of new parameters
+	- We propose a simple recipe based on the T0 model called T-Few that can be applied to new tasks without task-specific tuning or modifications
+	- We validate the effectiveness of T-Few on completely unseen tasks by applying it to the RAFT benchmark, attaining super-human performance and outperforming SOTA by 6%
+	- All code is publicly available
+	
+
+Introduction
+	- There has been relatively little focus on whether PEFT methods work well when very little labeled data is available
+	- Our primary goal is to close this gap by proposing a recipe - ie, a model, a PEFT method, and a fixed set of hyperparameters - that attains strong performance on novel, unseen tasks while only updating a tiny fraction of the model's parameters.
+	- We base our approach on the T0 model, a variant of T5 fine-tuned on a multitask mixture of prompted datasets.
+	- To improve performance on classification and multiple-choice tasks, we add unlikelihood and length normalization-based loss terms.
+	- We develop (IA)^3, a PEFT method that multiplies intermediate activations by learned vectors.
+	- "T-Few" recipe performs significantly better than ICL and outperforms humans on RAFT
+
+
+Designing the T-Few Recipe
+	- PEFT allows a model to be adapted to a new task with relatively small storage requirements and computational cost.
+	- We argue that PEFT presents a promising alternative to ICL
+	- Our goal is to develop a recipe that allows a model to attain high accuracy on new tasks with limited labeled examples while allowing mixed-task .............
+	
+Model and Datasets
+	- Evaluation of generalization capabilities can be straightforwardly done by measuring performance on these held-out datasets:  (COPA [37], H-SWAG [ 38 ], and Story Cloze [ 39] datasets),
+natural language inference (ANLI [ 40 ], CB [ 41], and RTE [42]), coreference resolution (WSC [ 43 ]
+and Winogrande [44 ]), and word sense disambiguation (WiC [45])
+
+Unlikelihood Training and Length Normalization
+	- Two additional loss terms to improve performance of few-shot fine-tuning.
+	- LMs are normally trained w cross-entropy loss (increase the probability of the correct target sequence y = (y1,...,yT)
+	- 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

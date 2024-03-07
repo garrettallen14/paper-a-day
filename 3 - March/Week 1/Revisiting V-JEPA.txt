@@ -1,0 +1,65 @@
+Revisiting Feature Prediction for Learning Visual
+Representations from Video
+
+Abstract
+    - Paper explores feature prediction as a stand-alone objective for unsupervised learning from Video
+    - Introducing V-JEPA, a collection of vision models trained solely using feature prediction objective
+    - No pre-trained image encoders, text, negative examples, reconstruction, or other sources of supervision.
+    - Models are trained on 2 million videos collected from public datasets
+    - Evaluated on downstream image and video tasks
+    - Our results show that learning by predicting video features leads to versatile visual representations
+    - Perform well on both motion and appearance-based tasks
+    - No adaptation of the model's parameters
+    - The largest model, a ViT-H/16 trained only on videos
+
+
+Introduction
+    - Humans possess the remarkable ability to map low-level signals originating from the retina into a semantic spatio-temporal understanding of the world
+    - Synthesizing notions such as objects and global motion
+    - Predictive feature principle: representations of temporally adjacent sensory stimuli should be predictive of each other
+    
+    - Revisit feature prediction as a standalone objective for unsupervised learning of visual representations from video
+    - Numerous advances:
+        - ViT, MAEs, Query-based feature pooling, JEPA, larger datasets
+    - Form a unique arsenal of tools
+    - Video JEPA
+    - Based solely on feature prediction w/o using pretrained image encoders, text, negative examples, human annotators, or pixel-level reconstruction
+    - We seek to answer:
+        - How effective is feature prediction as a standalone objective for unsupervised learning from video with modern tools?
+    - We pretrain a family of V-JEPA models on a dataset of 2m videos collected from publicly available datasets
+        - Combine a masked modeling prediction task with a JEPA
+    - We measure performance on several downstream image and video tasks, using both frozen eval and end-to-end finetuning
+    - Findings suggest that feature prediction can indeed serve as an effective stand-along objective for unsupervised learning form video, while using significantly shorter training schedules than pixel prediction methods
+    - Specifically:
+        - Feature 
+
+
+Methodology: Video-JEPA
+    - Goal: explore the effectiveness of feature prediction as a stand-alone objective for learning visual representations from video.
+    - We use a JEPA
+        - Predict the representation of an input y from the representation of another input x
+        - The basic architecture is made up of an encoder, Etheta(.)
+            - Computes the representation of the inputs
+        - Predictor Ptheta(.) predicts the representation of y from the representation of x
+            - Conditioned on a variable z indicating the transformation (or corruption) between x and y
+        - Conditioning on z enables the generation of distinct predictions for various transformations of x
+    
+Training Objective
+    - Train visual encoder Etheta(.) to satisfy:
+        - Representations computed from y should be predictable from representations computed from another part of the video, x.
+    - The predictor network Ptheta(.), which maps the representation of x to the representation of y, is trained simultaneously w/the encoder
+    - Predictor network is provided specification of the spatio-temporal positions of y thru the conditioning variable z <- Dy
+    - Naive implementation of the objective uses the regression:
+        - minimize theta, phi ||Pphi(Etheta(x), Delta y) - Etheta(y)||1
+        - This would admit a trivial solution
+        - Encoder would output a contant representation, regardless of input
+    - In practice, we use the following modified objective to prevent representation collapse:
+        - minimize theta, phi ||Pphi(Etheta(x), Delta y) - stop_gradient(E_theta(y))||1 (1)
+        - sg(.) denotes a stop gradient operation, which does not backprop thru its argument
+        - E_theta is an exponential-moving average of the network Etheta(.)
+    - The use of an exponential-moving average feature extractor along with a stop-gradient and a predictor has been used as a collapse prevention strategy for image pre-training
+    - The objective in equation (1) is similar to the loss of Assran for image pretraining, but we modify it to use an l1 regression, more stable.
+Theoretical motivation
+    - A theoretical motivation for the effectiveness of this collapse prevention strategy was proposed in Grill for the BYOL method
+    - We provide a simple adaptation of their analysis for our l1 loss
+    - 
