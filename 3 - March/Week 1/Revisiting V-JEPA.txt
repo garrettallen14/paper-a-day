@@ -62,4 +62,140 @@ Training Objective
 Theoretical motivation
     - A theoretical motivation for the effectiveness of this collapse prevention strategy was proposed in Grill for the BYOL method
     - We provide a simple adaptation of their analysis for our l1 loss
-    - 
+
+Figure 3: V-JEPA Training operates on a video clip of T frames with spatial resolution HxW, flattened into a sequence of L tokens.
+- First, obtain the input of the x-encoder by dropping tokens from the video clip.
+- x-encoder then processes the masked video sequence and outputs and embedding vector for each input token.
+- Next, the outputs of the x-encoder are concatenated with a set of learnable mask tokens containing positional embeddings of the masked spatio-temporal patches
+- The predictor network processes the combined token sequence, and outputs an embedding vector for each mask token
+- The outputs of the predictor are then regressed to the combined token sequence. 
+
+
+Prediction Task: Predicting y from x
+    - The feature prediction task is based on a masked modeling formulation:
+        - Regions x and y are sampled from the video using masking
+        - Sample y: sample several (possibly overlapping) spatially continuous blocks with various aspect ratios
+            - Repeat the spatial blocks across the entire temporal dimension of the video
+        - Sample x: this is the complement of the masked y.
+    - Masking a large continuous block that covers the full temporal dimension limits information leakage due to the spatial and temporal redundancy of videos, resulting in harder prediction task
+
+    - Two types of masks:
+        - Short-range masks: the union of 8 randomly sampled target blocks covering 15% of each frame
+        - Long-range masks: the union of 2 randomly sampled target blocks covering 70% of each frame
+
+        - The aspect ratio for all sample blocks is randomly chosen in the range (0.75,1.5)
+        - Given that both short-range and long-range masks are produced by sampling many blocks and taking their union, the result is an average masking ratio of ~90%
+        - Our masking strategy is referred to as "multi-block"
+
+    
+Network Parameterization:
+    - We use a ViT as video backbone
+    - Processing video:
+        - Split the video clip into a 3d grid of L spatio-temporal patches
+        - Each patch consists of a 16x16 pixel block spanning 2 consecutive frames
+        - We refer to these spatio-temporal patches as tokens
+        - This sequence of tokens is directly processed by the stack of transformer blocks
+    - Inputs x and y correspond to masked regions of a video
+        - We apply masking at the input of the x-encoder, and at the output of the y-encoder to construct contextualized targets
+    - This encoder is parameterized using standard ViT networks
+    - The predictor is a narrow transformer implemented using 12 blocks with an embedding dimension of 384
+    - Taking inspiration from MAEs, our predictor takes as input the sequence of embeddings produced by the x-encoder as well as a sequence of learnable mask tokens with positional embeddings
+    - The output of the predictor is an embedding vector for each mask token
+
+Pretraining Data and Evaluation Setup
+Pretraining
+    - We combine several public datasets
+    - Construct an unsupervised video pretraining dataset, VideoMix2M
+    - 2 million videos
+    - Train a couple different ViTs
+
+    - Each model takes as input a video clip of 16 frames sampled with a frame-skip of 4
+        - Corresponds to ~3 second clips on average
+
+Evaluation
+    - Investigate action recognition abilities: evaluate the appearance-based understanding of the model
+    - Motion classification: evaluates the temporal understanding of the model
+    - Action localization: evaluates the ability of the model to understand and localize motions in the video
+
+
+Appendix:
+Extended Description of V-JEPA:
+
+Input:
+    - During pretraining, we randomly sample a clip of 16 frames from each input video with a temporal stride of 4 between sampled frames
+        - 30 fps => 16 frames * 4 frame stride => the video covers about 64 frames of time => the video is ~ 2.4 seconds long
+    - We resize the video's spatial dimensions to 224x224
+    - The input shape is (16 x 224 x 224 x 3) for the entire clip
+        - 16 frames x 224x224 resolution x 3 channels
+    - ViT networks process a 1d sequence of tokens, so we must convert an input video clip into a 1d token sequence
+    - We apply a 3d conv comprising d filters of size 2x16x16 with a temporal stride of 2 and a spatial stride of 16
+        - This results in a tensor of shape 8x14x14xd
+        - Can we do this without the conv???
+    - We add absolute 3D sin-cos positional embeddings to the spatio-temporal feature map and flatten it
+    - This results in a 1D token sequence of shape 1568 x d
+Figure 7: V-JEPA Training operates on a video clip flattened into a sequence of tokens.
+- To convert a video clip of size 16x224x224x3 into a 1d token sequence, we apply a 3d conv comprising of d filters of size 2x16x16 with temporal stride of 2 and spatial stride of 16
+
+V-JEPA:
+    - We sample both a video clip and a video mask in each iteration
+    - We denote a video clip represented as a 1d token sequence of length L=1568 by xL = (x1...xL)
+    - Similarly, given a mask of M < L patches, leaving N = L - M
+    - We denote the indices of masked patches by (i1,...,iM)
+    - The complement, indices of unmasked patches by (j1,...,jN)
+Computing the x-representations:
+    - We first produce the x-representations by masking the video clip and feeding it into the x-encoder
+    - We denote the masked video by xN=(xj1,...,xjN)
+    - Applying the x-encoder Etheta(.) to the masked clip gives a sequence of patch representations, denoted as zN = Etheta(xN) = (zj1...zjN)
+
+Predicting the Target:
+    - The V-JEPA predictor network Pphi(.) takes as input the tokens produced by the x-encoder and predicts the missing regions of the video clip, specified by a set of learnable mask tokens...
+    - Specifically:
+        - Mask tokens are parameterized as the sum of a shared learnable vector and an absolute 3d sin-cos positional embedding, denoted by mM = (mi1,...,miM)
+        - The output of the predictor is thus given by s`M=Pphi(zN, mM) = (s`i1,...,s`iM) corresponding to a d-dimensional output for each of the M masked patches.
+
+Computing the y-representations:
+    - To compute the prediction targets, the entire unmasked video clip is processed by the y-encoder to obtain a set of target representations
+        - sL = E_theta(xL) = (s1...sL)
+    - The V-JEPA loss is now computed as:
+        Loss = 1/M sum(||s^k - sk||)
+    - This is simply the average L1 distance between the output of the predictor and the y-encoder
+    - We then compute a gradient update wrt the parameters of the x-encoder theta and predictor phi, and subsequently update the parameters of the y-encoder as an exponential moving average of the context encoder weights.
+
+
+Pretraining Details:
+Architectures: We use a ViT for the x and y encoders.
+    - We train three V-JEPA encoders based on these ViTs.
+    - Spatial resolution is either 224 or 384
+    - V-JEPA flattens the video clip into a sequence of non-overlapping spatio-temporal patches of size 16x16x2
+    - For all three models, the predictor is designed as a narrow ViT architecture, consisting of 12 transformer blocks with an embedding dimension of 384
+    - We keep the number of SA heads in the predictor equal to that of the backbone used for the context-encoder/target-decoder
+    - V-JEPA is pretrained w/o using a [cls] token
+Optimization: 
+    - We use AdamW to optimize the x-encoder and predictor weights.
+    - The batch sizes are either 3072 or 2400
+    - Models are trained for a total of 90k iterations (not bad)
+    - Learning rate is linearly increased from 2x10^-4 to 6.25x10^-4 during the first 12,000 operations of pretraining
+    - Decayed to 10^-6 following a cosine schedule
+
+    - Weight-decay is also linearly increased from 0.04 to 0.4 throughout pretraining
+    - The y-encoder weights are initialized identically to the x-encoder
+        - y-encoder weights are updated as an EMA of the x-encoder weights w/a momentum value starting at 0.998
+    - We scale all hyper-parameter schedules 25% beyond the actual training schedule
+
+    - We found that the last 25% of the default scheduler period to update hyper-parameters too aggresive... simply truncating the schedulers improved performance.
+Masking:
+    - We propose a 3d multi-block masking strategy
+    - We use two type of masks:
+        - Short-range: the union of 8 randomly sampled target blocks with a spatial scale of 0.15
+        - Long-range: the union of 2 randomly sampled target blocks with a spatial scale of 0.7.
+    - In both cases the aspect ratio is between (0.75, 1.5)
+
+
+Evaluation details:
+Frozen Classification:
+Attentive Probing
+    - Given an input video, xL, the V-JEPA target encoder outputs a sequence of L tokens.
+    - To pool this sequence of tokens into a single feature vector:
+        - We apply a lightweight non-linear cross-attention block which replace the SA operation of a transformer block w/ cross attention
+    
+    

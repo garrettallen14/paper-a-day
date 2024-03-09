@@ -1,0 +1,508 @@
+Full Model Description:
+    - Input: 
+        - 16 video frames: 16 x 224 x 224 x3
+        - 3d conv -> 2 x 16 x 16 x d
+        - 3d sin-cos absolute position embeddings
+        - 
+        
+
+
+
+utils/modules.py
+
+MLP: The network in the Transformer block after self attention
+    - Inputs:
+        - in_features: the number of features into the network
+        - hidden_features: the number of parameters in the hidden layers of the network
+        - out_features: the output of the network
+        - act_layer = nn.GELU
+            - Uses the GELU activation function
+        - drop=0
+            - 0 dropout is initialized
+    - Core Components:
+        - fc1 = nn.Linear(in_features, hidden_features)
+        - act = act_layer() # nn.GELU activation
+        - fc2 = nn.Linear(hidden_features, out_features) 
+        - drop = nn.Dropout(drop)
+    - Process:
+        - Forward pass:
+            - We perform one simple forward pass through the network...
+            - x = fc1(x)
+            - x = act(x)
+            - x = drop(x)
+            - x = fc2(x)
+            - x = drop(x)
+            - return x
+
+Attention: The self-attention layer within the Transformer block
+    - Inputs:
+        - dim: the size of the input feature vector
+        - num_heads = 8
+            - number of self-attention heads
+            - this is the number of parallel attention heads in the mha mechanism
+            - This hyperparameter determines how many different sets of attention weights the model can learn
+            - the input dim is divided across these heads, meaning each head works with a slice of the input features
+                - this allows for parallel processing of different representation subspaces
+                - more efficient, flexible, and capable
+        - qkv_bias = False
+            - If a bias is needed for the qkv parameters
+        - qk_scale = None
+            - Scaling factor for the dot product of the SA
+        - attn_drop = 0
+        - proj_drop = 0
+        - use_sdpa = True
+            - Uses scaled dot product attention
+            - sdpa is a specialized kernel for computing scaled dot product attention
+            - The dot product of query and keys (attention scores) are scaled by the inverse sqrt of the dimensionality of the key vectors, then applying a softmax
+            - sdpa efficiently computes attention
+    - Core Components:
+        - head_dimension = dim // num_heads
+            - Each head processes a different portion of the input
+            - The dimension of each head, therefore is split across the input dimension 'dim'
+        - scale = how much to scale the scaled dot product attention scores by
+        
+        - qkv = nn.Linear(dim, dim*3, bias=qkv_bias) 
+            - Our qkv weights are produced via a simple linear transformation
+            - Input: x of size dim
+            - Output: vector representation of x changed by the query, key and value parameters
+        
+        - attn_drop = nn.Dropout
+        - proj = nn.Linear(dim, dim)
+    - Process:
+        - Forward Pass:
+            - Inputs:
+                - x (input data)
+                - mask = None
+            - B,N,C = x.shape
+                - Batch size, Sequence Length, Channel size
+            - qkv = qkv(x).reshape(B, N, 3, self.num_heads, C // self.num_heads).permute(2, 0, 3, 1, 4)
+                - qkv(x) is a linear layer which takes the input x and splits it into query, key, value matrices
+                - Reshaping is necessary because the linear layer outputs a flat tensor, and we need to separate this tensor into the three distinct parts
+                - Multi-head attention allows the model to process information in parallel across different heads
+                    - The original dimensionality 'dim' or 'C' of the input features is split across the heads C // num_heads
+                    - This enables parallel processing
+                - Permutation: reordering the dimensions of the tensor to align with the expected format for computing attention
+                    - The permute function rearranges the tensor so that the dimension representing the separation of q,k,v comes first
+                    - So, 3 comes first, representing the 3 matrices
+                    - 3 (matrices), B batch_size, num_heads, N sequence length, dimensionality of the input features to the heads
+            - q, k, v = qkv[0], qkv[1], qkv[2] 
+                - These are all of size [Batch_size, num_heads, Sequence length, Dimension]
+            
+            - if use_scaled dot product attention:
+                x = F.sdpa(...)
+                attn = None
+            - Project it then return x, attn
+
+Block: The VisionTransformer Block
+    - Inputs:
+        - dim: size of input feature vector
+        - num_heads: number of sa heads
+        - mlp_ratio: the depth of the hidden layer of the mlp network
+            - mlp_ratio = 4.0
+            - mlp_hidden_dim = 4.0 * dim
+            - So, the hidden layer size for the mlp is 4x the input vector dimension
+        - qkv_bias
+        - qk_scale: if none, then we use sdpa
+        - drop
+        - attn_drop
+        - act_layer = GELU
+        - norm_layer = LayerNorm
+        - grid_size = None (?) Not used
+        - grid_depth = None (?) Not used
+    - Core Components:
+        - norm1 = norm_layer(dim)
+        - attn = Attention(
+            dim,
+            num_heads,
+            qkv_bias,
+            qk_scale,
+            attn_drop,
+            proj_drop
+        )
+            - We create a single SA layer, but do so with multiple heads
+            - The SA layer will take the input dim and split it into corresponding heads
+            - This allows for parallel processing while also diversifying output, etc.
+        - norm2 = norm_layer(dim)
+        - mlp_hidden_dim = int(dim * mlp_ratio)
+        - mlp = MLP(
+            in_features = dim,
+            hidden_features = mlp_hidden_dim,
+            act_layer = act_layer,
+            drop = drop
+        )
+            - So, the MLP has input of size vector dimension,
+            - Has mlp_ratio * dim hidden features
+            - Output I think is still size dim
+    - Process:
+        - Forward pass:
+            - Inputs:
+                - x: input vector size dim
+                - mask: any masking that need to be done
+            - y, attn = attn(norm1(x), mask=mask)
+                - We normalize the input x
+                - We calculate the attention values for the input
+            - x = x + y
+                - residually add the x input back to the new x value
+            - x = x + mlp(norm2(x))
+                - Normalize the new x
+                - Run this through the MLP network
+                - Residually add this output to this x
+
+CrossAttention: Allows a sequence to attend to another sequence
+    - Allows one set of data (queries) to interact with and be informed by another set of data (keys and values)
+    - Queries come from one source of data. These are the elements you're trying to enrich with additional information
+    - Enables the model to capture relationships between two different sequences
+    - Provide the model w a query sequence and a context sequence
+    - Query seq attend to the context seq meaning
+    - Inputs:
+        - dim: dimension of the input vector
+        - num_heads: the number of attention heads
+        - qkv_bias = False
+        - use_sdpa = True
+    - Core Components:
+        - num_heads, head_dim, scale (head_dim **-1/2)
+        - q = Linear(dim, dim, bias=qkv_bias)
+        - kv = Linear(dim, int(dim*2), bias)
+        - proj = Linear(dim, dim)
+        - use_sdpa = use_sdpa
+    - Process:
+        - Forward pass:
+            - 
+
+
+utils/patch_embed.py
+PatchEmbed:
+    - Image to Patch Embedding
+    - Inputs:
+        - patch_size = 16
+        - in_channels = 3
+        - embed_dim = 768
+    - Core Components:
+        - proj = Conv2d(in_channels, embed_dim, kernel_size=patch_size, stride=patch_size)
+    - Process:
+        - Forward Pass:
+            - Batch, Channels, Height, Width = x.shape
+            - x = proj(x).flatten(2).transpose(1,2)
+            - return x
+
+PatchEmbed3D:
+    - Video to Patch Embedding
+    - Inputs:
+        - patch_size = 16
+        - tubelet_size = 2
+            - Videos are not just collections of frames, they also include temporal dimension
+            - The tubelet size is a key parameter that helps in capturing this temporal information
+            - A "tubelet" is a 3D version of a patch
+            - Instead of covering a small area of a single frame, a tubelet covers a small area across multiple consecutive frames
+            - This means a tubelet is defined not only by its HxW (spatial) but also by its depth (temporal dims), corresponding to the num frames it spans
+            - 
+        - in_channels = 3
+        - embed_dim = 768
+    - Core Components:
+        - proj = Conv3d(
+            in_channels,
+            out_channels = embed_dim,
+            kernel_size = (tubelet_size, patch_size, patch_size),
+            stride = (tubelet_size, patch_size, patch_size)
+        )
+    - Process:
+        - Forward Pass:
+            - Batch, Channels, Time (?), Height, Width
+
+models/vision_transformer.py
+
+VisionTransformer:
+    - Inputs:
+        - img_size = 224
+            - The usual image size is 224x224
+        - patch_size = 16 (16x16 patches)
+            - Image is patchified into 16x16 patches
+        - num_frames = 1
+            - For static images, this is simply 1.
+            - For videos, we change this
+        - tubelet_size = 2
+            - How many frames are considered together as a single temporal unit
+            - Determines how many frames are considered together when creating embeddings that incorporate temporal info
+            - A 'tubelet' represents a small sequence or "tube" of frames within a video
+            - Ex. if tubelet_size=2 => every two consecutive frames in the video are grouped together and processed as one entity during the patch embedding phase
+        - in_chans = 3
+            - 3 in channels (RGB)
+        - embed_dim = 768
+            - The dimensionality of each token embedding
+        - depth = 12
+            - 12 ViT blocks
+        - num_heads = 12
+            - 12 sa heads in each transformer block.
+        - mlp_ratio = 4.0
+            - Determines the number of hidden parameters in the MLP network
+            - mlp_hidden_layer_size = 4.0 * dimension of the input
+        - qkv_bias = True
+            - Whether to include a bias term
+        - qk_scale = None
+            - Scaling factor for the dot product in the SA calc. 
+            - If none, this is set to the inverse sqrt of the embedding dim
+        - drop_rate = 0.0
+            - Dropout rate for the embeddings and the output of the attention / feed-forward layers
+        - attn_drop_rate = 0.0
+            - Dropout rate for attn weights
+        - norm_layer = nn.LayerNorm
+            - The normalization layer to use
+        - init_std = 0.02
+            - The standard deviation of the normal distribution used for weight init
+        - out_layers = None
+            - Specific layer's outputs to return in addition to the final output
+            - Useful for models requiring intermediate layer outputs
+        - uniform_power = False
+            - A flag for using uniform power in positional embedding calculation
+            - Affects the distribution of positional embeddings
+    - Core components:
+        - num_features = embedding dimension (768)
+
+        - input_size = image size = 224
+        - grid size = input size / patch size
+        - grid depth = num frames / tubelet size
+
+        - Initialize Patch Embeddings
+            - patch_embed = PatchEmbed3D(
+                patch_size=patch_size,
+                tubelet_size=tubelet_size,
+                in_chans=in_chans,
+                embed_dim=embed_dim)
+            - self.num_patches = (
+                (num_frames // tubelet_size)
+                * (img_size // patch_size)
+                * (img_size // patch_size)
+            )
+        - Attention Blocks
+            - blocks = nn.ModuleList([
+                Block(
+                    dim=embed_dim,
+                    num_heads=num_heads,
+                    mlp_ratio=mlp_ratio,
+                    qkv_bias=qkv_bias,
+                    qk_scale=qk_scale,
+                    drop=drop_rate,
+                    act_layer=nn.GELU,
+                    grid_size=grid_size,
+                    grid_depth=grid_depth,
+                    attn_drop=attn_drop_rate,
+                    norm_layer=norm_layer)
+                for i in range(depth)])
+            - self.norm = norm_layer(embed_dim)
+        - Initialize the weights
+    - Process:
+        - Forward Pass:
+            - Inputs:
+                - x: input video
+                - masks: indices of patch tokens to mask (remove)
+            - Tokenize Input:
+                - pos_embed = interpolate_pos_encoding(x, pos_embed)
+                    - Generate positional embeddings based on our input
+                - x = patch_embed(x)
+                    - Embed the input x as a set of conv3d tokens
+                - x = x + pos_embed
+                    - The positional embedding is added to the tokenized inputs
+                - Batch, N sequence len, D dimension (?) = x.shape
+            - Mask away unwanted tokens:
+                - x = apply_masks(x, masks)
+                - masks = torch.cat(masks, dim=0)
+            - Fwd prop:
+                - outs = []
+                - for i, blk in enumerate(self.blocks):
+                    - x = blk(x, mask=masks)
+                    - if out_layers is not None and i in self.out_layers:
+                        - outs.append(norm(x))
+                - x = norm(x)
+                - return x
+
+masks/default.py
+DefaultCollator:
+    - collated_batch = torch.utils.data.default_collate(batch)
+    - return collated_batch
+
+masks/multiblock3d.py
+_MaskGenerator:
+    - Inputs:
+        - crop_size = (224, 224)
+            - How much to crop/resize the input image
+        - num_frames = 16
+            - Number of frames in the video sequence
+        - spatial_patch_size = (16, 16)
+            - The size of each spatial patch
+        - temporal_patch_size = 2
+            - The size of each temporal patch
+            - Represents how many consecutive frames are considered as a single temporal unit
+            - A value of 2 means that every two consecutive frames are grouped together as one temporal patch
+        - spatial_pred_mask_scale = (0.2, 0.8)
+            - Defines the range of scales for the spatial (hxw) dimension of the prediction masks
+            - These scales randomly determine the size of the blocks to be masked in the spatial dimension
+        - temporal_pred_mask_scale = (1.0, 1.0)
+            - Defines the range of scales for the temporal time dimension
+            - Randomly determine the size of the blocks to be masked in the temporal dimension
+        - aspect_ratio = (0.3, 3.0)
+            - This tuple specifies the range of aspect ratios for the blocks to be masked
+            - This is the ratio of width to height of the mask blocks
+            - This range allows for variation in the shapes of the masked blocks
+        - npred = 1
+            - Specifies the number of prediction blocks to be sampled for each image/frame
+            - Controls how many distinct regions are to be masked for prediction purposes in each sample
+            - ie, npred = 1 => continuous block
+        - max_context_frames_ratio = 1.0
+            - Determines the max ratio of frames that can be covered by the context mask
+            - Limits the temporal extent of the context mask within the video sequence
+        - max_keep = None
+            - Specifies the maximum number of patches to keep in the context
+    - Core Components:
+        - crop_size
+        - height, width = crop_size[0] // spatial_patch_size, crop_size[1] // spatial_patch_size
+        - duration = num_frames // temporal_patch_size
+        
+        - max_context_duration = max(1, int(duration * max_context_frames_ratio))
+            - min of 1, up to duration (8 steps) * max_context_frames_ratio => 8 * 1 => max_context_duration is 8
+            - this is the maximum number of time-steps (frames) spanned by context mask
+    - Process:
+        - __call__:
+            - Create encoder and predictor masks when collating imgs into a batch
+            - Inputs: batch_size
+            1. Sample prediction block size using seed
+            2. Sample several prediction block locations for each image w/o seed
+            3. Return prediction masks and complement (encoder mask)
+
+MaskCollator:
+    - Inputs:
+        - cfgs_mask,
+        - crop_size=(224,224)
+        - num_frames = 16
+        - patch_size = (16,16)
+        - tubelet_size = 2
+    - Core Components:
+        - for m in cfgs_mask:
+            - mask_generator
+            - mask_generators.append(mask_generator)
+    - Process:
+        - step:
+            - for mask_generator in mask_generators:
+                - mask_generator.step()
+                - This creates a mask for the respective image
+        - __call__:
+            - batch_size = len(batch)
+            - collated_batch = torch.utils.data.default_collate(batch)
+
+models/predictor.py
+
+VisionTransformerPredictor:
+    - Inputs:
+        - img_size, patch_size, num_frames, tubelet_size, embed_dim
+        - predictor_embed_dim = 384
+            - How is this determined?
+        - depth = 6
+            - Num of Transformer blocks
+        - num_heads, mlp_ratio, qkv_bias, qk_scale, drop_rate, attn_drop_rate, norm_layer,...
+        - use_mask_tokens = False
+        - num_mask_tokens = 2
+        - zero_init_mask_tokens = True
+    - Core Components:
+        - Map input to predictor dimension
+            - predictor_embed = Linear(embed_dim, predictor_embed_dim, bias=True)
+                - input_dimension is the embedding dimension
+                - output dimension is the predictor embedding dimension
+                - Basically, I think the predictor embedding dimension is the dimension of the masked area???
+        - Mask Tokens:
+            - Think this is useless ???
+            - mask_tokens = None
+            - num_mask_tokens = 0
+        - Determine positional embedding:
+            - input_size = img_size
+            - grid_size = input_size // patch_size
+            - grid_depth = num_frames // tubelet_size
+        - num_patches = (
+                (num_frames // tubelet_size)
+                * (img_size // patch_size)
+                * (img_size // patch_size)
+            )
+        - Position Embedding
+        - Attention Blocks:
+            - block for i in range(depth)
+        - Normalize and project back to input dimension
+            - predictor_norm = norm_layer(predictor_embed_dim)
+            - predictor_proj = Linear(predictor_embed_dim, embed_dim, bias=True)
+    - Process:
+        - _init_pos_embed()
+            - Initializes the 3d positional embeddings
+        - _init_weights()
+            - Initializes the weights for the blocks and LayerNorms
+        - _rescale_blocks()
+            - scaled dot product attention scaling
+        - diffusion(x, noise_beta, steps=1000)
+            - Prepare diffusion noise schedule:
+                - b1,b2 = noise_beta
+                - beta_scheduler = (b1+i*(b2-b1)/steps for i in range(steps))
+                - alpha_scheduler = []
+                - _alpha = 1.0
+                - for _beta in beta_scheduler:
+                    - _alpha *= 1.-_beta
+                    - alpha_scheduler += [_alpha]
+            - Sample diffusion time step
+                - T = torch.randint(0, steps, (len(x),))
+                - alpha = torch.tensor(alpha_scheduler, device=x.device)[T].unsqueeze(-1).unsqueeze(-1)
+            - Normalize features and apply noise
+                - x = torch.nn.functional.layer_norm(x, (x.size(-1),))
+                - x = alpha**0.5 * x + (1.-alpha)**0.5 * torch.randn(x.shape, device=x.device)
+            - return x
+        - Forward Pass:
+            - Inputs:
+                - ctxt: context tokens
+                - tgt: target tokens
+                - masks_ctxt: indices of context tokens in input
+                - masks_tgt: indices of target tokens in input
+            - Batch Size
+                - B = len(ctxt) // len(masks_ctxt)
+            - Map Context Tokens to Predictor Dimensions (???)
+                - x = predictor_embed(ctxt)
+                - _, N_ctxt, D = x.shape
+            - Add positional embedding to ctxt tokens
+                - ctxt_pos_embed = predictor_pos_embed.repeat(B,1,1)
+                - x += apply_masks(ctxt_pos_embed, masks_ctxt)
+            - Map target tokens to predictor dimensions & add noise (fwd diffusion)
+                - mask_index = mask_index % self.num_mask_tokens
+                    - Returns the remainder of mask_index / num_mask_tokens
+            - Concatenate context & target tokens
+        
+
+models/attentive_pooler.py
+AttentivePooler:
+    - 
+    - Inputs:
+        - num_queries = 1,
+        - embed_dim = 768
+        - num_heads = 12
+        - mlp_ratio = 4.0
+        - depth = 1
+        - norm_layer = LayerNorm
+        - init_std = 0.02
+        - qkv_bias = True
+        - complete_block = True
+    - Core Components:
+        - query_tokens = nn.Parameter
+            - nn.Parameter tells PyTorch that this tensor should be considered a parameter of the model
+            - This is a learnable weight that the model should update during training
+            - These tokens serve as the queries to the attention mechanism
+            - The size is determined by the num_queries and embed_dim
+            - This allows the model to learn specific query representations during training
+        
+
+
+
+AttentiveClassifier:
+
+
+
+app/vjepa/train.py
+
+Training Loop:
+    - for epoch in range(start_epoch, num_epochs)
+        - def load_clips()
+            - unsupervised video clips
+            - clips = torch.cat([u.to(device, non_blocking=True)])
+            - put each clip on the GPU and concatenate along batch dimension
+            - 
