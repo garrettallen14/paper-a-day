@@ -1,0 +1,76 @@
+CORE: 
+Mitigating Catastrophic Forgetting in Continual Learning through Cognitive Replay
+
+2 Feb 2024
+
+Abstract
+    - Introduces a novel perspective to significantly mitigate catastrophic forgetting in continuous learning
+    - Current replay-based methods treat every task and data sample equally, thus cannot fully exploit the potential of the replay buffer
+    - We propose COgnitive REplay (CORE) which draws inspiration from human cognitive review processes
+    - CORE includes two key strats:
+        - Adaptive quantity allocation: modulates the replay buffer allocation for each task based on its forgetting rate
+        - Quality focused data selection: guarantees the inclusion of representative data that best encapsulates the characteristics of each task within the buffer
+
+
+Introduction
+    - Catastrophic forgetting helped by replay-based methods
+    - Replay old data to review old tasks
+    - The core component of these methods is the "replay buffer", which contains data from previous tasks.
+    - Current methods fail to fully exploit the potential of the replay buffer
+    - Current methods allocate the replay buffer space indiscriminately across all tasks, failing to differentiate the varying rates of forgetting unique to each task.
+    - They overlook the quality of the data samples in the buffer, which compromises the effectiveness in data replay
+    
+    - CORE aligns factors of human forgetting with the model's forgetting, specifically cognitive overload and interference
+    - Evaluates task-specific accuract to determine the forgetting rate of previous tasks considering both factors
+    - For the newly trained current task, which has not yet experienced cognitive overload, CORE anticipates its potential forgetting by evaluating its interference impact on previous tasks
+    - Adaptive Quantity Allocation strategy: dynamically allocates buffer space to each task based on the calculated attention derived from theri respective forgetting and interference rates
+    - Quality-Focused Data Selection
+    - Contributions
+        1. We are first to adopt both min and avg task accuracy values, along with continual monitoring of each task's performance, which ensures a thorough assessment of model efficacy in continual learning
+        2. Drawing inspirations from human memory mechanisms, CORE implements two innovative strategies, Adaptive Quantity Allocation and Quality Feature-based Data Selection
+
+
+Theoretical Background
+Forgetting in Human Lifelong Learning
+    - The continual acquisition of new tasks frequently results in the gradual forgetting of previously learned tasks
+    - Two primary memory types:
+        1. Recall-based Memory: Orthogonal representation, using hippocampal structures
+            - Distinct and segmented storage
+            - Cognitive overload forgetting occurs when new tasks compete for finite capacity of the system
+            - Orthogonal representation leads to a scenario where new info directly replaces older memories
+        2. Familiarity-based Memory: Non-orthogonal, uses extra-hippocampal structures
+            - Vulnerable wrt its non-orthogonal representation, featuring overlapping neural pathways
+            - New information can interfere with established memory
+Continual Learning against Forgetting
+    - Current methodologies to prevent catastrophic forgetting
+        - Parameter Isolation: Segregate parameters for distinct knowledge sets... face scalability issues
+        - Regularization: (elastic weight consolidation, learning without forgetting) strategically limit imporatnt parameter updates to protect previously acquired knowledge
+            - The effectiveness depends on the precise determination of parameter significance in maintaining old knowledge
+        - Data Replay: Experience Replay (ER), Incremental Classifier and Representation Learning (iCaRL) utilize historical data to review through a 'replay buffer'
+            - The challenge for these approaches lies in effectively utilizing the replay buffer, specifically in how to allocate buffer space and select representative samples strategically
+Review with Cognitive Strategies
+    - In cogsci, the synergistic application of the Targeted Recall and Spaced Repetition strats, along with the Levels of Processing framework provide a more effective approach to review
+    - Targeted Recall: 
+        - Directs hightened attention and resources towards tasks exhibiting higher rates of forgetting.
+    - Spaced Repetition:
+        - Regular, periodic review for sustained memory retention.
+    - Levels of Processing:
+        - Information quality in learning.
+        - Shallow Processing: ephemeral memory retention due to superficial engagement
+        - Deep Processing: encourages an in-depth engagement, leading to the formation of durable and readily retrievable memories
+
+
+Methodology
+Overview
+    - Model trained on DtCL, which contains the current task's data and data from the replay buffer
+    - After training, an evaluation is conducted to gauge the forgetting rate
+    - We dynamically allocate buffer space and select high-quality samples for the replay buffer, which is then used for the subsequent task Tt+1's training
+Cognitive Overload and Interference in Models
+    - Forgetting in models parallels human cognitive processes (cognitive overload and interference)
+    - Cognitive overload: the fixed size of the model becomes saturated with new information, hindering the ability to effectively retain and process previously learned information
+        - Resembles human cognitive constraints under substantial information loads
+    - "Interference" inherent in the neural network's interconnected architecture means even minor param adjustments can drastically impact task recall
+Forgetting Rate Assessment
+    - Constructs the replay buffer, guided by specific forgetting rates of different tasks
+    - We quantify forgetting in previous tasks P by considering both cognitive overload and interference
+    - 

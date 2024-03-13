@@ -1,0 +1,119 @@
+Yi: Open Foundation Models by 01.AI
+
+7 Mar 2024
+
+Abstract
+    - We introduce Yi model family, 6B and 34B pretrained
+    - 200K long context
+
+
+Intro
+    - Yi model design choices:
+        - Model scale, data scale, data quality
+    - 34B pretrain data scale ~ 3.1T tokens
+        - We overtrain the model on more tokens (3T) than the compute optimal (1T)
+        - The benefit here is from the inference side
+        - We achieve stronger performance with reduced serving cost
+            - After int4 quantization, we can serve the 34B chat model on 24gb
+            - Almost no performance drop (because overfit already)
+    - Pretraining data quality is guaranteed 
+        - Sophisticated data cleaning pipeline w/cascaded filtering methods
+        - Increased dedupe strength
+    - Finetuning heavily emphasizes quality
+        - 10,000 instructions over multiple iterations
+    
+    - Pretraining data cleaning
+        - Filtering based on language, heuristic textual features, perplexity, semantics, topic and safety
+        - Cascaded deduplication process based on paragraph, MinHash, exact matching
+        - Higher removal ratio than existing pipelines
+    
+    - We further extend the Yi model capability from three dimensions:
+        - Context scaling
+        - Vision-language adaptation
+        - Depth-upscaling: making the model deeper by continual pretraining
+            - Confirm its effectiveness to further improve model performance
+
+
+Pretraining
+    - Approach: train a standard dense transformer architecture on a heavily engineered large pretraining corpora
+    - Need not much architectural modification
+    - Data Processing:
+        - Learned data filtering models
+        - Unsupervised semantic clustering to group web documents
+    - Tokenization
+        - Use Byte-Pair Encoding
+        - Vocab size: 64,000
+            - Split numbers into individual digits
+            - Allow rare characters to fall back to the unicode-byte encoding
+    - Model Architecture
+        - 6B:
+            - Hidden size: 4096
+            - Q-heads: 32
+            - KV-heads: 4
+            - Layers: 32
+            - Sequence Length: 4096
+            - Max LR: 3e-4
+        - 34B:
+            - Hidden size: 7168
+            - Q-heads: 56
+            - KV-heads: 8
+            - Layers: 60
+            - Sequence Length: 4096
+            - Max LR: 1.5e-4
+        - Grouped query attention (GQA)
+            - Splits query-heads into G groups
+            - Share a single KV head within each group of query
+            - Substantial reductions of training and inference costs
+            - No performance degredation seen
+        - Activation function
+            - Use SwiGLU as post-attention layer
+            - Reduce activation size from 4h to 8/3h
+        - Positional embedding and long context
+            - Use RoPE position embeddings
+            - Adjust the base frequency to support long context windows up to 200K
+            - Base model is trained on 4k context length
+            - To adapt the base model to longer context, we continue to pretrain the model on 10B tokens
+            - We view the capability of modeling longer dependency than pretrained length is intrinsic capability
+
+
+Finetuning
+    - Method significantly emphasizes data quality over quantity
+    - Optimized every single data point
+    - Data Preprocessing
+        - Quality is all you need
+            - For prompt distribution selection, we develop compound instructions
+            - Default chat style
+            - CoT data formatting, we use a "step-back" pattern
+    - Training Method
+        - Next-word prediction loss for finetuning
+        - Only compute loss on the responses, not system / user instructions
+        - Use AdamW optimizer 0.9 to 0.999, epsilon to 1e-8
+        - Training step to 300 w a constant 1e-5 learning rate
+
+
+Infrastructure
+    1. Automated managing and monitoring computing resources
+    2. Improved training speed from optimized parallel strategies, kernel efficiency, long-context support
+    3. Unified finetuning framework supporting heterogenous distributed training backend
+    4. Reducing the deployment cost by various LLM serving accelerations such as quantization, cts batching, paged attention
+    - Computing Resources Management
+        - All training-related hyper-params are scaled at the same time seamlessly
+        - Apply the following for reliability:
+            1. Automated inspection, prediction and labeling of nodes for different kind of software/hardware error categories
+            2. Implement a task queuing system with pre-checks and the capability for fast, automatic recovery in the event of failures during training
+            3. Develop multi-task submission and management console
+    - Performance and Cost Efficiency
+        - Memory and communication restrictions are the two major technical challenges of large scale model training beyond adding more GPUs
+        - We use and improve upon the following techniques to tackle the memory and communication restrictions:
+            1. ZeRO-1 to remove the memory consumption by partitioning optimizer states cross data-parallel processes
+            2. Tensor parallel combined with pipeline parallel
+            3. Kernel fusion techniques like flash attention and JIT kernels
+            4. Topology-aware resource allocation (ranking strategy) to minimize communication across different layers of switches
+
+
+Capability Extension
+    - Discuss post-training methods to extend the Yi base model to 200k long-context, equip it with visual understanding and enhance the 6B model by depth upscaling
+Vision-Language Modeling
+    - ViT encodes, initialized with CLIP ViT-H/14 model
+    - A projection module, designed to align image features with text feature space, consists of a two-layer MLP
+    - 

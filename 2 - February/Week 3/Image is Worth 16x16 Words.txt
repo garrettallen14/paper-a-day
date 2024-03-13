@@ -22,7 +22,46 @@ Figure 1: Model overview.
 
 
 Method
+    - In model design, we follow the original Transformer as closely as possible.
+    - Scalable NLP Transformer architectures -- and their efficient implementations -- can be used almost out of the box.
+
 Vision Transformer (ViT)
-    - The standard Transformer receives as input a 1D sequence of token embeddings
-    - To handle 2D images, we reshape the image x in R(HxWxC) into a sequence of flattened 2D patches: xp in R(Nx(P^2*c))
-      where (H, W) is the resolution of the original image C is the number of channles (P, P) is the resolution of each image patch, and N = 
+    - The standard Transformer receives as input a 1D sequence of token embeddings.
+    - To handle 2D images, we reshape the image x \in R^(height*width*channel) into a sequence of flattened 2D patches xp in R^(N*(P^2*C))
+    - where (H,W) is the resolution of the original image, C is number of channels and (P,P) is the resolution of each image patch, and N = HW/P^2 is teh resulting number of patches
+    - Number of patches also serves as the effective input sequence length for the transformer.
+    - The Transformer uses constant latent vectory size D through all of its layers, so we flatten the patches and map to D dimension with a trainable linear projection
+
+    - Similar to BERT class token, we prepend a learnable embedding to the sequence of embedded patches whose state at the output serves as the image representation y
+    - Both during pre-train and fine-tune, a classification head is attached to z0L.
+    - The classification head is implemented by a MLP with one hidden layer at pre-training time and by a single linear layer at fine-tuning time
+
+    - Position embeddings are added to the patch embeddings to retain positional information
+    - We use std learnable 1d position embeddings, since we have not observed performance gains from more advanced embeddings
+
+    - Inductive Bias: We note that the Vision Transformer has much less image-specific inductive bias than CNNs
+        - In CNN's, locality, 2d neighborhood structure, and translation equivariance are baked into each layer throughout the whole model
+        - In ViT, only MLP layers are local and translationally equivariant, while the SA layers are global... the 2d neighborhood structure is used very sparingly
+        - Positional embeddings at initialization time carry no information abou the 2D positions of the patches and all spatial relations between the patches have ot be learned from scratch
+
+    - Hybrid Architecture: An alt to raw image patches, the input sequence can be formed from feature maps of a CNN
+
+Fine-tuning and higher resolution:
+    - For fine-tuning, we remove the pre-trained prediction head and attach a zero-initialized DxK feedfwd layer, where K is number of downstream classes
+
+
+Experiments
+Setup
+    - Datasets: 2012 ImageNet: 1k classes, 1.3m images... ImageNet21k: 21k classes, 14m... JFT: 18k, 303m images
+    - Model Variants: 
+        - ViT-Base: 12 layers, 768 hidden size D, MLP size 3072, 12 heads, 86m params
+        ...
+        - ViT-Huge: 32 layers, 632M params
+    - Training and Fine-tuning:
+        - Adam: B1=0.9, B2=0.999, batch size of 4096, high weight decay of 0.1
+        - Linear learning rate warmup and decay
+        - Fine-tuning use SGD w/ momentum, batch size 512
+Pre-training Data Requirements
+    - ViT performs well when pre-trained on a large JFT-300M dataset.
+    - With fewer inductive biases for vision than ResNets, how crucial is the dataset size?
+    - 

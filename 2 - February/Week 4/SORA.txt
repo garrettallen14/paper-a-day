@@ -1,0 +1,96 @@
+Sora: A Review on Background, Technology, Limitations, and
+Opportunities of Large Vision Models
+
+Abstract
+    - Trace Sora's development, investigate underlying technologies
+
+
+Introduction
+    - Sora produce up to 1-min long videos with high-quality and adhering to user instructions
+    - At the heart of Sora is a pre-trained diffusion transformer
+    - Employs spacetime latent patches as its building blocks
+    - Sora compresses a raw input video into a latent spacetime representation
+    - A sequence of latent spacetime patches is extracted from the compressed video to encapsulate both visual appearance and motion dynamics over brief intervals
+    - Patches... analogous to word tokens in language models, provide Sora with detailed visual phrases to be used to construct videos.
+    - Sora's text-to-video generation is performed by a diffusion transformer model
+    - The model iteratively denoises an image and introduces specific details according to the provided text prompt
+    - The generated video emerges through a multi-step refinement process, with each step refining the video
+
+
+Technology
+    - Sora is a diffusion transformer with flexible sampling dimensions as shown
+    - It has three parts:
+        1. Time-space compressor first maps the original video into latent space
+        2. ViT processes the tokenized latent representation and outputs the denoised latent representation
+        3. A CLIP-like conditioning mechanism receives LLM-augmented user instructions and potentially visual prompts to guide the diffusion model to generate styled or themed videos
+    - After many denoising steps, the latent representation of the generated video is obtained then mapped back to the pixel space with the corresponding decoder
+
+Data Pre-processing
+    Variable Durations, Resolutions, Aspect Ratios
+        - Sora can sample in any aspect ratio
+        - Training on data in their native sizes significantly improves composition and framing in the generated videos
+        - Empirical findings suggest that by maintaining the original aspect ratios, Sora achieves a more 
+
+    - The training of Sora aligns with the core tenet of Richard Sutton's The Bitter Lesson... leveraging computation over human-designed features leads to more effective and flexible AI systems.
+    - So, all that matters is Computation! Simplicity and computation win.
+
+Unified Visual Representation
+    - Transform all forms of visual data into a unified representation, which facilitates the large-scale training of generative models
+    - Sora patchifies videos by initially compressing videos into a lower-dim latent space, followed by decomposing this further into spacetime patches
+
+Video Compression Network
+    - Sora's visual encoder aims to reduce the dimensionality of input data, output a latent representation that is compressed both temporally and spatially
+    - The compression network is build upon a VAE or Vector Quantised-VAE
+    - It is challenging for the VAE to map visual data of any size to a unified and fixed-size latent space if resizing and cropping not used
+    - Two implementations to address this:
+    Spatial-patch Compression
+        - Transforming video frames into fixed-size patches (ViT, MAE)
+        - Temporal dimension variability: given the varying durations of training videos, the temporal dimension of the latent space representation cannot be fixed
+            - One can either sample a specific number of frames (padding or temporal interpolation may be needed for much shorter videos)
+            - OR one can define a universally extended (super long) input length for subsequent processing
+        - Utilizing pre-trained visual encoders: for processing videos of high-resolution, leveraging existing pre-trained visual encoders, such as the VAE encoder from Stable Diffusion is advisable
+            - Sora's team likely trained a compression network with a decoder (the video generator) from scratch
+            - Did this via the manner employed in training latent diffusion models
+            - Encoders can efficiently compress large-size patches (256x256) facilitating the management of large-scale data
+        - Temporal information aggregation: Since this method primarily focuses on spatial patch compression, it necessitates a mechanism for aggregating temporal information within the model
+            - This aspect is crucial for capturing dynamic changes over time and is further elaborated in subsequent sections
+    Spatial-temporal-patch Compression
+        - This technique is designed to encapsulate both spatial and temporal dimensions of video data, offering a comprehensive representation
+        - This technique extends beyond merely analyzing static frames by considering the movement and changes across frames, capturing the video's dynamic aspects
+        - The utilization of 3D convolution emerges as a straightforward and potent method for achieving this integration.
+    Figure 9: Comparison between different patchification for video compression... Spatial patchification samples nt frames and embeds each 2D frame independently following ViT.
+        Spatial-temporal patchification extracts and linearly embeds non-overlapping or overlapping tubelets that span the spatiotemporal input volume
+        - Similar to spatial-patch compression, employing spatial-temporal-patch compression with predetermined conv kernel params -- such as fixed kernel sizes, strides, output channels -- results in variations in the latent space due to differing characteristics of video inputs
+        - This variability is primarily driven by the diverse durations and resolutions of the videos being processed.
+        - To mitigate this challenge, the approaches adopted for spatial patchification are equally applicable and effective in this context.
+    - We reverse engineer the two patch-level compression approaches based on VAE or its variant like VQ-VQE. Operations on patches are more flexible to process different types of videos
+    - Sora aims to generate high-fi videos, so a large patch size / kernel size is used for efficient compression.
+    - Here, we expect that the fixed-size patches are used for simplicity, scalability, and training stability.
+    - Varying-size patches could also be used to make the dimension of the whole frames or videos in latent space consistent...
+    Figure 10: Patch packing enables variable resolution images or videos with preserved aspect ratio. 6 Token dropping somehow could be treated as data augmentation.
+
+Spacetime Latent Patches
+    - There is a pivotal concern remaining in the compression network part: How do we handle the variability in latent space dimensions?
+    - ie, the number of latent feature chunks or patches from different video types
+    - Patch n' Pack [40] is likely used
+        - Packs multiple patches from diff images in a single sequence
+        - Accomodates efficient training on variable length inputs by dropping tokens
+        - Here the patchification and token embedding steps need to be completed in the compression network, but Sora may further patchify the latent for transformer token as Diffusion Transformer does
+        - How do we pack tokens in a compact manner?
+            - Simple greedy approach is used which adds examples to the first sequence with enough remaining space.
+
+
+
+
+transforming
+video frames into fixed-size patches, akin to the methodolo-
+gies employed in ViT [15] and MAE [33]
+
+latent diffusion models
+[19, 35, 36]
+
+ViViT [38]
+
+patch n’ pack (PNP) [40]
+
+Diffusion Transformer does [4]

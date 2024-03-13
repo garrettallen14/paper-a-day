@@ -1,0 +1,36 @@
+Learning to Generate Instruction Tuning Datasets for
+Zero-Shot Task Adaptation
+
+28 Feb 2024
+
+Abstract
+    - Bonito: an open-source model for conditional task generation: the task of converting unannotated text into task-specific training datsets
+    - Goal: enable zero-shot task adaptation of LLMs on users' specialized, private data
+    - Train Bonito on a new large-scale dataset with 1.65M examples
+        - Created by remixing existing instruction tuning datasets into meta-templates
+        - Meta-templates produce training examples where the input is the unannotated text and the task attribute
+        - Output is instruction and response
+
+
+Introduction
+    - Investigating effective ways to provide domain knowledge to LLMs
+    - Self-supervision w/next word prediction requires enormous amount of training data to achieve strong performance
+    - Self-supervision can undo the benefits of instruction tuning
+    - Continued instruction tuning of models improves performance on datasets in specialized domains
+    - We aim to automate the creation of instruction tuning datasets for specialized domains
+
+    - We create Bonito, an open-source model to convert unannotated text from specialized domains into task-specific training datasets for instruction tuning
+    - Conditional task generation... the key idea is we can make a new training dataset using existing datasets for instruction tuning
+
+
+Bonito: Learning to Generate Tasks
+    - We describe the steps to create the conditional task generation with attributes dataset to train Bonito.
+    - Then, we briefly describe the procedure to create synthetic tasks for the target unannotated texts to adapt language models
+Task Generation Key Properties:
+    1. Model should take text as input and generate high-quality tasks that require minimal cleaning or post-processing
+    2. Model should adhere to the task type like extractive QA or Nat language inference task.
+    3. Model should generate diverse tasks for the exact text with varying styles.
+
+Conditional Task Generation with Attributes (CTGA):
+    - The dataset contains 1.65 million examples derived from P3 by annotating 323 prompt templates from 39 datasets with 16 task types
+    - The prompt templates are used to create the meta-templates, which in turn, generate the training examples

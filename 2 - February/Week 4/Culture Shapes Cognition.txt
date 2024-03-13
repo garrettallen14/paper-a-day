@@ -1,0 +1,18 @@
+A Dialogical Account of Deductive Reasoning  
+as a Case Study for how Culture Shapes Cognition
+
+Abstract
+    - Social, cultural practices may influence how humans reason
+    - Will focus particularly on deductive reasoning and address the question of whether learned to be mastered or arise spontaneously in untrained reasoners.
+    - Deductive skills arise predominantly by means of specific training, "schooling"
+    - When it comes to deduction, the onset of deductive reasoning in an individual reasoner, recapitulates the historical emergence of the concept of deduction.
+
+    - But games can cue untrained reasoners to perform closer to the deductive canons in experiments
+        - This also implies some sort of training!
+
+
+Introduction
+    - Connections between argumentation (a cultural practice) and reasoning
+    - Begin by presenting a philosophical reconceptualization of the concept of deduction inspired by its emergence in the context of specific dialogical practices in ancient Greece
+    - Next, I discuss alternative accounts of the connections between culture, argumentation and reasoning... point out differences between my approach and these other proposals
+    - I then review the experimental findings on deductive reasoning
