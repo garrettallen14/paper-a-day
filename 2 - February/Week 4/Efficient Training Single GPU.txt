@@ -1,0 +1,70 @@
+Gradient Accumulation: 
+    - Training models with larger batch sizes than what might be feasible given hardware constraints
+    - Model's weights are normally updated after computing the gradients from a single batch of data
+    - Batch size is limited by GPU, hardware... larger batches require more memory for both the data and the gradients
+    - But, larger batches improve the stability and performance of the training process
+    - Gradient accumulation circumvents this limitation by dividing the batch into smaller mini-batches that fit into the available memory
+    - The model processes each mini-batch sequentially, but instead of updating the weights after each mini-batch, the gradients are accumulated across multiple mini-batches
+    - After processing the equivalent of the large batch, the accumulated gradients are used to update the model's weights
+
+Gradient Checkpointing:
+    - Another memory optimization technique
+    - In the forward pass, activations are computed at each layer
+    - These activations are stored in memory for use during the backward pass to compute gradients
+    - For very deep networks, storing all these activations can consume a substantial amount of memory
+    - Gradient checkpointing selectively stores only a subset of the intermediate activations during the forward pass
+    - During the backward pass, the algorithm recomputes the non-stored activations on the fly as needed for gradient computation
+
+Mixed Precision Training:
+    - Uses both 16 and 32 bit floating point to speed up computation and memory footprint
+
+Batch Size:
+    - Larger batch size can utilize parallel processing, but requires far more memory
+    - Smaller batches result in more updates per epoch and can exploit hardware efficiencies
+    - Smaller batches are less demanding on memory and can provide a regularization effect through noisier gradients, but may be slower to train
+
+
+Load Model
+    - When a model is loaded to the GPU, kernels are also loaded. This can take up 1-2GB of memory on its own
+Anatomy of Model's Operations
+    - We use much more memory than the size of the model to train
+    - Transformers architecture includes 3 main groups of operations.
+    1. Tensor Contractions
+        - Linear layers and components of Multi-Head Attention all do batched matrix-matrix mult. These are the most compute-intensive part of training a Transformer
+    2. Statistical Normalizations
+        - Softmax and layer normalization are less compute-intensive than tensor contractions, and involve one or more reduction operations, the result of which is then applied via a map
+    3. Element-wise Operators
+        - These are the remaining operators: biases, dropout, activations, residual connections
+
+Anatomy of Model's Memory
+    - Training the model uses much more memory than just putting the model on the GPU
+    - A typical model trained in mixed precision with AdamW requires 18 bytes per model parameter plus activation memory
+    - For inference there are no optimizer states and gradients, so we can subtract those => 6 bytes per model per parameter for mixed precision inference, plus activation memory
+    - There are many components during training that use GPU memory
+        1. Model weights:
+            - (32 bits/8 bits per byte) = 4 bytes * num of parameters for fp32 training
+            - (16 bits/8 bits per byte) = 2 + 4 bytes = 6 bytes * num params for mixed precision training
+            - (8 bits/8 bits per byte) = 1 byte * num of parameters for 8 bit model
+            - (4 bits/4 bits per byte) = 0.5 byte * num of parameters for 4 bit model
+        2. Optimizer states:
+            - 8 bytes * num parameters for normal AdamW (maintains 2 states)
+            - 2 bytes * num parameters for 8-bit AdamW optimizers like bitsandbytes
+            - 4 bytes * num parameters for SGD w/momentum (maintains only 1 state)
+        3. Gradients
+            - 4 bytes * num parameters for either fp32 or mixed precision training (gradients always kept in fp32)
+        4. Forward activations saved for gradient computation
+            - Size depends on many factors including:
+                - Sequence length
+                - Hidden size
+                - Batch size
+        5. Temporary memory
+            - Must be careful to strategically free temporary variables when no longer needed
+        6. Functionality-specific memory
+    - There are potentially a few places where we could save GPU memory or speed up operations
+
+DataLoader
+    - One of the important requirements to reach great training speed is the ability to feed the GPU at the maximum speed it can handle
+    - By default, everything happens in the main process and it might not be able to read the data from disk fast enough
+        - DataLoader(pin_memory=True,...) => ensures that the data gets preloaded into the pinned memory on CPU and typically leads to much faster transfers from CPU to GPU memory
+        - DataLoader(num_workers=4,...) => spawn several workers to pre-load data faster -- during training watch the GPU utilization stats, and if its far from 100% experiment with raising # workers.
+        - 

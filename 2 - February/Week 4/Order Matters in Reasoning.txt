@@ -1,0 +1,33 @@
+Premise Order Matters in Reasoning with
+Large Language Models
+
+14 Feb 2024
+
+Abstract
+    - Permuting the premise order can cause a performance drop of over 30%
+    - We release the benchmark R-GSM to examine the ordering effect for mathematical problem-solving, and we again observe a significant drop in accuracy
+
+
+Benchmarks
+    - LLMs are weak when the proof is long and requires knowledge of multiple deduction theorems
+    - Focus on a confined problem space from SimpleLogic (propositional logic problems with definite clauses)
+    - Each problem includes: 
+        (1) a set of facts A1,...,An that hold true;
+        (2) a set of rules of the form "If X, then Y", "If X0 and X1, then Y", ...
+        (3) a conclusion "C is True" to be proved.
+    - As opposed to SimpleLogic -- which formulates the problem as a binary classification task -- our benchmark, every problem has a ground-truth label of True. We consider the prediction to be correct only when the generated proof is completely valid.
+    - The LLM is required to produce the step-by-step deduction that leads to the conclusion, any hallucination of non-existent facts and rules is considered erroneous
+
+    - For each logical reasoning problem, we synthetically generate variants with different premise orders
+    - We denote the order conforming to the ground truth proof as the forward order
+    - A premise ordering that is more random increases the task difficulty
+
+    - We categorize different premise orders based on their Kendall tau distance t to the fwd order, normalized into the range [-1,1]
+    - t=1 is fwd order, t=-1 is backward order.
+    - t=0 suggests there is no strong correlation between premise order in the problem description and the proof
+    - We measure the premise order effect by varying the following two factors:
+        1. Number of rules required in the proof
+        2. Number of distracting rules
+    
+    - We generate 200 problems for each number of required rules. Considering different premise orders and numbers of distracting rules, each problem includes 15 variants, resulting in a total of 27K problems in our benchmark
+    

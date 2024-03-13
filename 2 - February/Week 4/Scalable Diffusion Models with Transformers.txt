@@ -1,0 +1,21 @@
+Scalable Diffusion Models with Transformers
+
+2 Mar 2023
+
+Abstract
+    - Train latent diffusion models of images, replacing the commonly used U-Net backbone w/a transformer
+    - Analyze the scalability of DiTs through the lens of fwd pass complexity as measured by Gflops
+    - DiTs w/higher Gflops--through increased transformer depth/width or number of input tokens--consistently have lower FID.
+    - Our largest DiT-XL/2 models outperform all prior diffusion models
+
+
+Introduction
+    - We study the scaling behavior of transformers wrt network complexity vs sample quality
+    - We show that by constructing and benchmarking the DiT design space user the Latent Diffusion Models (LDMs) framework, we can successfully replace the U-Net backbone with a transformer
+    - DiTs are scalable architectures for diffusion models: theres a strong correlation between network complexity vs sample quality
+    - By simply scaling-up DiT and training an LDM with a high-capacity backbone, we are able to achieve a SOTA result of 2.27 FID on the class conditional 256x256 ImageNet benchmark
+
+Denoising diffusion probabilistic models (DDPMs)
+    - Diffusion and score-based generative models have been particularly successful as generative models of images
+    - In many cases outperforming GANs
+    - 
