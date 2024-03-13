@@ -1,0 +1,27 @@
+Matryoshka Representation Learning
+
+8 Feb 2024
+
+Abstract
+    - Computational and statistical constraints for each downstream task are often unknown
+    - Rigid fixed-capacity representations can be either over or under-accomodating
+    - Can we design a flexible representation that can adapt to multiple downstream tasks w/varying computational resources?
+    - Matryoshka Representation Learning (MRL): encodes information at different granularities
+        - Allows a single embedding to adapt to the computational constraints of downstream tasks
+    - MRL minimally modifies existing representation learning pipelines
+    - Imposes no additional cost during inference and deployment
+    - MRL learns coarse-to-fine representations that are at least as accurate and rich as independently trained low-dim representations
+    - Flexibility within representations offer:
+        - 14x smaller embedding size for ImageNet-1K classification
+        - 14x real-world speed-ups for large-scale retrieval
+        - 2% accuracy improvements for long-tail few-shot classification
+    - MRL code and pretrained models are open-sourced
+
+Introduction
+    - Trained representations are fundamental building blocks of real-world ML systems
+    - Trained once and frozen, d-dimensional representations encode rich information
+    - Deployment of deep representations:
+        1. expensive yet constant-cost fwd pass to compute the representation
+        2. utilization of the representation for downstream tasks
+    - Compute costs for the latter part of the pipeline scale with the embedding dimensionality, as well as data size (N) and label space (L)
+    - 
