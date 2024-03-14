@@ -1,0 +1,27 @@
+Building Meta’s GenAI
+Infrastructure
+
+12 March 2024
+
+Abstract
+    - Announcing two 24k GPU clusters
+    - Sharing details on hardware, storage, design, performance helping us extract high throughput and reliability
+    - Use this cluster design for Llama 3 training
+    - Build these clusters on top of Grand Teton, OpenRack and PyTorch
+    - By end of 2024, aiming to continue to grow our infrastructure build-out that will include 350,000 NVIDIA H100 GPUs
+    - Total Meta portfolio equivalent to ~600,000 H100s
+
+    - To lead in developing AI => leading investments in hardware infrastructure
+    - Sharing details on two versions of our 24,576-GPU data-center scale cluster at Meta
+    - These clusters support our current and next gen AI models
+
+
+Under the Hood
+    - Focused on building end-to-end AI systems with a major emphasis on researcher and developer experience and productivity
+Network
+    - We built one cluster with a remote direct memory access (RDMA) over converged ethernet (RoCE)
+    - The other uses NVIDIA Quantum2 InfiniBand fabric
+    - Testing the differences
+Compute
+    - Both clusters are built using Grand Teton, an in-house open GPU hardware platform
+    - Grand Teton allows us to build new clusters in a way that is purpose-built

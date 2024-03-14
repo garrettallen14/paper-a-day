@@ -1,0 +1,186 @@
+Learning and Leveraging World Models in Visual
+Representation Learning
+
+1 Mar 2024
+
+Abstract
+    - JEPA is a promising self-supervised approach
+    - Learns by leveraging a world model
+    - Previously limited to predicting missing parts of an input
+    - We explore how to generalize JEPA prediction task to a broader set of corruptions
+    - Image World Models: goes beyond masked image modeling, learns to predict the effect of global photometric transformations
+    - We study the recipe of learning performant IWMs
+    - Show IWMs rely on three key aspects:
+        1. conditioning
+        2. prediction difficulty
+        3. capacity
+    - The predictive world model learned by IWM can be adapted through finetuning to solve diverse tasks
+    - A fine-tuned IWM wm matches or surpasses the performance of previous self-supervised methods
+    - Learning w an IWM allows one to control the abstraction level of the learned representations
+    - Learns invariant representations such as contrastive methods, or equivariant representations such as masked image modeling
+
+
+Introduction
+    - Learning and leveraging WMs is common in RL
+    - World models are commonly learned by training a network to predict the consequence of an action
+        - Consequences from input space or latent space
+    - Given such a broad view of world modeling, we seek to explore whether learning and leveraging WMs can also be beneficial in visual representation learning
+
+    - A wide family of self-supervised learning approaches are based on encoder-predictor architectures
+        - Encoder-predictor networks are trained to predict 
+            - Transformations of the data (masked image modeling)
+            - Joint-embedding architectures
+            - Equivariant prediction objectives
+    - If we regard transformations as "actions" then we can easily relate self-supervised learning approaches to world-modeling in RL
+
+    - Ex. The decoder network used in masked autoencoders can be thought of as a generative image world model
+        - It learns the effect of the "masking action" T(a) on an image y.
+        - In this case, the transformation parameters a (locations of masked image patches) are also fed to the decoder network
+    - JEPAs operate similarly, but can be seen as learning a latent image world model, which learns to infer the effect of the masking action on the representation of an image
+    - If one does not condition the predictor on the transformation parameters, then the best we can hope for is learning representations that are invariant to the data transformations
+    - Despite some of the apparent similarities between World Modeling in RL and SSLearning from images:
+        - The learned WM in RL is typically leveraged on downstream tasks
+        - In contrast, the learned WM in Self supervised learning is typically discarded after pretraining, as the main focus is on the representation quality of the learned encoder
+        - This stems from the fact that most downstream tasks in CV are unrelated to the WM task
+        - Common tasks of interest focus on discriminative aspects
+            - Even when the predictor learns useful information, it is simply discarded
+        - We postulate: discarding the WM in representation learning is wasteful, and just like in RL, we can reuse this WM for downstream tasks
+    - This motivates us to study learning world models as a paradigm for representation learning
+    - Introduce Image World Models (IWM)
+        - Learns good representations
+        - Strong reusable world models
+    - IWM is based on JEPA and extends the usual latent inpainting to also include photometric transformations
+        - Allows us to demonstrate the key aspects in learning a capable world model, which include the choice of predictor conditioning, strength of transformations, and capacity of the world model
+    - We focus on leveraging the learned world model for downstream tasks, and find that it can be leveraged through finetuning
+        - Specifically, we find that finetuning the WM on top of the frozen encoder for downstream tasks provides improved performance over encoder finetuning
+        - This is also achieved at a fraction of the cost and number of finetuned parameters
+    - Moreover, only the world model learned by IWM exhibits this behavior: finetuning a randomly initialized network of the same architecture as the predictor does not provide such a performance improvement
+    - The WM should be a key part of the inference process, instead of being discarded
+    - We further show that the WM can be finetuned to solve multiple tasks at once, further improving efficiency
+
+    - The capacity given to the WM has a direct influence on the level of abstraction of the learned representations
+    - If the predictor is the identity, the network will capture high-level semantic information, as it will only learn to encode what is shared between the input y and its transformation x.
+    - This is the driving force behind the representation quality of contrastive learning
+        - Transformations are selected to only preserve the semantics of the image
+    - On the other hand, as the predictor has more capacity and can effectively invert the effect of the transformations, the output of the encoder can retain more information about its input
+    - These two ideas are at the core of equivariant representation learning:
+        - A predictor that can apply transformations effectively is equivariant
+        - A predictor that cannot is invariant
+    - We find that a world model that is invariant to transformations performs better in linear evaluation
+    - One that is equivariant correlates with better world model finetuning
+    - This gives a tradeoff between ease of adaptation and raw performance
+    - As such, learning representations by learning a world model gives us flexibility in the properties of the representations, making this an attractive representation learning framework
+    
+    - We leverage JEPAs to learn an Image World Model (IWM)
+        - Complexity of transformations, conditioning on transformations, and capacity of the predictor
+    - We show that equivariant world models can be leveraged for discriminative tasks
+        - Finetuning the predictor leads to better performance compared to encoder finetuning, at a fraction of the cost
+        - Can be finetuned on several tasks at once
+    - We show that controlling the capabilities of the world model gives us representations with different properties
+        - An invariant world model gives us more abstract representations and performs better in linear evaluation, akin to contrastive learning
+        - An equivariant world model preserves more information about the input, giving better peak performance with predictor finetuning
+
+
+Related Works
+    - Augmentation invariant Self-Supervised Learning
+        - At the core of contrastive methods lies augmentation invariance
+        - Multiple augmented views of an image should lead to the same representation in latent space
+        - At the core: how to avoid representations collapsing
+        - Sample-contrastive methods avoid this phenomenon by pushing away representations coming from other data points
+        - Dimension-contrastive methods avoid collapse by considering the representations as a whole and encouraging maximization of information content
+        - Both dimension and sample contrastive methods have been shown to lead to very similar representations.
+        - Prediction based methods learn by predicting the augmented representations, but they also lead to invariant representations due to a lack of conditioning on the transformations
+    - World Modeling in visual representation learning
+        - World modeling is a successful paradigm in RL or video prediction, it has yet to show clear benefits in representation learning
+        - Multiple families of approaches can be reframed in light of this
+        - Equivariant self-supervised learning methods aim to predict transformations of data when such transformations form a group
+        - Masked image modeling learns representations by predicting masked parts of the image
+            - Decoders can be seen as instantiations of a world model
+        - JEPAs predict masked parts of the image, but in the latent space
+        - Generative approaches in representation learning seem promising, but their performance still remains below contrastive or MIM appraoches
+        - There are negative correlations between generation quality and representation quality
+        - One shared aspect among these works is that the world model (predictor or decoder) is either discarded for evaluations, or only used to augment data
+        - We propose we can learn a world model that is reusable for downstream tasks while still learning high-quality representations
+
+
+Method
+    - Similar to I-JEPA, but the predictor is the instantiation of the world model
+    - We consider a world model to be capable if it can apply transformations in latent space, thus learning equivariant representations
+    - A capable world model is equivariant. A poor world model is invariant
+    - Approaches which learn equivariant representations using contrastive methods often have to rely on an invariance loss to increase representation quality
+    - JEPA does not have this drawback
+        - The semantic aspect of the representation is learned through latent inpainting
+    - Working in latent space further allows the network to remove unnecessary information, or information that is too hard to predict
+    - To train IWM, need to generate source and target views -- x and y respectively -- from an image I.
+    - Target y:
+        - The target view is generated by applying a random horizontal flip, a crop, and a color jitter to the original image I
+    - Source x:
+        - We start from the target y which we further transform.
+        - We apply another color jitter, but also some destructive augmentations: grayscale, blur, solarization
+        - We mask parts of the image
+    - Action a:
+        - We denote by ax->y the transformation parameters associated with the transformation of x to y
+        - ie: We invert the initial transformation process
+        - ax->y contains information bout the color jitter difference between x and y as well as information on whether or not each destructive augmentation was applied
+    - World modeling with ptheta:
+        - The source and target are then fed respectively through an encoder and its EMA
+        - EMA network is crucial to avoid collapsed solutions
+        - To condition the predictor, acting as our world model, it is fed with geometric information about the target in the form of mask tokens
+        - Predictor:
+            - Inputs:
+                - Embedded source patches: xc
+                - Transformation parameters: ax->y
+                - Mask tokens: ma
+            - Objective:
+                - Match ptheta(inputs) = z`y to zy
+Architecture and Nomenclature:
+    - We use a ViT-B/16 architecture 
+    - Predictor is based on the same architecture with different depth and embedding dimension
+
+
+Learning an Image World Model for Representation Learning
+Evaluating the Quality of the World Model
+    - Learning equivariant representations and learning a world model are closely related problems
+    - We can borrow metrics from the equivariance literature to evaluate the quality of our trained world model
+    - Mean Reciprocal Rank (MRR) as our main metric
+    - We generate a bank of augmented target images (256 in practice)
+    - We feed the representation of the clean image through the predictor with the goal of predicting the target image
+    - We then compute the distance between the prediction and the augmented representation bank from which we get the rank of the target in the NN-graph
+    - Averaging the reciprocal ranks over multiple images and transformations gives us MRR which tells us about the quality of the world model
+
+    - An MRR close to 1 means the wm is able to apply the transformation. 0 = not
+Learning a strong IWM
+    - To build a performant IWM, we isolate three key aspects:
+        1. Conditioning the predictor on transformations (or actions)
+        2. Controlling the complexity of the transformations
+        3. Controlling the capacity of the predictor
+    - Not caring properly for either of these leads to invariant representations
+World Model Conditioning
+    - Study two approaches:
+        - Sequence conditioning:
+            - Simply add tokens representing the transformation to the input of the predictor
+            - Seems straightforward, but needs to be implemented in a way that breaks the permutation equivariance of the transformer predictor
+            - Every token is fed through a unique linear layer that allows the network to transform the information in a way that can be disambiguated by the predictor
+        - Feature conditioning:
+            - Mix the information between the transformation and mask tokens by adding the conditioning as extra dimensions
+            - Then we feed the mask tokens through a 1x1 conv neural network to mix the information in the mask tokens and map back to the right dimensionality
+        - No conditioning leads to a world model that cannot apply transformations whereas both conditioning using the sequence or feature axes leads to good world models
+        - We use the feature conditioning in practice as it leads to higher downstream performance
+Transformation Complexity:
+    - We rely on data augmentation as used in contrastive approaches, consisting of color jitter (brightness, hue, contrast, saturation, ...)
+    - We refer to the last three as destructive as they remove information.
+    - Beyond the set of transformations modeled, their strength must also be adequate to learn a useful world model
+    - If the prediction task is too easy, then the predictor will not learn anything useful
+    - The stronger the augmentations, the easier it is to learn a strong world model
+World Model Capacity:
+    - If the transformation is complex, the predictor needs more capacity to be able to apply it
+    - Capacity is a crucial factor for this reason
+    - A deeper predictor enables us to learn a strong world model on a wider range of augmentations
+    - This predictor is key to the success of IWM
+Visualizing Predictions:
+    - We compare the predicted representations to a bank of transformed images and look at the image associated to the prediction's nearest neighbor
+
+
+Experimental details
+Pretraining:
+    

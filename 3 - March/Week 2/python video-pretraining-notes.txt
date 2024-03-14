@@ -1,0 +1,78 @@
+data_loader.py
+
+def composite_images_with_alpha(im1,im2,alpha,x,y)
+    - Draw im1 over im2 at location x,y using alpha as the opacity for im2
+
+def data_loader_worker(tasks_queue, output_queue, quit_workers_event)
+    - Reads the cursor image from CURSOR_FILE
+        tasks_queue.get()
+        trajectory_id, video_path, json_path = task
+        video = cv2.VideoCapture(video_path)
+        attack_is_stuck = False
+            - In some recordings, the game seems to start with attack always down from the beginning
+            - Not an issue for us I dont think
+        last_hotbar = 0
+
+        open json_path as json_file:
+
+        step_data = json_data
+
+        action, is_null_action = json_action_to_env_action(step_data)
+
+        ret, frame = video.read()
+
+        if ret:
+            - we skip null actions as done in the VPT paper
+            if step_data["isGuiOpen"]:
+                camera_scaling_factor = frame.shape[0] / MINEREC_ORIGINAL_HEIGHT_PX
+                cursor_x = int(step_data["mouse"]["x"] * camera_scaling_factor)
+                cursor_y = int(step_data["mouse"]["y"] * camera_scaling_factor)
+                composite_images_with_alpha(frame, cursor_image, cursor_alpha, cursor_x, cursor_y)
+        output_queue.put((trajectory_id, frame, action), timeout=QUEUE_TIMEOUT)
+
+DataLoader:
+    - Generator class for loading batches from a dataset
+    - Returns a single step at a time per worker, no sub-sequences
+    - Idea: You keep track of the model's hidden state and feed that in, along with one sample at a time
+    - Inputs:
+        - dataset_directory
+        - number_workers
+        - number_epochs
+        - batch_size
+        - max_queue_size
+    - Core Components:
+        - Unique ids
+        - Demonstration Tuples:
+            - Create tuples of (video_path, json_path) for each unique_id
+        - Repeat dataset for n_epochs times, shuffling the order for each epoch
+            - random.shuffle(demonstration_tuples)
+            - self.demonstration_tuples += demonstration_tuples
+        - task_queue = Queue()
+        - for trajectory_id, task in enumerate(demonstration_tuples):
+            - task_queue.put((trajectory_id), *task)
+        - for _ in range(n_workers):
+            - task_queue.put(None)
+        - output_queues = [Queue(maxsize=max_queue_size) for _ in range(n_workers)]
+        - quit_workers_event = Event()
+        - processes = [
+            Process(
+                target=data_loader_worker,
+                args=(
+                    task_queue,
+                    output_queue,
+                    quit_workers_event
+                ),
+                daemon=True
+            )
+            for output_queue in self.output_queues
+        ]
+    - Processes:
+        - Next:
+            - batch_frames = []
+            - batch_actions = []
+            - batch_episode_id = []
+
+            - for i in range(self.batch_size):
+                - workitem = self.output_queues[self.n_steps_processed % self.n_workers].get(timeout=QUEUE_TIMEOUT)
+                
+        

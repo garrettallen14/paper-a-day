@@ -1,0 +1,57 @@
+Beyond Chinchilla-Optimal:
+Accounting for Inference in Language Model Scaling Laws
+
+(Cited in the 01.AI paper)
+13 Dec 2023
+
+Abstract
+    - LLM scaling laws:
+        - Empirical formulas estimating changes in model quality
+        - Measure based on increasing parameter count and training data
+    - These formulas neglect to include the cost of inference
+    - We modify the Chinchilla scaling laws to calculate optimal LLM param count / pretraining data size
+    - Conduct analysis both in terms of compute budget and real-world costs
+    - LLMS researchers expecting reasonably large inference demand (~1B requests) should train models smaller and longer than Chinchilla-optimal
+
+
+Introduction
+    - How does one minimize the cost required to produce and serve a high quality model?
+    - Chinchilla scaling laws only account for the computational costs of training
+    - LLaMA models were trained on 1-2 trillion tokens
+    - Since inference costs are lower for smaller models, the extra training compute required to train LLaMA-style pays off after enough inference requests
+
+    - Prior work has discussed the training-inference compute trade-off
+    - There is lower inference cost of smaller models as inspiration for the LLaMA series
+
+    - We modify Chinchilla scaling laws to account for inference costs, calculating the optimal parameter and training token counts
+
+
+Computational Optimality
+    - Seek to minimize the computational costs of a model
+    - Closely follow the methodology using pretraining crossentropy loss as a proxy for quality
+    - Floating point operations (FLOPs) as our unit of computational cost
+    
+    - We model pretraining loss L(N, Dtr) in terms of num parameters, N, and pretraining tokens Dtr according to Chinchilla paper's third scaling law:
+        - L(N, Dtr) `= E + A/N^alpha + B / Dtr^beta (1)
+        - The Chinchilla paper derived the parametric loss function in Eq. 1
+        - Fit values for A,B,E,alpha,beta based on authors' empirical training results
+        - The best-fit values for these constants depend on the exact dataset and model architecture
+    - We assume that conditioned on pre-training loss, inference demand is independent of model size and token count
+    - Ie: models of equivalent quality but different parameter counts will see the same requests
+
+    - Let TFLOPs(N,D) and IFLOPs(N,D) be the num of FLOPs required to train and run inference on a model w N parameters on D tokens
+    - Denote # of tokens (input + output) of a single inference request i as Dinf(i)
+    - Let Dinf=sum(Dinf(i))
+        - Be the sum of all tokens over all inference requests
+    
+    - We are interested in minimizing the sum of our training and inference FLOPs under the constraint L(N,Dtr) = l
+    
+    - Optimal N, Dtr for l, Dinf = argmin N,Dtr|L(N,Dtr)=l 6NDtr + 2NDinf
+    - This is the "converse" of the Chinchilla optimization problem
+    - In the Chinchilla paper, the authors assumed a fixed compute budget, found N* and Dtr* that minimized pretraining loss
+    - Our objective is to FIX pretraining loss and find N* Dtr* that MINIMIZE compute costs
+
+    - Our total computation cost depends on the inference demand over the life of the model
+    - For inference Dinf > 0, the optimization problem is intractable
+    - We computationally solve for N* and Dtr* across a range of values l and Dinf using Newton root-finding method
+    - 
