@@ -1,0 +1,20 @@
+TubeR: Tubelet Transformer for Video Action Detection
+
+10 May 2022
+
+Abstract
+    - Spatio-temporal video action detection
+    - Directly detect an action tubelet in a video by simultaneously performing action localization and recognition from a single representation
+    - TubeR learns a set of tubelet-queries and utilizes a tubelet-attention module to model the dynamic spatio-temporal nature of a video clip
+        - Reinforces the model capacity compared to using actor-positional hypotheses in the spatio-temporal space
+    - For videos containing transitional states or scene changes, we propose a context aware classification head to utilize short-term and long-term context to strengthen action classification
+    - Use an action switch regression head for detecting the precise temporal action extent.
+    - TubeR directly produces action tubelets with variable lengths and even maintains good results of long video clips
+
+
+Introduction
+    - This paper tackles the problem of spatio-temporal human action detection
+    - Two approaches in the literature:
+        - Frame-level detection
+        - Tubelet-level detection
+    - Frame-level detect and classify the action independently on each frame

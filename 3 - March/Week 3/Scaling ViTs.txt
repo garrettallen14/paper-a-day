@@ -1,0 +1,48 @@
+Scaling Vision Transformers
+
+20 Jun 2022
+
+Abstract
+    - ViTs are great
+    - Scale is a primary ingredient in attaining excellent results
+    - Understanding scaling properties is a key to designing future generations effectively
+    - We scale ViT models and data both up and down and characterize the relationships between error rate, data and compute
+    - We refine the architecture and training of ViT, reducingmemory consumption and increasing accuracy of resulting models
+    - We successfully train a ViT model with two billion parameters, attaining a new SOTA on ImageNet of 90.45% top-1 accuracy
+    
+
+Introduction
+    - We experiment with models ranging from 5m to 2b parameters
+    - Datasets ranging from 1m to 3b training images
+    - Compute budgets ranging from >1 TPUv3 core-day to beyond 10k core-days
+    
+    - We create an improved large-scale training recipe
+    - Investigate training hyper-parameters and discover subtle choices
+    - Very strong L2 regularization, applied to the final linear prediction layer only, results in a learned visual representation with strong few-shot transfer capabilities
+
+    - A single example per class on the ImageNet dataset (with 1000 classes), our best model achieves 69.52% accuracy
+    - With 10 examples per class it attains 84.86%
+
+    - We substantially reduce the memory footprint of the original ViT model
+    - We train a model with 2b params and attain a new SOTA 90.45% on ImageNet
+
+
+Core Results
+    - We first present our main results on scaling trends
+    - Compute is measured in TPUv3 core-days
+    - We measure (i) few-shot transfer via training a linear classifier on frozen weights
+    - (ii) transfer via fine-tuning the whole model on all data, both to multiple benchmark tasks
+Scaling up Compute, Model and Data together
+    - Doing all three improves representation quality
+    - At the largest size, the models start to saturate and fall behind the power law frontier
+    - Representation quality can be bottlenecked by model size
+        - Small models are not able to benefit from either the largest dataset or compute resources
+    - Large models benefit from additional data, even beyond 1B images
+        - When scaling up the model size, the representation quality can be limited by smaller datasets
+        - When increasing the dataset size, we observe a performance boost with big models, but now small ones
+        - The largest models even obtain a performance improvement the training set size grows from 1b to 3b images
+Double-saturating power law
+    - Fig 2: Representation quality, measured as ImageNet finetune and linear 10-shot error rate, as a function of training compute
+    - A saturating power-law approximates the pareto frontier fairly accurately
+    - For over two orders of magnitude of compute, the relationship between compute and performance follows a power-law
+    

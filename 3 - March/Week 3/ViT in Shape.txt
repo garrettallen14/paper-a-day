@@ -1,0 +1,49 @@
+Getting ViT in Shape:
+Scaling Laws for Compute-Optimal Model Design
+
+9 Jan 2024
+
+
+sdepth ≈ 0.45, swidth ≈ 0.22, and sMLP ≈ 0.6
+
+- MLP dimension should be scaled faster than depth, and depth faster than width.
+- The size of ViT, as quantified by its parameter count, is scaled more slowly than the allocated compute. 
+        - More precisely, for every increment in compute by a factor of 10, the parameter count of the optimized model shape increases by a factor of ≈2.5.
+
+
+
+Abstract
+    - We advance and refine scaling laws to infer compute-optimal model shapes, such as width and depth
+    - Implement this for ViTs
+
+
+Introduction
+    - The benefit of scale follows a predictable power law
+        - The performance f(x) ~ bx^-c + e
+        - b,c > 0 and e is the irreducible loss
+    - The simple power-law relation becomes more complicated when compute is considered
+    - Should pick a model size that maximizes performance subject to compute budget constraint
+    - Shape plays a pivotal role in scaling behavior outside Language Modeling
+    
+    - We present SoViT: a shape-optimized vision transformer
+    - Matches the performance of much larger models despite being pre-trained with equal compute
+    - Our recipe allows us to extrapolate without having to conduct an extensive set of experiments
+    
+    - Small vision models can perform on par with larger ones with the same compute if we optimize their shape
+    
+    - MLP is scaled faster than depth, depth scaled faster than width
+    - Compute-optimal ViTs are smaller (by parameter count) than previously assumed
+
+Figure 1: Predicted efficiency frontier. 
+In large models, optimal shapes follow a similar trajectory in both image classification and multimodal tasks
+
+
+Scaling Strategy:
+Notation: 
+- We begin with a formal description. A neural architecture as a tuple x = (x...xd) in Nd containing D shape dims
+- We denote compute such as GFLOPs by t.
+- f is a performance metric (downstream ImageNet 10-shot error rate)
+
+- f(x,t) results from pretraining an architecture x for a fixed compute budget t
+- We always assume that f corresponds to a loss, meaning lower values are better.
+

@@ -1,0 +1,24 @@
+Rotary Position Embedding
+for Vision Transformer
+
+20 Mar 2024
+
+Abstract
+    - RoPE performs remarkably on LMs, especially for length extrapolation of Transformers
+    - The impacts of RoPE on CV domains have been underexplored
+    - Provide a comprehensive analysis of RoPE when applied to ViTs
+    - Practical implementations of RoPE for 2D vision data
+    - RoPE demonstrates impressive extrapolation performance
+
+
+Introduction
+    - Begin with 1D to 2D expansion of RoPE to cope with images rather than original language inputs
+    - Although 2D RoPE using axial frequencies was used in pioneer works
+        - We argue that it lacks the ability to handle diagonal directions
+        - Diagonal directions are preferred in convolution networks by the square kernel
+    - We propose to use mixed axis frequencies for 2D RoPE: RoPE-Mixed
+    - Since RoPE-Mixed uses frequencies for both axes as learnable parameters of the network, it effectively handles diagonal direction
+    - More suitable for ViT's attention than Axial 2D RoPE
+    - 2D RoPE is a beneficial option as a position embedding for transformers with an impressive performance improvement on high-resolution images
+    - We believe our study demonstrates the impact of 2D RoPE in vision domains and contributes to future research
+

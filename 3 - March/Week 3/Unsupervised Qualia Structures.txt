@@ -1,0 +1,39 @@
+Is my “red” your “red”?: 
+Unsupervised alignment of qualia structures via optimal transport
+
+24 Apr 2023
+
+Abstract
+    - To what extent are sensory experiences equivalent between individuals?
+    - Intersubjectively comparing the similarity relationships of sensory experiences, "qualia structures"
+    - We present an unsupervised optimal transport method for assessing the similarity of qualia structures
+    - Qualia structures can be "correctly" aligned across participants solely on similarity relationships
+    - Presents quantitative evidence for the structural equivalence of qualia of color and natural objects across individuals
+    - Applicable to any modality of experience, enabling general structural exploration of subjective experiences
+
+
+- The question of inter-subjective equivalence of sensory experience is a central concern in the study of consciousness
+- Some consider the question impossible to determine
+- Indirect characterization of experience is empirically possible
+- Approach: analyze reports of subjective similarities between sensory experiences
+- Relationships between sensory experiences, such as similarity, allow structural investigation of phenomenal consciousness
+
+Qualia Structure:
+    1. Collecting detailed subjective reports about the relationships between sensory experiences (qualia) through psychophysics experiements capturing the relational structure
+    2. Comparing qualia structures between participants without assuming correspondence between individual qualia... then evaluating the extent to which the qualia structures are similar
+    - To demonstrate the utility, we investigate two distinct datasets
+        - Color similarity judgements
+        - THINGS: similarity judgements of naturalistic objects previously collected and made publicly available
+    - We initially illustrate the qualia structure mainly using the color similarity judgement data as an example
+
+Collecting Detailed Subjective Reports
+    - Ask participants to report (dis)similarity between 93 unique colors
+    - Obtain vector embeddings of the colors as an approximation of the qualia structure
+
+Comparing Qualia Structures between participants
+    - Purely unsupervised
+    - Gromov-Wasserstein optimal transport (GWOT) method
+        - Aims to find the optimal mapping between two point clouds in different domains based on the distance between points within each domain
+        - Aligns the point clouds according to the principle that a point in one domain should correspond to another point in the other domain that has a similar relationship to other points
+        - Training objective: Minimize Gromov-Wasserstein distance (GWD)
+        

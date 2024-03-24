@@ -1,0 +1,45 @@
+DeiT III: Revenge of the ViT
+
+14 Apr 2022
+
+Abstract
+    - We revisit the supervised training of ViTs
+    - Our procedure builds upon and simplifies a recipe introduced for training ResNet-50
+    - This includes a simple new data-augmentation procedure with only 3 augmentations
+    - Our evaluations on Image classification transfer learning and semantic segmentation show that our procedure outperforms by a large margin previous fully supervised training recipes
+
+    - Train a one-billion parameter ViT-H (52 layers) without any hyper-parameter adaptation
+    - W/o sacrificing performance, divide by >2x the number of GPUs required and training time for ViT-H (pretraining at lower res)
+    - ViT-B and ViT-L, our supervised training approach is on par with BerT-like self-supervised appraoches
+
+
+Training and Pre-training for ViTs
+Regularization and loss:
+    - Stochastic depth:
+        - A regularization method for deep networks
+        - Use a uniform drop rate across all layers and adapt it according to the model size
+    - LayerScale:
+        - We use LayerScale to facilitate the convergence of deep transformers
+    - Binary Cross Entropy
+    - Optimizer: LAMB, a derivative of AdamW that includes gradient clipping
+Data Augmentation:
+    - 3-Augment: A simple data augmentation inspired by what is used in self-supervised learning
+        - Grayscale
+        - Solarization
+        - Gaussian Blur
+        - For each image, we select only one of this data-augmentation with a uniform probability over 3 different ones
+        - In addition to these 3 augmentation choices, we include the common color-jitter and horizontal flip
+    - Cropping:
+        - Random Resized Crop (RRC)
+            - Regularisation to limit model overfitting
+            - Overfitting occurs rapidly with modern large models
+
+Default setting:
+    - ImageNet-1k: Train 400 epochs with a batch size 2048
+    - Training and eval are carried out at a resolution 224x224
+    - ImageNet-21k: Pre-train by default during 90 epochs at 224x224
+        - Finetuning of 50 epochs on ImageNet-1k
+
+Ablations:
+    - Training duration:
+        - 
