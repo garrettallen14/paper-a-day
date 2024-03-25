@@ -45,4 +45,38 @@ Double-saturating power law
     - Fig 2: Representation quality, measured as ImageNet finetune and linear 10-shot error rate, as a function of training compute
     - A saturating power-law approximates the pareto frontier fairly accurately
     - For over two orders of magnitude of compute, the relationship between compute and performance follows a power-law
-    
+
+
+Method Details
+    - Improvements to the ViT model and training
+    - An entire ViT-G/14 sitting on a single TPUv3 core
+Decoupled weight decay for the "head"
+    - Weight decay has a drastic effect on model adaptation in the low-data regime
+    - We conduct a study of this phenomena at a mid-size scale
+    - One can benefit from devoupling weight decay strength for the final linear layer "head" and for the remaining weights "body"
+    - The best performance appears off-diagonal (decoupled weight decay for the head and body)
+    - High weight decay in the head decreases performance on the pre-training (upstream) task, despite improving transfer performance
+Saving memory by removing [class] token
+Memory-efficient optimizers
+    - Storage required for optimizers becomes a bottleneck
+    - ViT-G 2B takes up 8gb, Adam stores two additional fp scalars per each parameter -> an additional 16gb needed
+    - We explore two modifications
+        1. Adam w/half-precision momentum:
+            - Storing momentum in half-precision does not affect training dynamics
+            - We can reduce optimizer overhead from 2-fold to 1.5-fold
+        2. Adafactor optimizer:
+            - Stores momentum using rank 1 factorization
+            - Results in negligible memory overhead
+            - Did not work out of the box, so we make the following modifications
+                a. Reintroduce the first momentum in half-precision... (recommended setting does not use first momentum at all)
+                b. Disable scaling of learning rate relative to weight norms
+                c. Adafactor gradually increases the second momentum from 0.0 to 1.0 throughout the course of training. 
+                    - It seems clipping the second momentum at 0.999 (Adam's default value) results in better convergence, so we adopt this
+Learning-rate schedule
+    - Explore learning-rate schedules that utilize a warmup and cooldown phase
+    - Cooldown after approximately 200k, 400k, or 500k steps
+    - Linear schedule best if one knows the training duration in advance
+    - All three alternatives come reasonably close
+Selecting model dimensions
+    - Patch-size, number of encoder blocks (depth), dimensionality of patch emb and sa (width), number of attention heads, hidden-dim of MLP blocks
+    - 

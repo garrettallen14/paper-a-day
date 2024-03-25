@@ -1,0 +1,123 @@
+MM1: Methods, Analysis & Insights from
+Multimodal LLM Pre-training
+
+19 Mar 2024
+
+Abstract
+    - For large sclae multimodal pre-training using a careful mix of image-caption, interleaved image-text, and text-only data is crucial for achieving SOTA
+    - Image encoder together with image resolution and image token count has a substantial impact
+    - Vision-language connector design is of comparatively negligible importance
+
+
+Introduction
+    - Design aspects are in the following order of importance:
+        - Image resolution, visual encoder loss and capacity, visual encoder pre-training data
+    - We find little evidence that architectural decisions of how visual data is fed into the LLM matter
+
+    - Use three different types of multimodal pre-training data:
+        - Image-caption, interleaved image-text, and text-only
+        - For few-shot and text-only, interleaved and text-only training data is of paramount importance
+
+
+Recipe for Building MM1
+    - We explore three major axes of design decisions
+        - Architecture: Investigate different pre-trained image encoders and explore ways of connecting LLMs with these encoders
+        - Data
+        - Training Procedure: Hyperparameters, when to train what parts
+Ablation Setups
+    - We use a smaller base config to ablate from
+    - The base config is:
+        - Image Encoder: A ViT-L/14 model trained with a CLIP loss; images 336x336
+        - Vision-Language Connector: C-Abstractor with 144 image tokens
+        - Pre-training Data
+        - Language Model: A 1.2B transformer decoder-only LM
+Model Architecture Ablations
+    - We investigate how to best pre-train a visual encoder and how to bridge the visual features to the space of the LLM
+Image Encoder Pre-Training
+    - Most MLLMs use a CLIP pre-trained image encoder
+    - Recent works also started to explore vision-only self-supervised models like DINOv2 as image encoder
+    - We find the choice of the pre-trained image encoder can substantially impact downstream results
+    - Here we ablate the importance of image resolution and image encoder pre-training objective
+    - Contrastive Losses:
+        - When trained on large-scale image-text datasets, the resulting models possess strong semantic understanding of the image data
+    - Reconstructive Losses:
+        - For dense prediction, CLIP-style models struggle to attain the same strong performance
+- Encoder Lesson:
+    - Image resolution has the highest impact, followed by model size and training data composition
+    - Increasing image resolution from 224 to 336 results in approx. 3% boost in all metrics across all architectures!
+    - Doubling the parameters (from ViT-L to ViT-H) results in only <1% boost!
+    - Contrastive methods result in higher performance than reconstructive
+    - In particular, encoders based on ViT-L of 300M parameters result in 0.3% to 1.5% performance gain compared to AIM600M of comparable size
+Vision-Language Connector and Image Resolution
+    - The goal of this component is to translate the visual representation to the space of the LLM
+        - As image encoders are ViTs, their output is either a single embedding, or a set of grid-arranged embeddings corresponding to the input image patches
+        - The spatial arrangement of the image tokens needs to be converted to the sequential one of the LLM
+        - At the same time, the actual image token representations are to be mapped to the word embedding space
+    - While doing so, there are two conflicting requirements:
+        1. We want to capture as much detail as possible (maximize input tokens)
+        2. We want to limit the number of input tokens (reduce computation)
+    - We consider using 64 or 144 tokens to represent the image, as well as two different image resolutions, 224 and 336
+    - We consider the following architectural options:
+        - Avg Pooling: We apply nxn avg pooling on the output of the ViT image encoder, followed by a linear projection
+        - Attention Pooling: Since image token representations are in a different space than LLM input embeddings, attention pooling using k learnable queries is a natural approach
+        - Convolutional Mapping: Honeybee approach, C-Abstractor
+- VL Connector Lesson:
+    - Number of visual tokens and image resolution matters the most, while the type of VL connector has little effect
+Data
+- Data Lesson 1:
+    - Interleaved data is instrumental for few-shot and text-only performance
+    - Captioning data lifts zero-shot performance
+- Data Lesson 2:
+    - Text-only data helps with few-shot and text-only performance
+    - We utilize text-only data as a way to maintain the language understanding capabilities of the model
+- Data Lesson 3:
+    - Careful mixture of image and text data can yield optimal multimodal performance and retain strong text performance
+- Data Lesson 4:
+    - Synthetic data helps with few-shot learning
+
+
+Final Model and Training Recipe
+    - We collect the results from the previous ablations to determine the final recipe for MM1 multimodal pretraining
+        - Image Encoder: We use a ViT-H with 378x378 resolution, pre-trained with a CLIP objective
+        - Vision-Language Connector: We use a VL connector with 144 tokens and a C-Abstractor
+        - Data: 45% interleaved image-text, 45% image-text pair documents, 10% text-only documents
+    - Scale up size to 3B, 7B, 30B params
+    - Initialize both the image encoder and underlying LLM decoder weights for MM1 from in-house pre-trained models
+    - We perform multimodal pre-training on the above data for 200k steps (100B tokens)
+    - All models are pretrained entirely unfrozen
+        - Sequence length: 4096
+        - Up to 16 images per sequence at 378x378 resolution
+        - Batch size of 512 sequences
+    - All models are trained using AXLearn framework
+Model Scaling
+    - Infeasible to do proper hyperparameter search
+    - Perform a grid search of learning rate at a small scale to identify optimal learning rate at 9M, 85M, 302M, 1.2B
+    - Use a linear regression in log space to extrapolate from smaller to larger models, resulting in the following prediction of optimal peak learning rate mu given number of parameters:
+        - mu = exp(-0.4214ln(N) - 0.5535)
+    
+
+Supervised FineTuning
+    - Scaling to Higher Resolutions:
+        1. Positional Embedding Interpolation
+            - After positional embedding interpolation, the ViT backbone is adapted to the new resolution during fine-tuning
+        2. Sub-image Decomposition
+            - Computing self-attention among more than 2000 image tokens is computationally challenging
+            - For a high-res input image (ex. 1344x1344), we construct 5 images of 672x672 and feed them as independent images into our visual encoder
+            - Using positional embedding interpolation for each subimage, we can support image resolution as high as 1792x1792 in experiments
+
+
+Appendix B: Training Details
+Pre-training
+Batch Size and Composition
+    - For simplicity, all MM1 models are pretrained with same batch size of 512 and max decoder sequence length of 4096
+    - Allow up to 16 images per input sequence, each image 144 tokens as input
+    - This results in roughly 1M text and 1M image tokens per batch
+    - When packing image-text pairs or interleaved documents, we modify the SA masks to prevent tokens from attention across example boundaries
+    - For image-text pairs in particular, this was critical for maintaining strong few-shot performance
+Learning Rate Schedule
+    - Employs a standard cosing learning rate decay schedule with initial linear warmup of 2000 steps
+    - LR is then decayed to 10% of its peak value over the course of 2e5 training steps
+    - We perform gradient clipping with max norm 1 and use the AdamW optimizer with an implementation that decouples the learning rate and weight decay
+    - For MM1-30B, we also add a z-loss term with scale 1e-4
+    - The predicted optimal (peak) learning rates for each of the main LLM sizes studied
+    - 3B,7B,30B => 6e-5,4e-5,2e-5

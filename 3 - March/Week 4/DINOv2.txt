@@ -1,0 +1,31 @@
+DINOv2: Learning Robust Visual Features
+without Supervision
+
+2 Feb 2024
+
+Abstract
+    - Breakthroughs in NL processing for model pretraining have opened the way for foundation models for CV
+    - These models could simplify the use of images in any system by producing general-purpose visual features
+        - ie, features that work across image distributions and tasks without finetuning
+    - This work shows that existing pretraining methods can produce such features
+    - We revisit existing approaches and combine different techniques to scale our pretraining in terms of data and model size
+    - Technical contributions aim at accelerating and stabilizing the training at scale
+    - Propose an automatic pipeline to build a dedicated, diverse, and curated image dataset instead of uncurated data, as typically done in the self-supervised literature
+
+
+Introduction
+    - An alternative to text-guided pretraining is self-supervised learning where features are learned from images alone
+    - In this work we explore if self-supervised learning has the potential to learn general-purpose visual features if pretrained on a large quantity of curated data
+    - We revisit existing discriminative self-supervised approaches and reconsider some design choices under the lens of a larger dataset
+    - We tailor approach toward stabilizing and accelerating discriminative self-supervised learning when scaling in model and data sizes
+    - These improvements make our approach around 2x faster and require 3x less memory than similar discriminative self-supervised methods
+    - Allow us to leverage longer training with larger batch sizes
+
+    - A major difficulty when dealing with images is to rebalance concepts and avoid overfitting on a few dominant modes
+    - In this work, a naive clustering approach works reasonably well to resolve this issue
+    - We gathered a small but diverse corpus of 142M images to validate our approach
+    
+Data Processing
+    - Self-supervised image retrieval
+        - We build our curated pretraining dataset by retrieving images from our uncurated data source that are close to images in our curated sources
+        - Use a ViT-H/16 network image embeddings and use cosine-similarity

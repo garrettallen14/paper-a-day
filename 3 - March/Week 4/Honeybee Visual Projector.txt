@@ -1,0 +1,36 @@
+Honeybee: Locality-enhanced Projector for Multimodal LLM
+
+11 Dec 2023
+
+Notes: Apple in their MM1 paper use the C-Abstractor for image projection
+
+Abstract
+    - Two essential projector properties
+        i. Flexibility in managing number of visual tokens
+        ii. Preservation of local context from visual features
+
+
+Honeybee: Locality-enhanced MLLM
+Locality-enhanced Projector
+    - Projector is crucial as it bridges visual and language models
+    - Translates image features into a format the LM can understand
+Architecture
+    - C-Abstractor:
+        - In deep learning, convolution is the most successful for modeling local context
+        - (Visual Features + Positional Embeddings) -> LxResBlock -> Adaptive AvgPool -> LxResBlock
+Training
+    - Train Honeybee in two-stage pipeline
+        1. Freeze vision encoder and LLM, focusing on training the C-Abs
+        2. Train both the projector and LLM to enhance deeper visual understanding and generation abilities
+
+
+Evaluation
+Implementation Details
+    - Employ 7B and 13B Vicuna-v1.5 as LM
+    - Leverage the pre-trained CLIP ViT-L/14 w/resolutions of 224 and 336 for 7B and 13B-LLM respectively
+    
+
+Appendix
+Implementation Details
+    - We utilize 6 blocks in C-Abstractor
+    - Use a single node with A100 80GB x 8, employing deepspeed zero-2 and flash-attention v2 for all experiments
