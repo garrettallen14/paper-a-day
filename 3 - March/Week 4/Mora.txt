@@ -1,0 +1,4 @@
+Mora: Enabling Generalist Video Generation via
+A Multi-Agent Framework
+
+Say trained on 2x A100s but no other training details L paper

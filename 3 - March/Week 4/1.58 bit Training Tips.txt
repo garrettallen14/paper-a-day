@@ -1,0 +1,23 @@
+The Era of 1-bit LLMs: Training Tips, Code and FAQ
+
+27 Mar 2024
+
+Abstract
+    - Providing additional experiments and results in "Era of 1bit LLM" paper
+    - Include official PyTorch implementation of BitNet
+
+
+Training Tips
+    The S-Shape Loss Curve
+        - The loss curve during high-precision training typically exhibits an exponential shape
+        - The curve observed during 1-bit training often follows an S-Shaped pattern
+        - Significant reduction in loss towards the end of the training process
+        - Intermediate evaluations may not accurately predict the final performance of 1-bit LLM training
+    Learning Rate
+        - In experiments, the LR followed a two-stage approach:
+            1. Standard learning rate scheduling, with a higher peak as 1-bit LLMs are more stable than their full-precision counterparts
+            2. We decayed the learning rate midway through, resulting in a lower peak learning rate for the second stage
+    - We employed a significantly higher learning rate for our model compared to full-precision LLMs
+    - Halfway through the training process, we decayed the learning rate, a strategy that yielded better performance in our experiments
+    - We observed a significant reduction in loss occurring when the learning rate was decayed, rather than at the end of the training phase
+    - This approach made the performance more predictable during the training process

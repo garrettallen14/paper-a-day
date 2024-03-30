@@ -1,0 +1,41 @@
+The Era of 1-bit LLMs:
+All Large Language Models are in 1.58 Bits
+
+27 Feb 2024
+
+Abstract
+    - BitNet b1.58, every parameter (or weight) of the LLM is ternary {-1,0,1}
+    - Matches full-precision FP16, or BF16 w/same model size and training tokens in terms of perplexity and end-task performance
+
+
+Era of 1-bit LLMs
+    - Vanilla LLMs are in 16-bit floating values
+    - Bulk of any LLM is matrix multiplication
+
+
+BitNet b1.58
+    - A transformer that replaces nn.Linear with BitLinear
+    - Trained from scratch, with 1.58-bit weights and 8-bit activations
+    - Compared to the original BitNet, it introduces some modifications summarized below
+
+    Quantization Function
+        - To constrain the weights to -1, 0, +1, we adopt an absmean quantization function
+        - First scales the weight matrix by its avg absolute value, then rounding each value to the nearest integer among {-1, 0, +1}:
+            W` = RoundClip((W / (lambda + eps)), -1, 1)
+            RoundClip(x,a,b) = max(a,min(b,round(x)))
+            lambda = 1/nm sumij(|Wij|)
+        - The quantization function for activations follows the same implementation in BitNet
+            - We do not scale the activations before the non-linear functions to the range [0,Qb]
+            - Activations are all scaled to [-Qb, Qb] per token to get rid of the zero-point quantization
+            - This is more convenient and simple for both implementation and system-level optimization
+    LLaMA-alike Components
+        - The architecture of LLaMA has been the de-facto backbone for open-source LLMs
+        - To embrace the OS community, BitNet adopts the LLaMA-alike components
+            - Uses RMSNorm, SwiGLU, rotary embedding, removes all biases
+
+
+Results
+    Memory and Latency
+        - Memory gains and speed increases as the model size scales
+    Energy
+        - 

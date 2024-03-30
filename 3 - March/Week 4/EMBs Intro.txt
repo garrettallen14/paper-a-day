@@ -1,0 +1,75 @@
+Introduction to Latent Variable Energy-Based Models:
+A Path Towards Autonomous Machine Intelligence
+
+5 Jun 2023
+
+Path toward fully autonomous human-like intelligence has three main challenges:
+    1. Learning representations and predictive models of the world to help plan and control the outcomes
+    2. Learning to reason in a way compatible with DL
+    3. Learning to plan complex action sequences that require hierarchical representations of action plans
+
+New paradigm to autonomous intelligence
+    - Perception: current state of world
+    - Actor: propose optimal action sequences
+    - World Model: predicts ("imagines") future possible world states given actions of the actor
+    
+    - This is a "perception-planning-action" cycle.
+
+    - While imagining possible consequences of the actor's actions, the world model uses the cost module for inference
+    - This cost module is proposed to be divided into two sub-modules:
+        1. The immediately calculable intrinsic cost is hard-wired into the architecture (not trainable)
+            - This models basic needs like pain, pleasure, hunger
+        2. The critic, a trainable module that predicts future values of the intrinsic cost and is influenced by the perception module
+    - Moreover, there is a short-term memory module which stores state-cost episodes that can be used by the world model when predicting the future world states
+    - The global task of this architecture is to take action that minimizes the cost or, even better, minimizes the expected cost in the future.
+    - There is a configurator module which enables switching between tasks by configuring all other modules.
+    - An advantageous property of this architecture in the lens of modern tools is that all modules are fully differentiable
+
+    - The perception-planning-action cycle in the proposed model is akin to model-predictive control
+    - The key difference is that the World Model predicting the future here is learned.
+    - Also different from RL because the cost function is known and all modules are fully differentiable, so no action needs to be taken in reality to predict the future cost
+
+    - The world model, in analogy to humans and animals, may be primarily trained with SSL which is proposed as the central element for the next AI revolution
+
+
+Self-supervised learning and representing uncertainty
+    - The main aim of SSL is to reconstruct the input or predict missing parts of the input
+    - Within the training, the model learns hierarchical representations of the data
+
+    - For images, when models are trained to make a single prediction, training makes them predict the average of all possible predictions
+    - SSL produces blurry predictions
+    - There is no chance of predicting every detail of the world, however, making decisions usually does not require predicting all possible details of the world, just relevant task-dependent ones
+
+    - A great challenge of SSL for the future is to 
+        1. Represent uncertainty in the prediction
+        2. Allow for multiple predictions being equally probable for a single input
+    - Next token prediction for words is computationally challenging, but now possible due to advances
+    - Next frame in the video or next one hundred words in the sentence stops being feasible
+
+    - In such high-dimensional setups, we may need to give up the idea of representing probability distributions over predictions
+
+    - The proposed solution: replace probabilistic models with energy-based models (EBMs) and combine them with latent variables for handling uncertainty and task-dependent information redundancy
+    - This is similar to the hierarchical strucutre for complex planning within the architecture of H-JEPA
+
+
+Introduction to EBMs
+    - Probabilistic models require normalization and may therefore become intractable in the limit of high-dimensional data.
+    - In decision-making tasks, it is merely necessary that the system chooses the correct answer
+    - The probabilities of other answers are irrelevant as long as they are smaller
+    - Therefore, instead of predicting a single most probable event, we can let the model represent the dependency between variables through the energy function
+    - Such an energy guided model only needs to assign the lowest energy to the correct answer and larger energies to the incorrect ones!
+    - Energy-based models (EBMs) capture dependencies between variables x and y by associating a scalar energy F(x,y) to each configuration of the variables.
+    - Low energies should be assigned to compatible pairs of x and y (eg, slow driving when snow is present) and high energies to incompatible pairs
+    - The inference consists then in finding values of y that minimize Fw(x,y): y` = argminyFw(x,y)
+
+    - An advantage of EBMs is that they can represent multimodal dependencies in which multiple values of y are compatible with a given x.
+    - In theory, they can also describe dependencies between data in various forms
+    - Moreover, a useful property of EBMs is that if the y domain is continuous, the energy function F is smooth and differentiable so that we can use gradient-based inference algorithms
+    
+    - An important thing to note is that the energy function discussed here is used only for inference, not learning
+    - Training of an EBM involves a loss function and consists in finding an energy function in which observed configurations of the variables are given lower energies than unobserved ones
+
+    - The energy function is not the objective function to minimize within learning! The energy function is used only for inference
+EBMs vs. Probabilistic models
+    - In the probabilistic setting, the training consists in finding such model parameters w that maximize the likelihood (or minimize the negative likelihood) of observing outputs given inputs:
+        

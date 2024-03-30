@@ -1,0 +1,38 @@
+Language Models are Few-Shot Learners
+
+22 Jul 2020
+
+Abstract
+    - Recent work has demonstrated substantial gains on many NLP tasks and benchmarks by pre-training on a large corpus of text followed by fine-tuning on a specific task
+    - Method requires task-specific fine-tuning datasets of thousands or tens of thousands of examples
+    - Humans can perform a new language task from only a few examples or from simple instructions
+    - Scaling up language models greatly improves task-agnostic, few-shot performance
+    - Train GPT-3, an autoregressive LM with 175 billion parameters
+
+
+Introduction
+    - Single-layer representations were learned using word vectors and fed to task-specific architectures
+    - RNNs w/multiple layers of representations and contextual state were used to form stronger representations
+    - More recently, pre-trained recurrent or transformer LMs have been directly fine-tuned, entirely removing the need for task-specific architectures
+    - A major limitation is there is still a need for task-specific datasets and fine-tuning
+    
+    - The need for a large dataset of labeled examples for every new task limits the applicability of language models
+    - The potential to exploit spurious correlations in training data grows with the expressiveness of the model
+
+    - Humans do not require large supervised datasets to learn most language tasks
+
+Training Process
+    - Larger models can use a larger batch size, but require a smaller learning rate
+    - We measure the gradient noise scale during training and use it to guide our choice of batch size
+
+    - Table 2.1 shows the parameter settings we used
+    - To train the larger models without running out of memory, we use a mixture of model parallelism within each matrix multiply and model parallelism across the layers of the network
+
+
+Total Compute Used to Train LMs
+    - 12.74 TFLOPs for a 3060
+    => 1.274E+13 FLOPs
+    => 1.1E+18 FLOPs per day
+    => 204 days for small
+    => 1245 days for Large
+    => 285000 days for 175B full GPT-3
