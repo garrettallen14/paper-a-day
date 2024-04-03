@@ -1,0 +1,36 @@
+High Fidelity Visualization of What Your Self-Supervised Representation Knows About
+
+16 Aug 2022
+
+Abstract
+    - Discovering what is learned by neural networks is a challenge
+    - SSL classification is most common to evaluate
+    - We showcase Representation Conditional Diffusion Models (RCDM) to visualize representations
+    - The use of RCDM is motivated by its ability to generate high-quality samples -- on par with SOTA generative models
+    - Ensure the representations of those samples are faithful
+    - By using RCDM to analyze self-supervised models, we are able to clearly show visually that
+        1. SSL representations are not invariant to the data augmentations they are trained with
+        2. SSL post-projector embeddings appear indeed invariant to these data augmentation, along with many other data symmetries
+        3. SSL representations appear more robust to small adversarial perturbation of their inputs than representations trained in a supervised manner
+        4. SSL-trained representations exhibit an inherent structure that can be explored thanks to RCDM visualization and enables image manipulation
+
+
+Introduction
+    - Approaches aimed at learning useful representations, from unlabeled data:
+        - Probabilistic latent variable models
+        - Variants of auto-encoders
+    - Traditionally put under the broad umbrella of unsupervised learning
+    - More recent approaches, under the term of self-supervised learning (SSL) have used various kinds of "pretext-tasks" to guide the learning of useful representations
+    - Filling-in-the-blanks tasks proved remarkably successful in learning potent representations for NLP
+    - Modern family of SSL approaches are distinguished from traditional unsupervised-learning models such as autoencoder variants or GANs
+        1. Training criteria are not based on any input-space reconstruction or generation, and only depend on the obtained distribution in the representation or embedding space
+        2. They encourage invariance to explicitly provided input transformations aka data augmentations, thus injecting important additional domain knowledge
+    - Recent SSL methods use a projector (a small MLP) on top of a backbone network (resnet50 or ViT)
+    - Projector is usually discarded when using the model on downstream tasks
+    - Modern SSL methods do not provide any direct way of mapping back the representation in image space, to allow visualizing it.
+    - The main goal of this work is thus to enable visualization of representations learned by SSL methods
+    
+    - We propose to generate samples conditioned on a representation such that
+        1. The representation of those samples match the one used for conditioning
+        2. The visual quality of the sample is as high as possible to maximize the preciseness of our visual understanding
+        

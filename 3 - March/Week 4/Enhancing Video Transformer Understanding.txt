@@ -1,0 +1,33 @@
+Enhancing Video Transformers for Action
+Understanding with VLM-aided Training
+
+24 Mar 2024
+
+Abstract
+    - ViTs are currently best performing models in video action understanding
+    - Their generalization over domains or datasets is limited
+    - VLMs have demonstrated exceptional generalization performance, but unable to process videos
+    - Cannot extract spatio-temporal patterns crucial for action understanding
+    - We propose the Four-tiered Prompts (FTP) framework that takes advantage of the complementary strengths of ViTs and VLMs
+    - Retain ViT's strong spatio-temporal representation ability, but improve the visual encodings to be more comprehensive and general
+        - Align them with VLM outputs
+    - FTP framework adds four feature processors that focus on specific aspects of human action in videos:
+        - Action category
+        - Action components
+        - Action description
+        - Context information
+    - VLMs only employed during training
+
+    - Basically just better labeling of videos for the dataset
+
+
+Introduction
+    - ViTs are currently the best performing backbones for spatio-temporal representation learning
+    - To refine their representations, researchers have applied different variants of self-attention in the spatial domain of ViTs
+    - Swin Transformer, local attention...
+        - Reduced computational overhead and mitigated redundancy in the spatial domain
+    - Various architectures have been proposed to extend Multi-Head Self-Attention along the temporal dimension to capture long-term video dependencies
+    - Training and benchmarking ViTs for video action understanding, datasets pose different requirements in terms of the relevant spatio-temporal inforamtion needed to be processed
+
+    - Recent attempts to extract and concatenate keyframes from videos as the input for VLMs significantly underperform compared to ViTs
+    - Temporal information is less readily available from keyframes, especially if these cover a longer time interval

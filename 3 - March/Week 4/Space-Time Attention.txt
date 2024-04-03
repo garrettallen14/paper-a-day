@@ -1,0 +1,56 @@
+Is Space-Time Attention All You Need for Video Understanding?
+
+9 Jun 2021
+
+Abstract
+    - Convolution-free approach to video classification
+    - Exclusively built on self-attention over space and time
+    - TimeS-former adapts the standard Transformer to video by enabling spatiotemporal feature learning directly from a sequence of frame-level patches
+    - Divided Attention: temporal attention and spatial attention are separately applied within each block
+    - Compares different self-attention schemes and suggests that "divided attention" leads to the best video classification accuracy among the design choices considered
+    - Compared to 3D conv networks, the model is faster to train and can achieve dramatically higher test efficiency
+    - Can be applied to much longer video clips (over one minute long)
+
+
+Introduction
+    - Video Understanding has many similarities to NLP
+    - Videos and sentences are both sequential
+    - ...
+    - However, in the video domain, 2d or 3d convs still represent the core operators for spatiotemporal feature learning
+    - While self-attention has shown benefits when applied on top of convolutional layers, to the best of our knowledge, no attempt to use self-attention as the exclusive building block has been used
+
+    - Aim to build a performant conv-free video architecture by replacing altogether the convolutional operator with self-attention
+    - We argue that such a design has the potential to overcome a few inherent limitations of convolutional models for video analysis
+    - Transformers impose less restrictive inductive biases
+    - While conv kernels are specifically designed to capture short-range spatiotemporal information, they cannot model dependencies beyond the receptive field
+
+    - We adapt the ViT to video by extending the self-attention mechanism from image space to the space-time 3D volume
+    - "TimeSformer" (time-space transformer) views the video as a sequence of patches extracted from the individual frames
+    - As in ViT:
+        - Each patch is linearly mapped into an embedding
+        - Each patch is augmented with positional information
+    - Can interpret the resulting sequence of vectors as token embeddings which can be fed to a Transformer encoder
+
+    - Downside of self-attention in standard Transformer:
+        - It requires computing a similarity measure for all pairs of tokens
+        - In our setting, this is computationally expensive due to the large number of patches in the video
+    
+    - We propose several scalable self-attention designs over the space-time volume and empirically evaluate them over large-scale action classification datasets
+    - The best design is represented by a "divided attention:
+        - Separately applies temporal attention and spatial attention within each block of the network
+
+
+The TimeSformer Model
+    - Input: X is (height, width, 3=in_channels, number of frames)
+    Decomposition into patches:
+        - Following ViT, we decompose each frame into N non-overlapping patches, each of size PxP
+        - The N patches span the entire frame, ie, N=HW/P^2
+        - We flatten these patches into vectors x(p,t) in R^^ 3*P*P
+    Linear embedding:
+        - We linearly map each patch x(p,t) into an embedding vector z0(p,t) in R D by means of learnable matrix pos
+    Query-Key-Value computation:
+        - Our Transformer consists of L encoding blocks
+        - At each block l, a qkv vector is computed for each patch from the representation
+        q = WQ LN(z) ... v = WV LN(z)
+    Self-attention computation:
+        
