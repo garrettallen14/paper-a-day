@@ -1,0 +1,197 @@
+A Cookbook of Self-Supervised Learning
+
+28 Jun 2023
+
+What is Self-Supervised Learning and Why Bother?
+    - SSL is “the dark matter of intelligence”
+    - Defines a pretext task based on unlabeled inputs to produce descriptive and intelligible representations
+    - Natural language:
+        - Masking a word and predict the surrounding words
+        - Objective of predicting the context surrounding a word encourages the model to capture relationships among words in the text w/o need for labels
+        - These representations can be used across a range of downstream tasks (translation, summarizing, generation)
+    - Training on vast unlabeled data comes w/many benefits
+Why a Cookbook for SSL?
+    - SSL research has a high barrier to entry due to
+        1. Computational cost
+        2. Absence of fully transparent papers detailing the intricate implementations required to fully enable SSL's potential
+        3. absence of a unified vocabulary and theoretical view of ssl
+    - SSL established a distinct paradigm away from tradtional reconstruction based unsupervised learning methods
+    - our vocab for understanding ssl in a unified view is limited
+    
+    - ssl is empirically driven and comes with many moving pieces (hyperparameters mostly)
+    - to start studying ssl methods, one must first exhaustively empirically probe those methods to fully grasp the impact/behaviors of the moving pieces
+
+The Families and Origins of SSL
+Origins of SSL
+    - contemporary methods build upon the knowledge gained from early experiments
+    - we give a brief overview of the main ideas of ssl prior to 2020
+    - many specific methods have fallen out of mainstream use, but the ideas form the foundation for many modern methods
+    - early progress in ssl focused on development of methods falling into these categories:
+    1. information restoration
+        - masking/removing something from an image, then training a neural network to restore the missing information
+            - colorization-based ssl methods convert an image to grayscale then train a network to predict the original rgb values
+                - early ssl method for object segmentation
+            - most straightforward is masking then training to inpaint the missing pixel values
+    2. temporal relationships in video
+        - the focus of the review is on image (not video) processing
+        - a range of specialized methods have been developed for learning single-image representations by pre-training on videos
+        - information restoration methods are particularly useful for videos, which contain multiple modalities of information which can be masked
+            - Wang and Gupta 2015 pre-train a model using a triplet loss that promotes similarities between representations of an object in two different frames
+                - resulted in a good object detection model
+            - Pathak 2017 trains a model to predict the motion of objects in a single frame, and adapts the resulting features to solve single-frame detection problems
+            - predicting ego-motion of a camera given multiple frames
+            - remove audio track from a video, then predict the missing sound
+            - for depth mapping, monocular depth models from unlabeled image pairs & later the frames from a single-camera video
+    3. learning spatial context
+        - train a model to understand the relative positions and orientations of objects in a scene
+            - mask the direction of gravity by applying a random rotation and asks the model to predict the rotation
+            - doersch 2015 simply predicts the relative location of two randomly sampled patches in an image
+                - superceded by "jigsaw" methods that break an image into an array of disjoint patches and predict the relative location of each
+            - learning to count: the model is trained to output the number of objects in an image in a self-supervised way
+    4. grouping similar images together
+        - one can learn rich features by grouping semantically similar images together
+        - k-means clustering is one of the msot widely used methods from classical ML
+        - deep clustering alternates between assigning labels to images by performing k-means in the feature space, and updating the model wrt these assigned class labels
+    5. generative models
+        - early ssl method: greedy layer-wise pre-training: layers of a deep network are trained one at a time using an autoencoder loss
+        - analogous approach used RBMs to stack and create deep belief nets
+            - these methods were abandoned in favor of simpler initialization strategies and longer training runs
+        - later advancements improved on the representation learning ability of autoencoders
+            - it was ultimately found that representation transferability is better when the autoencoder is asked to restore a missing part of its input
+        - GANs consist of an image generator and a discriminator that differentiates real from generated images
+        - both components can be trained w/o supervision & both potentially contain useful knowledge for transfer learning
+    6. multi-view invariance
+        - many modern ssl methods use contrastive learning to create feature representations that are invariant to simple transforms
+        - idea of contrastive learning is to encourage a model to represent two augmented versions of an input similarly
+        - one of the most popular frameworks for learning from unlabeled data is to use a weakly trained network to apply psuedolabels to images & train these labels in a standard supervised fashion
+
+
+The Deep Metric Learning Family
+    - Deep Metric Learning (DML) family of methods is based on the principle of encouraging similarity between semantically transformed versions of an input
+    - DML originated with the idea of a contrastive loss
+        - Transforms this principle into a learning objective
+    - In DML one trains a network to predict whether two inputs are from the same class (or not) by making their embedding close (or not) by making their embedding close (or far)
+    - Since data is without labels, to identify similar inputs, we often form variants of a single input using known semantic preserving transformations
+    - The variants of the inputs are called positive pairs or examples
+        - The samples we wish to make dissimilar are negatives
+    - Often there's a margin parameter, m, imposing the distance between examples from different classes should be larger than main
+
+Self-Distillation Family: BYOL/SimSIAM/DINO
+    - Feed two different views to two encoders, and map one to the other by means of a predictor
+    - To prevent the encoders from collapsing by predicting a constant for any input, various techniques are employed
+    - A common approach to prevent collapse is to update one of the two encoder weights with a running average of the other encoder's weights
+    - BYOL: Bootstrap your own latent
+        - Self-distillation as a means to avoid collapse
+        - BYOL uses two networks along with a predictor to map the outputs of one to the other
+        - Network predicting the output is called the online or student network
+        - Network producing the target is the target or teacher network
+        - Each network receives a different view of the same image formed by image transformations
+
+
+Theoretical Unification of SSL
+Theoretical Study of SSL
+    - Unified Contrastive Losses
+        - Minimizing a general family of loss functions
+    - Hard negative sampling
+        - Contrastive SSL losses already have such mechanisms at the batch level, focusing on hard-negative pairs without explicit hard-negative sampling
+(***)   - Contrastive losses need large batch sizes to ensure that hard negative samples are observed!
+    - Study of the Projector
+        - The projector network maps the representations into another space where the loss is computed
+        - Despite strong empirical evidence the projector improves performance, few theoretical works explaine the role
+        - Argued that the projector prevents dimensional collapse in the representation space and it only needs to be diagonal and low-rank to do so
+        - The proposed method without a projector outperforms SimCLR with a one layer linear projector, for 2- and 3-MLP projectors, performance remains out of reach.
+Dimensional Collapse of representations
+    - The goal of joint SSL methods is to learn meaningful representations
+    - A significant part of the approaches suffer from dimensional collapse
+        - Information encoded across different dimensions is redundant
+    - ie, the output of the projector the embeddings are rank-deficient
+    - Whitening batch normalization helped alleviate collapse
+    - Different measures of dimensional collapse:
+        - Entropy of the singular value distribution
+        - Classical rank estimator
+        - Fitting a pwoer law to the singular value distribution
+    - All measures focus on evaluating the rank of the representations to measure dimensional collapse in the learned representations
+
+
+A Cook's Guide to Successful SSL Training / Deployment
+Role of Data-Augmentation
+    - Many SSL methods, especialy joint embedding methods require a way to define positive views from a given image to learn invariances
+    - The proxy used in these SSL methods is to leverage data augmentation to define these invariances
+    
+    - By using different crops of a given images and positive view, the SSL model will be trained to produce a representation which is invariant to different crops
+    - The deep nature of what is learned by the SSL models is defined by the data augmentation pipeline
+    - Contrastive learners can benefit from very aggressive data augmentations such as large rotations when explicitly trained not to be invariant to them
+
+    - Another line of work attempts to remove the need for these handcrafted data augmentations
+        - I-JEPA
+Role of multi-crop
+    - Increase the number of positives for a given image
+        - Multi-crop introduces smaller crops (96x96) on top of the usual two large ones (224x224)
+        - Instead of only comparing the two large crops together, or all pairs of crops, the two large crops are each compared to all the other crops
+Role of the Projector
+    - Most SSL with joint embedding methods include a projector (2or3 layer MLP) after encoder
+    - SSL loss is applied to projector output
+    - Projector usually discarded after training
+    
+    - A projector is needed in SSL since the training task is always different from the downstream task
+    - To bridge the gap between the terms used in the SSL and the transfer learning literature, Guillotine Regularization
+Using a projector to handle noisy image augmentation
+    - Projector may be necessary to mitigate the noise of data augmentation
+    - SSL methods typically randomly augment input images to generate two different views of the same image
+Influence of the projectors output dimension
+    - Large batch sizes are a requirement for contrastive methods
+    - A large output dim is a requirement for covariance based methods
+Influence of the backbones output dimension
+    - the larger backbone representations lead to better linear probe performance
+    - traditional supervised methods decline in performance whent he dim of the backbone is increased
+    - ssl methods highly benefit from wider backbone representations
+Properties of the representation induced by the projector
+    - projector enforces pairwise independence of the features in the representation
+    - higher degrees of independence are reached w wider projectors
+    - more appropriate for learning unsupervised reps
+Training SSL w/o projector
+    - regularizing the representation objective on subvectors of the representtion w/o a trainable projector is sufficient to outperform simclr with a linear projector
+
+
+Role of Standard Hyper-Parameters
+Role of Mini-Batch Size
+    - SMALL BATCHES: Chen et al 2020b square root scaling of the learning rate gave significant increase on performance
+    - top performance with a batch size of 256 or more by simply removing the positive pair from the denominator of the softmax with more careful hyperparameter tuning
+Role of LR Schedulers and optimizers
+    - to determine a learning rate, methods often scale a base lr based on the batch size according to the heuristic:
+        - LR = batchsize/256 * base lr
+    - some use adamw with 1e-5 or 5e-4
+    - most common is a warmup period of 10 epochs where the learning rate is linearly increased to its base value
+    - after the warmup period, most methods use cosine decay
+Role of Weight-decay
+    - An important component of backprop
+    - No weight decay may lead to unstable results
+    - Weight decay allows the online network and predictor to better model invariance to augmentations regardless of the initial condition
+
+Vision Transformers Considerations
+    - Training ViT requires special care
+    - Prone to collapse and instability
+    - Sensitive to hyperparameters
+    - Batch Size:
+        - Large batch (4096) can be unstable
+        - Using a random (versus a learned) patch projection layer to embed pixel patches into input tokens for ViT stabilizes training
+        - A learning rate warmup of 10k iterations also improves training stability
+        - 1024 to 2048 seems to be sweet spot for SSL pre-training of ViTs
+    - BatchNorm layers in the projector heads improved linear probing accuracy of the ViT
+    - PATCH SIZE:
+        - Training with smaller patch sizes (5x5, 8x8 instead of 16x16) leads to improved performance
+        - Increasing patch sizes leads to reduction in running time, but increase in memory usage
+    - Stochastic depth
+        - Randomly drops blocks of the ViT as a regularization
+        - Huge importance when training larger models (0.5 drop path rate for ViT-H)
+        - Smaller models regularization can hurt performance
+    - LayerDecay
+        - Decreases lr geometrically along the layers
+    - LayerScale
+
+Techniques for High Performance Masked Image Modeling
+    - The choice of the teacher model does not have to be chosen carefully if the distillation is done in stages
+    - "uniform masking": constrain masking to hide equal amounts of information in each local window ensuring each has some information intact
+
+Evaluating Your SSL Models
+    - 
