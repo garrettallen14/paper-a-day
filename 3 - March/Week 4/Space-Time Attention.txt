@@ -28,7 +28,6 @@ Introduction
     - "TimeSformer" (time-space transformer) views the video as a sequence of patches extracted from the individual frames
     - As in ViT:
         - Each patch is linearly mapped into an embedding
-        - Each patch is augmented with positional information
     - Can interpret the resulting sequence of vectors as token embeddings which can be fed to a Transformer encoder
 
     - Downside of self-attention in standard Transformer:

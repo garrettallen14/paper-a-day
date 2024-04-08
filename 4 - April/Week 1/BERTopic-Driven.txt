@@ -1,0 +1,26 @@
+BERTopic-Driven Stock Market Predictions:
+Unraveling Sentiment Insights
+
+4 Apr 2024
+
+Abstract
+    - Analyze sentiment of topics derived from stock market comments
+    - Integrate this sentiment analysis with various DL models
+    - Incorporating topic sentiment notably enhances performance
+
+
+Introduction
+    - EMH posits that stock prices consistently reflect the rational present value of a firm's expected future cash flows
+    - The rapid evolution of stock markets has led to a proliferation of diverse investor types participating in these markets, alongside a growing number of financial anomalies that defy the tenets of the EMH
+    - Numerous studies have highlighted that stock market participants are not entirely rational
+    - Consequently, conventional theoretical models in behavioral finance are not competent sufficiently to comprehensively explain the influence of investor sentiment on the stock market
+
+    - Some researchers have previously employed the LDA-POS model for stock price movement prediction
+    - LDA, while a widely used topic modeling algorithm, relies on the BOW model and doesnt take into account word order information
+    - NLP technologies have emerged as promising tools for contributing to stock prediction
+    - BERT, with its ability to consider word order and context is better suited for sentiment analysis
+    
+    - This enables us to computationally analyze extensive volumes of subjective information extracted from online platforms
+        - Establish a topic vector space for effective topic modeling, thereby enhancing the accuracy of our sentiment analysis in the realm of stock market forecasting
+
+

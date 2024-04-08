@@ -194,4 +194,26 @@ Techniques for High Performance Masked Image Modeling
     - "uniform masking": constrain masking to hide equal amounts of information in each local window ensuring each has some information intact
 
 Evaluating Your SSL Models
-    - 
+Evaluation with Labels
+    - Self-supervised pre-training is mainly evaluated on image classification
+    - The three main common protocols are referred to as kNN, linear, and full fine-tuning evalutaitons
+    - Online evaluation can provide a useful signal of downstream performance because its  optimized alongside the varying SSL objective, it is misleading
+Evaluation without Labels
+    - Most evaluations rely on the use of labels and training an auxiliary model
+    - This can make evaluations expensive and sensitive to hyperparameters or their optimizations
+    - Using a pretext-task such as rotation prediction can facilitate performance evaluation without Labels
+        - Drawback is the requirement for training the classifier for the pretext task and assumption that rotations were not part of the pretraining augs
+Going beyond classification
+    - Currently there is no standardized protocol for evaluating SSL models on these tasks
+Visual Evaluation
+    - Use a decoder over the representation to map the information back to pixel space
+    - Most SSL methods aren't shipped with a decoder, so need to train a conditional generative diffusion model using an SSL representation as conditioning
+
+Speeding up Training
+    - Distributed Training
+        - SSL requires large batch sizes
+        - Can be sped up considerably by increasing batch sizes
+            - Limited by memory of the device
+        - Some SSL methods rely on statistics of the current batch for the loss value, which needs to be distributed along devices
+    - We present the elements that need to be taken into account to correctly distribute the training of common self-supervised learning methods
+    
