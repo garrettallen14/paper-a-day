@@ -1,0 +1,25 @@
+Neural Discrete Representation Learning
+
+30 May 2018
+
+Abstract
+    - Simple yet powerful generative model that learns self-supervised discrete representations
+    - VQ-VAE differs from VAE in two ways
+        1. encoder network outputs discrete rather than continuous codes
+        2. the prior is learnt rather than static
+    - To learn a discrete latent representation, we incorporate ideas from Vector Quantization
+    - Using VQ allows the model to circumvent "posterior collapse"
+        - Latents are ignored when their are paired with a powerful autoregressive decoder
+    - Pairing these representations with an autoregressive prior, the model can generate high quality images, videos, speech
+
+
+VQ-VAE
+    - VAEs consist of following:
+        1. encoder which parameterises a posterior distribution q(z|x) of discrete latent random variables z given the input data x
+        2. a prior distribution p(z)
+        3. a decoder with a distribution p(x|z) over input data
+    - Discrete Latent Variables
+        - We define a latent embedding space e \in R KxD where K is size of discrete latent space, D is the dimensionality
+        - There are K embedding vectors
+        - The model takes an input x that is passed through an encoder producing output ze(x)
+        - The discrete lv z are then calculated by a nearest neighbour look-up

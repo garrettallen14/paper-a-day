@@ -1,0 +1,19 @@
+Under The Hood: How
+OpenAI's Sora Model Works
+
+15 Mar 2024
+
+Question: How many minutes per GPU will it generate in 3 years assuming we grow 2x every 18 months.
+    - 3 years = 36 months = 2*2 = 4x => 20 minutes of video per hour per H100 GPU
+    - This still means that it takes longer to generate the video than it takes to perform inference on the representations
+Question: What was the # of params used?
+    - Estimation in the paper is 20B parameters
+    - In the presentation, they mention that it was 32x the base model -> their base DiT was 20/32 -> 625M params!!!
+    - This is 6x the number of params of my current DiT. Although the actual architecture is around half.
+
+Key Takeaways
+    - Sora can generate at most ~5 min of video per hour per H100 GPU
+    - Inference for diffusion-based Sora is orders of magnitude more expensive
+    - We estimate a peak demand of ~720k Nvidia H100 GPUs for inference
+
+\\

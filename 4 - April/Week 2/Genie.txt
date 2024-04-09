@@ -1,0 +1,48 @@
+Genie: Generative Interactive Environments
+
+23 Feb 2024
+
+Abstract
+    - At 11B params, Genie is a "foundation world model"
+    - Comprised of:
+        - Spatiotemporal Video tokenizer
+        - Autoregressive dynamics model
+        - Simple and scalable latent action model
+    - Genie enables users to act in the generated environments on a frame-by-frame basis 
+        - Not trained with any ground-truth action labels or other domain-specific requirements
+    - The resulting latent action space facilitates training agents to imitate behaviors from unseen videos, opening the path for training generalist agents
+
+
+Introduction
+    - Genie can take an unseen image as a prompt and make it possible to create and play imagined virtual worlds
+    - Uses a Novel video tokenizer, and extracts latent actions via a causal action model
+    - Both the video tokens and latent actions are passed to a dynamics model
+        - Dynamics model autoregressively predicts the next frame using MaskGIT
+    - Provide a rigorous scaling analysis of our architecture wrt batch and model size
+        - Vary from 40M to 2.7B
+    - Architecture scales gracefully with additional computational resources
+    - Trained on 30,000 hours of internet gameplay from 2d platformers
+
+
+Methodology
+    - Use a memory efficient ST-transformer across all model components
+        - L spatiotemporal blocks with interleaved spatial and temporal attention layers, followed by an MLP
+        - SA in the spatial layer attends over the 1xHxW tokens within each time step
+        - Temporal layer attends over Tx1x1 tokens across T time steps
+    - Assume a causal structure with a causal mask
+    - The dominating factor of computation complexity (spatial attention layer) scales linearly with the number of frames rather than quadratically
+Model Components
+    1. Latent Action Model: Infers the latent action a between each pair of frames
+    2. Video Tokenizer: Converts raw video frames into discrete tokens z
+    3. Dynamics Model: Given a latent action and past frame tokens, predicts the next frame of the video
+    - Model is trained in two phases following a standard autoregressive video generation pipeline:
+        1. train video tokenizer first for the dynamics model
+        2. co-train the latent action model (directly from pixels) and dynamics model (on video tokens)
+    Latent Action Model (LAM)
+        - To achieve controllable video generation, we condition each future frame prediction on the action taken at the previous frame
+        - Such action labels are rarely available in videos from the internet and action annotation is costly to obtain
+        - We learn Latent Actions in a fully unsupervised manner
+        Inputs: The encoder takes as inputs all previous frames, as well as the next frame x t+1
+        Outputs: A corresponding set of continuous latent actions a1:t
+        - A decoder then takes all previous frames and latent actions as input and predicts the next frame xt+1
+        
