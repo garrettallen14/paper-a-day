@@ -74,4 +74,108 @@ Embedding Similarities
             - Aggregated Score:
                 - Designed as the maximum between the Levenshtein edit distance and similarity from the Dolos toolkit
                 - Widely used code generation benchmarks MBPP and HumanEval are contaminated with pre-training sets The Pile and The Stack
-            - 
+
+
+Model Contamination
+    - Model M trained on DM training set is applied to an eval dataset DE
+    - Task is to determine if DE int DM is empty
+    - Exposure to evaluation data during training raises concerns about the model's ability to generalize to unseen data
+        - Performance on eval is artificially inflated
+    - Compared to data contamination, the training set is dependent on the model and could be unknown, as with GPT-3.5&4
+Performance Analysis
+    - First review a line of research assessing model contamination through performance analysis: M is applied to evaluation datasets of different timestamps, including recent datasets which did not exist at pre-training time
+    1. A comparative analysis of the efficacy in code generation tasks between GPT-4 and GPT-3.5-Turbo, utilizing datasets from periods before and after a specified cutoff date
+        - Reveals a compelling correlation between likelihood of exposure to coding problem platforms by these LLMs and the observe test case pass rates
+        - Underscores a statistically significant positive correlation for problems catalogued on GitHub prior to the GPT models' training cut-off, suggesting their inclusion in the training data enhanced performance on related tasks
+    2. Present four innovative methods to detect task contamination in LLMs
+        i. Training data inspection to identify direct task examples
+        ii. Task example extraction from instruction-tuned models
+        iii. Membership inference to detect exact content matches suggesting data inclusion
+        iv. Chronological analysis to assess contamination through performance metrics against known dataset timelines
+    3. Comprehensive evaluation of data contamination in LM pre-training through experiments on various public datasets
+        - Pre-trains models from scratch
+        - Reveals a U-Shaped relationship between extent of data contamination and model performance
+        - Challenges existing n-gram based definitions of contamination as inadequate
+        - Underscores the necessity for more robust contamination detection methods
+
+Model Completion
+    - An intuitive approach to detect model contamination in LLMs is to carefully analyze their outputs in controlled prompting setups
+    - Outputs on contaminated datapoints may be too close or exactly match training data, or be subject to very high model confidence
+Model Memorization
+    - When analyzing model memorization, researchers focus on which training data points have been entirely memorized by the model, a process that can be leveraged to flag contamination on downstream tasks
+    1. Highlights the common practice of random data shuffling in NLP tasks fails to account for the overlaps between training and test sets, leading to data leakage and inflated performance metrics
+        - Models that merely memorize instead of generalize may benefit from this overlap 
+        - By employing bag-of-words approach to assess text similarity, the study provides a foundational method for identifying and mitigating leakage
+    2. Discuss benefits of deduplicating datasets for training
+        - Dedupe significantly reduces the incidence of memorized data emission by a factor of 10x
+        - Mitigates the common issue of train-test overlap, thereby preventing overestimation of model accuracy, enhances training efficiency by reducing dataset size by up to 19%
+        - Maintains or improves model perplexity, allowing for faster attainment of higher accuracy
+        - This comprehensive approach not only streamlines the training process, but also contributes to more environmentally and economically sustainable model development
+    3. Find evidence of contamination across several benchmarks, impacting the performance of models like GPT-3
+        - A novel approach to quantify the effect of contamination involves training a model on a mix of general and task-specific data, then comparing its performance on seen versus unseen instances to measure memorization and exploitation
+        - Highlights the nuanced relationship between memorization and exploitation
+        - Larger models, or those trained w/certain data configurations may exhibit different levels of sensitivity
+    4. Emphasize potential vulnerabilities of aligned models to adversarial attacks inducing recitation of memorized training data
+        - Analyze discoverable memorization across 10k documents from the Gemma pre-trained models' corpora
+        - Gemma models exhibit memorization rates comparable to those of PaLM models
+Prompting techniques
+    - Outputs close to actual training data could indicate contamination
+    1. Uncover vulnerability of LLMs including ChatGPT to data extraction attacks
+        - By prompting w/an off-(training)-distribution input, they show that ChatGPT can regurgitate entire chunks of training data, including sensitive personal-level information
+        - Study illustrates that even models trained with alignment techniques, aimed at reducing the emission of memorized data, can be induced to divulge substantial amounts of sensitive information
+    2. Highlights potential for steering LLMs towards generating more factual and grounded content through prompting
+        - QUIP score
+Model Likelihood
+    - Utilize the fact that model's next token predictions are more likely to be more confident if the data point has been seen during training
+    1. Min-K% Prob
+        - Assumes white-box access to LLM logits or next-prob distributiongs
+    2. Run inference on DE and shuffled versions of DE
+        - LLM log probs being statistically different signifies contamination
+    3. Compares perplexity on benchmark samples against memorized and clean baselines
+        - Significant memorization in recent models on popular reading comprehension and summarization benchmarks
+        - Multiple-choice benchmarks show les evidence of contamination
+    4. Propose two novel likelihood-based contamination detection methodologies:
+        - Contamination Detection via output Distribution (CDD)
+            - Detects data contamination by observing peakedness in LLMs output distribution in black-box manner
+        - Trustworthy Evaluation via output Distribution (TED)
+            - Corrects the LLMs output distribution to mitigate the impact of data contamination on eval metrics
+LLM-Based Model Contamination Detection
+    1. Guided Prompting: unlike a std prompt asking the LLM to complete the data point, guided prompting also includes extra information like dataset name
+        - Contamination is then assessed based on the averaged difference in performance between standard and guided prompting
+        - If GPT-4 with in-context learning finds an exact match or two near-exact matches in the guided completions
+        - This latter method is highly accurate in identifying contamination (92%-100%)
+    2. Data Contamination Quiz (DCQ) evaluation framework for contamination detection in black-box LLMs
+        - The LLM under investigation is prompted with five completion options, where one option is the ground-truth text from the original dataset, three other options are paraphrases from GPT-4 and the last choice is None
+
+
+Discussion
+Best Practices
+    - Recent works have called the community to adopt better practices to reduce contamination
+Encrypting eval datasets
+    - Advocate for the encryption of publicly released data using a public key, coupled w/ licensing agreements that prohibit derivative distribution
+    - Implementing training exclusion controls for closed APIs and safeguarding test data by refusing to perform evaluations wihtout such controls
+    - Moreover, they suggest avoiding data that appears with the solution and releasing internet-derived data along with the corresponding web-page context
+Scanning newly released eval datasets
+    - Develop automatic or semi-automatic approaches to detect contamination for new benchmarks and design mechanisms to flag those works w/ contamination
+Evaluating on a wide spectrum
+    - Use more benchmarks from diverse sources, covering both basic and advanced capabilities
+    - Recommend employing multiple task prompts for benchmark tests to derive model performance that is more stable and reliable
+    - Highlight the necessity of conducting data decontamination checks between pre-training data and any evaluation data when using benchmarks
+Not leaking data to closed-source APIs
+    - Systematic literature review of 225 papers and carefully detail data leakage from them to closed-source models like the GPT-series
+    - Conclude that ~42% of reviewed papers leaked data to GPT-3.5 and GPT-4 for a total of ~4.7M benchmark samples across 263 benchmarks
+    - Report a series of evaluation malpractices and propose a list of suggested practices for evaluating closed-source LLMs
+
+Future Challenges
+Real-time contamination detection systems
+    - Can monitor datastreams continuously and alert users to potential contamination events
+Bypassing contamination detection
+    - Very effective way to bypass several existing contamination detection methods:
+        - Evasive Augmentation Learning (EAL): paraphrasing benchmarks with GPT4 and fine-tuning the LLM on the paraphrased data
+Ethical and legal data frameworks
+    - We believe in the need for comprehensive ethical and legal frameworks to govern the collection, usage, and management of data for LLM training
+    - This includes policies and protocols for data privacy, consent, and use that help prevent the incorporation of contaminated data from unethical sources and the contamination of widely used pre-training data sources
+
+
+LLMSanitize Library
+    - Facilitating contamination detection in LLMs, we have built and are releasing LLMSanitize 

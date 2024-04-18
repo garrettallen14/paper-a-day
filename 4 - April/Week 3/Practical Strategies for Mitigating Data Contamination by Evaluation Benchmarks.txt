@@ -1,0 +1,91 @@
+Stop Uploading Test Data in Plain Text: 
+Practical Strategies for Mitigating Data Contamination by Evaluation Benchmarks
+
+18 Oct 2023
+
+Abstract
+    - Leaderboards w/hidden answers, or using test data which is guaranteed to be unseen are expensive and become fragile with time
+    - Propose three strategies:
+        1. Test data made public should be encrypted with a public key and licensed to disallow derivative distribution
+        2. Demand training exclusion controls from closed API holders, and protect your test data by refusing to evaluate w/o them
+        3. Avoid data which appears with its solution on the internet, and release the web-page context of internet-derived data along with the data
+
+
+Introduction
+    - Common NLP models are LLMs trained on data crawled from internet
+    - Data is malformed or obfuscated in ways that make it difficult to audit at scale
+    - Evaluation data that is also available on the web may be used as part of training and can be challenging to verify whether used in practice or not
+Strategy 1:
+    - Protect data from automatic crawlers using public key encrpytion and a license that forbids distribution of adaptations ("no derivatives")
+Strategy 2:
+    - Withhold from evaluating APIs that give no training exlusion options
+Strategy 3:
+    - Avoid data that appears with its solution on the internet
+    - If the data originates from the internet, release its context with it
+
+
+Setting
+    - We consider two independent scenarios of data contamination, and three assumptions underlying our mitigation strategies:
+Scenario 1 (internet crawled corpora):
+    - The model to be evaluated is based on a training set derived automatically form the internet.
+    - The training set is closed or large enough that it is difficult to exhaustively and routinely search for all possible instances of data contamination from public test sets
+    - Note: we include cases in which the model potentially trained on some form of the data's solution, even if it was not trained on the data verbatim
+Scenario 2 (closed API models):
+    - The model to be evaluated is a closed model behind an API
+    - There is no global or conditional guarantee of exclusion from future training
+    - Any API call which contains test data compromises that test data for all models under the API holder and their affiliates
+Assumption 1 (presumption of contamination):
+    - In all cases, if it is possible that the training data has been contaminated, we assume that it is
+    - In other words, if some test data is accessible to automatic internet crawling systems, we consider it compromised
+Assumption 2 (sincere actors):
+    - We are concerned with a setting where the evaluators and model developers are non-adversarial
+Assumption 3 (contamination inheritance):
+    - Models trained on data derived from other models will all be considered as contaminated as their "ancestors"
+
+
+Why is Data Contamination Prevalent?
+Closed models give no guarantees or controls about held-out data
+    - Models with private training data make it impossible to know if they were trained on particular evaluation data
+    - Even when using test data that is guaranteed to be unknown to a closed API model, on the first moment that this data is used to evaluate the closed model, it ceases to be unknown, and there is currently no standardized training exclusion controls by API holders
+    - Furthermore, for much of evaluation research that evaluates models before the data is publicly released, the API holders will not know whether the data being sent to them belongs to a wold-be eval set or not
+Even with open data, detection is difficult
+    - Even for models whose training data is known, it can be challenging to understand exactly what they were trained on or to filter out tests data before training
+    - Although exhaustive checks are rare, false negative/positives are still possible
+    - Detection is a Reactive, not Preventative measure.
+Existing mitigation strategies are imperfect
+1. Live Leaderboards with hidden answers
+    - Answers to test data are kept hidden behind an interface that only reveals the evaluation result
+    - There are weaknesses with this approach:
+        a. partial mitigation
+            - Test data itself --sans answers-- is still available on the internet
+            - Live Leaderboards are traditionally only applied to test sets, but development sets need protection from training to be effective as well
+        b. Rarely enforced
+            - Live Leaderboards are costly and time-consuming to maintain
+            - Rarely implemented, used, and get discontinued over time
+        c. Responsibility of evaluation falls to the benchmark host
+            - In the case of automatic evaluation metrics, this poses on issue, but when evalutaion is costly or time consuming -- such as with human eval -- the leaderboard host alone must often shoulder the costs of all evaluations
+2. Creating (very) new data
+    - Most trivially, it is possible to run the eval before any data is publicized
+    - Additionally, models can admit their cutoff dates
+    - Expensive cat-and-mouse game
+
+
+Suggested Mitigation Strategies
+Strat 1: Encrypt test data with a public key, and use a "No Derivatives" license
+    - Simply upload the test data after encrypting its contents, alongside the key used to decrypt it
+    - A simple method is by compressing the data in a password-protected archive
+    - A No Derivatives clause will protect the data from being redistributed without its encryption, while still being otherwise permissive
+    - Preventative when employed by evaluation practictioners, stopping the eval data from being compromised to begin with
+
+    - The goal is not to protect the data from adversarial actors, but to protect the data from automatic crawling
+    - The encryption key can be safely released with the encrypted data, and the encryption method can be simple and fast, so long as it sufficiently distorts the text
+    - However, we warn against using standard obfuscation or compression methods that are not key-protected, since some crawling systems include pipelines of automatic decompression or deobfuscation
+
+    - Online dataset hubs should without from including test data in their online viewer directly, and specify when or whether hidden data was previously available in plain text
+Strat 1 Corollary: Few Shot Prompts
+    - Demonstrations used as training data
+    - Not regarded as eval data, they are used primarily to evaluate model generalization under strict data constraints
+    - Few-shot evaluation relies on the assumption that this small num of demonstrations will approximate model behavior on any small num of demonstrations
+    - Consider published prompts as "compromised"
+        - Evaluation ceases to be representative
+    - Should consider prompts with data as evaluation data
