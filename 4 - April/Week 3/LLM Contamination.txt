@@ -1,0 +1,77 @@
+How Much are LLMs Contaminated?
+A Comprehensive Survey and the LLMSanitize Library.
+
+31 Mar 2024
+
+Abstract
+    - Contamination is critical
+    - Business applications and fundraising in AI:
+        - A few percentage points gained on popular QA benchmarks could translate into dozens of millions of dollars
+        - Pressure towards model integrity
+    - It is harder and harder to keep track of the data that LLMs have seen
+        - May be impossible with closed-source models like GPT-4 and Claude-3 not divulging any information on the training set
+    - LLM performance may not be reliable anymore, as high performance may be at least partly due to their previous exposure to the data
+    - Jeopardizes the entire progress in the field of NLP, yet, there remains a lack of methods on how to efficiently address contamination, or a clear consensus on prevention, mitigation and classification of contamination
+    - We survey all recent work on contamination with LLMs, and help the community track contamination levels of LLMs by releasing an open-source Python library named LLMSanitize implementing major contamination detection algorithms
+
+
+Introduction
+    - LLMs are pivotal tools in AI
+    - Models rely on extensive datasets to learn about language and the world, and generate responses that are increasingly indistinguishable from human-authored content
+    - Integrity of these datasets is paramount -- any contamination can significantly impair the models' effectiveness / reliability
+    - Contamination is a broad issue that we divide into data contamination and model contamination
+        - Data contamination: an evaluation dataset is (partly) included in the training set
+        - Model contamination: a specific evaluation dataset during pre-training or fine-tuning, leading to biased results on this dataset
+    - If we consider whether the contaminated data contains only inputs or both inputs and labels, contamination includes input contamination and input+label contamination
+    - Depending on the level of access to the model, model contamination detection mainly focuses on white-box detection where we have full access to the model, eg, a local model, and a black-box detection where only the API access is available
+    
+    - Contamination poses a multifaceted challenge, threatening not only the technical accuracy of LLMs but also their ethical and commercial viability
+    - In contexts where precision and trustworthiness are non-negotiable: medical diagnosis, legal advice, financial services, the repercussions of relying on contaminated data can be profound
+    - The allure of leveraging LLM outputs to attract investment underscores a pressing commercial dimension
+    - Community is struggling to settle on a fixed subset of benchmarks as LLMs performance increases fast
+
+    - Need a comprehensive survey and shared integrated resource of contamination detection in LLMs
+    - We delineate the scope and nature of contamination challenges
+    
+    - Categorize contamination into: data and model contamination
+        - Review all existing work in each category
+    - Introduce LLMSanitize, an OS Python library aimed at helping the community centralize a shared implementation of all data and model contamination methods
+
+
+Data Contamination
+    - Given a training dataset D and evaluation DE, the objective is to check whether D int DE is empty
+    - Checking data contamination is primordial to prevent memorization of contaminated data, which could skew performance on the evaluation benchmarks
+String Matching
+    - Several LLM training reports assess the level of contamination between their downstream evaluation datasets and their pre-training set through string-matching
+    - GPT-2:
+        - Calculate contamination as the percentage of 8-grams from a particular evaluation set that are also found in the WebText training set
+        - They discover 1-6% overlap between common LM datasets' test sets and the WebText dataset used for pre-training
+    - GPT-3:
+        - Clean version of each evaluation dataset removing all datapoints having a 13-gram collision with anything in the pre-training CommonCrawl (C4) dataset
+        - A conservative overlap analysis discovers large contamination problems for common datasets, showing some Wikipedia language modeling benchmarks
+    - C4 Dataset Investigation
+    - PaLM:
+        - 10 evaluation datasets at risk of contamination per their construction process
+        - For each dataset, partitions it into a clean and a contaminated subset based on whether at least 70% of the 8-grams of the data point can be found at least once in the training set
+        - Note: 8-grams are like 8 words basically
+    - GPT-4:
+        - Measures cross-contamination between evaluation sets and pre-training data with substring match:
+            - A match is identified if any of three 50-characters randomly sampled substrings from the evaluation data point is a substring of the training set
+        - Authors report contamination overall has very little effect on reported zero-shot results
+    - Llama-2:
+        - Uses tokens instead of words to measure contamination
+        - Establishes a token is contaminated if it appears in any token n-gram longer than 10 tokens in both eval sample and training set
+    - Similar to PaLM and GPT-4, Li study also finds the data contamination does not necessarily lead to increased performance metrics
+Embedding Similarities
+    - String matching fails on paraphrasing
+    - Cosine similarity offers an attractive alternative
+    - Attempts:
+        - Lee 23 prevent contamination in Open-Platypus dataset by removing test questions with cosine similarity (SentenceTransformer embeddings) greater than 80% against any training item
+        - Phi-1 runs a data contamination analysis between their fine-tuning set and evaluation set
+            - Embeddings-based retrieval between code snippets using L2 distance embeddings is effective
+            - n-gram overlap fails in the coding domain
+        - Hybrid approach to string matching and embeddings similarity:
+            - Aggregated Score:
+                - Designed as the maximum between the Levenshtein edit distance and similarity from the Dolos toolkit
+                - Widely used code generation benchmarks MBPP and HumanEval are contaminated with pre-training sets The Pile and The Stack
+            - 
