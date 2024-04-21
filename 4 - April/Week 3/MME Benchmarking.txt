@@ -1,0 +1,7 @@
+MME: A Comprehensive Evaluation Benchmark
+for Multimodal Large Language Models
+
+17 Mar 2024
+
+Abstract
+    - Multimodal LLMs 

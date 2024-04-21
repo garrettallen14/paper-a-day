@@ -1,0 +1,98 @@
+A MATHEMATICAL PERSPECTIVE ON TRANSFORMERS
+
+6 Feb 2024
+
+Abstract
+    - Develop a mathematical framework for analyzing Transformers based on their interpretation as interacting particle systems
+    - Clusters emerge in long time
+
+
+Outline
+    - DNNs are compositional in nature:
+        - Data is processed sequentially, layer by layer, resulting in a discrete-time dynamical system
+    - Residual neural networks: neural ODEs
+        - Input: x(0) in Rd (an image) is evolving according to a given time-varying velocity field as x`(t) = vt(x(t)) over some time interval (0,T)
+    - A DNN can be seen as a flow map x(0) -> x(T)
+    - Transformers are flow maps on P(Rd), the space of probability measures over Rd
+    - This flow map from measures to measures, Transformers evolve a mean-field interacting particle system
+    - Every particle (token) follows the flow of a vector field which depends on the empirical measure of all particles
+    - The continuity equation governs the evolution of the empirical measure of particles, whose long-time behavior is of crucial interest
+    - Our main observation: particles tend to cluster under these dynamics
+    - This phenomenon is of particular relevance in learning tasks such as next-token prediction
+    - The output measure encodes the probability distribution of the next token
+        - The clustering indicates a small number of possible outcomes
+    - Results indicate that the limiting distribution is actually a point mass, leaving no room for diversity or randomness, which is at odds with practical observations
+    - This apparent paradox is resolved by the existence of a long-time metastable state
+    - The Transformer flow appears to possess two different time-scales:
+        1. Tokens quickly form a few clusters
+        2. Through pairwise merging of clusters, all tokens finally collapse to a single point (much slower)
+    
+    - Goals of this manuscript:
+        1. Provide general and accessible framework to study Transformers
+            - The structure of these interacting particle systems allows one to draw concrete connections to established topics in mathematics
+        2. Describe several promising research directions with a particular focus on the long-time clustering phenomenon
+
+    - Part 1: Modeling
+        - We define an idealized model of the Transformer architecture that consists in viewing the discrete layer indices as a continuus time variable
+            - Two key components: self-attn and layer norm
+            - Layer norm constrains particles to evolve on the unit sphere, whereas self-attention is the particular nonlinear coupling of the particles done through the empirical measure
+        - The empirical measure evolves according to the continuity partial diff eqn
+        - We introduce a simpler surrogate model for self-attn which has the convenient property of being a Wasserstein gradient flow 
+    - Part 2: Clustering
+        - We establish new mathematical results that indicate clustering of tokens in the large time limit
+        - In high dimension d >= n, a set of n particles randomly initialized will cluster to a single point as t -> inf.
+        - We complement this result with a precise characterization of the contraction of particles into a cluster
+        - We describe the histogram of all inter-particle distances, and the time at which all particles are already nearly clustered
+        - We also obtain a clustering result without assuming that the dimension d is large, in another asymptotic regime
+    - Part 3: Further questions
+        - We propose potential avenues for future research
+
+    - Part 1. Modeling
+        - Begin our discussion by presenting the mathematical model for a Transformer
+        - Slightly simplified, includes the self-attn mechanism as well as layer norm, but excludes additional ffwd layers commonly used in practice
+        - Leads to a highly nonlinear mean-field interacting particle system
+
+
+Interacting Particle System
+    - Treat the discrete layer indices in the model as a continuous time variable, echoing previous work on ResNets
+Residual neural networks
+    - One standard paradigm in ML is that of supervised learning
+    - Approximate an unknown function f: Rd->Rm from data D = {x(i), f(x(i))} i in N
+    - This is typically done by choosing one among an arsenal of possible parametric models, whose params are then fit to the data by means of minimizing some user-specified cost
+    - Within the class of neural nets, RNNs have become a staple DNN architecture
+    - ResNets approximate a function f at x in Rd through a sequence of affine transformations, a component-wise nonlinearity, and skip connections
+    - Has L hidden layers
+    - The output of the RNN given the ith input is projected to Rm via a trained transformation
+    - Layer index k can naturally be interpreted as a time variable, motivating the continuous time analogy
+    - (2.2) is dubbed neural ODEs
+The interacting particle system
+    - RNNs operate on a single input vector x(0) in Rd at a time, Transformers operate on a sequence of vectors of length n (Rd)n
+    - Each vector represents a word, and entire sequence a sentence or paragraph
+    - Allows to process words together with their context
+    - A sequence element xi(0) in Rd is a token
+    - Sequence (xi(0)) i in n is a prompt
+    - We use the words "token" and "particle" interchangably
+    - Practical implementations make use of layer normalization, which amounts to an element-wise standardization of every particle at every layer
+    - Layer norm constrains particles to evolve on a time-varying axis-aligned ellipsoid (unit sphere Sd-1)
+
+    - A Transformer is then a flow map on (Sd-1)n: the input sequence (xi(0)) i in n in (Sd-1)n is an initial condition which is evolved through the dynamics
+    - Pxy = y - <x,y>x denotes the projection of y in Sd-1 onto TxSd-1
+    - ZB,i(t) is the partition function where Q,K,V are parameter matrices learned from data, and B>0 a fixed number intrinsic to the model
+    - The interacting particle system importantly contains the true novelty that Transformers carry wrt other models: the self-attn mechanism
+        - Aij(t) = e^<Q(t)xi(t),K(t)xj(t)> / ZB,i(t)  (i,j) in [n]^2
+    - A(t) is an nxn stochastic matrix A(t) called the self-attn matrix
+        - Attention stems from the fact that Aij(t) captures the attention given by particle i to particle j relatively to all particles l in [n]
+    - Attention Aij(t) captures the attention given by particle i to particle j relatively to all particles l in [n].
+    - A particle pays attention to its neighbors where neighborhoods are dictated by matrices Q(t) and K(t)
+    - It has been observed numerically that the probability vectors (Aij(.)) j in [n] (i in [n]) in a trained self-attn matrix exhibit behavior related to the syntactic and semantic structure of sentences in NLP
+    - To simplify, we freeze the QKV parameters
+    - The dynamics (SA) have a strong resemblance to the vast literature on nonlinear systems arising in the modeling of collective behavior
+    - Remark (Permutation equivariance): f: (Sd-1)n -> (Sd-1)n is permutation equivariant if f(piX) = pi(f1(X),...,fn(X)) for any X in (Rd)n and for any permutation pi in Sn of n elements
+        - If we permute the input X, the output f(X) is permuted the same way
+        - Given t>0 the Transformer (SA) mapping is permutation equivariant
+Toward the complete Transformer
+    - Multi-headed attention: practical implementations spread out the computation of the self-attn mechanism at every t through a sequence of heads, leading to the so-called MHSA
+    - The inf width limit for Transformers is in fact very natural, as it is realized by stacking an arbitrary large num of heads: H->+inf
+    - So, the same questions as for 1-hidden layer NNs may be asked:
+    - Problem 1 (Approximation): Fix d,n>=2 and consider the 1-hidden layer Transformer w/MHSA. Can one approximate, in some appropriate topology, any cts and permutation-equivariant function f: (Sd-1)n -> (Sd-1)n by means of some fHtheta as H->+inf ? 
+    - Feed Forward Layers: Complete Transformer dynamics combines all of the above mechanisms with a ffwd layer. This amounts to considering dynamics of the form: x`i(t) = Pxi(t) (...) layers are critical and drive the existing results on approximation properties of Transformers. Nevertheless, the analysis of this model is beyond the scope of our current methods

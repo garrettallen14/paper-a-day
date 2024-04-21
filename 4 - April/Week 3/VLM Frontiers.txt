@@ -1,0 +1,41 @@
+Exploring the Frontier of Vision-Language Models: 
+A Survey of Current Methodologies and Future Directions
+
+12 Apr 2024
+
+Abstract
+    - Three distinct categories:
+        1. Models dedicated to VLM understanding
+        2. Models that process multimodal inputs to generate unimodel (textual) outputs
+        3. Models that both accept and produce multimodal inputs and outputs
+    - Analyze all kinds of VLMs
+    - Benchmark these VLMs over various datasets
+
+
+Introduction
+    - Extensively analyze the performance of different VLMs across benchmark datasets, notably the MME benchmark, providing comprehensive insights
+    - Our survey represents the most comprehensive and current compilation of VLMs to date, encompassing approximately 70 models
+
+
+VLMs
+    - We have conducted an extensive analysis of several VLMs across ten widely recognized benchmark datasets, spanning tasks such as Visual Question Answering (VQA) and image captioning
+Vision-Language Understanding
+    - CLIP:
+        - NN proficient in grasping visual concepts through natural language guidance
+
+
+Benchmarks:
+    - Science-QA
+    - VizWiz
+    - Flickr30K
+    - POPE
+    - VQA v2
+    - GQA
+    - LlavaBench
+    - Chart-QA
+    - MM-Vet
+    - ViSiTBench
+
+MME Benchmark
+
+MSVD-QA, MSRTT-QA, ActivityNet-QA
