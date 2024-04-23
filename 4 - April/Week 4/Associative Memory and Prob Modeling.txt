@@ -1,0 +1,24 @@
+Bridging Associative Memory and Probabilistic Modeling
+
+15 Feb 2024
+
+Abstract
+    - Assoc memory studies RNNs designed to denoise, complete and retrieve data
+    - Probabilistic modeling studies learning and sampling from probability distributions
+    - Observation: associative memory's energy functions can be seen as probabilistic modeling's negative log likelihoods
+    - We build a bridge between the two that enables useful flow of ideas in both directions
+    - We showcase four examples:
+        1. Propose new EBMs that flexibly adapt their energy functions to new in-context datasets (ICL of Energy functions)
+        2. Propose two new associative memory models:
+            a. Dynamically creates new memories as necessitated by the training data using Bayesian nonparametrics
+            b. Explicitly compute proportional memory assignments using the ELBO
+        3. Analytically and numerically characterize the memory capacity of Gaussian kernel density estimators, a widespread tool in probabilistic modeling
+        4. We study a widespread implementation choice in Transformers -- normalization followed by SA -- to show it performs clustering on the hypersphere
+
+
+Introduction
+    - Associative memory: RNNs with state x(t) in R D and dynamics f: XxTh -> X
+        - Constructed so that the RNN denoises, completes, and/or retrieves training data
+        - Research is often interested in the stability, capacity and failures of particular memory models
+        - Explicitly define the dynamics as minimizing an energy function
+    - Probabilistic modeling: aims to learn a prob dist ptheta(x) with params theta using training dataset D := {xn} N:n=1

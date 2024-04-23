@@ -3,5 +3,141 @@ for Multimodal Large Language Models
 
 17 Mar 2024
 
+DATASET TOTALS:
+    - Perception:
+        - Coarse-Grained Recognition:
+            - 30 images, 60 instruction-answer pairs
+        - Fine-Grained Recognition:
+            - 917 images, (yes or no questions) (??)
+        - OCR:
+            - 20 images, 40 instruction-answer pairs
+    - Cognition:
+        - Commonsense Reasoning:
+            - 70 images and 140 instruction-answer pairs
+        - Numerical Calculation:
+            - 20 images and 40 instruction-answer pairs
+        - Text Translation:
+            - 20 images and 40 instruction-answer pairs
+        - Code Reasoning:
+            - 20 images and 40 instruction-answer pairs
+
+Measurements:
+    - I think each image has one positive and one negative instruction-answer pair
+    - Accuracy: Whether it answered Yes or No correctly for a given image and answer pair (50% chance at random)
+    - Accuracy+: Whether it answered Yes and No correctly for both questions for the image or not (25% chance at random)
+
 Abstract
-    - Multimodal LLMs 
+    - Present the first comprehensive MLLM Evaluation benchmark MME
+    - Measure both perception and cognition abilities on a total of 14 subtasks
+    - Avoid data leakage through manually designed annotations of instruction-answer pairs
+    - The concise instruction design allows us to fairly compare MLLMs, instead of struggling in prompt engineering
+    - Easily carry out quantitative statistics
+    - A total of 30 advanced MLLMs are comprehensively evaluated on our MME
+    - Results suggest large room for improvement exists, and reveals potential directions for the subsequent model optimization
+
+
+Introduction
+    - Instruction following
+    - In-Context Learning (ICL)
+    - Chain-of-Thought (CoT) reasoning
+    - Flamingo turns on multimodal ICL
+    - PaLM-E achieves amazing OCR-free math reasoning via CoT
+    - The existing three common quantitative evaluation manners for MLLMs have their limitations that are difficult to comprehensively evaluate performance
+    - First manner evaluates on existing traditional multimodal datasets (image captioning and VQA)
+        - May be hard to reflect emergent abilities of MLLMs on these datasets
+        - Difficult to guaranteee all MLLMs have not seen the test data
+    - Second manner is to collect data for an open-ended evaluation, but either data is unavailable to public or amount is small (50 imgs)
+    - Third manner focuses on one aspect of MLLMs, such as object hallucination or adversarial robustness
+        - Powerless to comprehensive evaluation
+    - A universal comprehensive evaluation benchmark should have the following four characteristics:
+        1. Cover as much as possible
+            - Perception: recognizing specific objects such as existence, count, position and color
+            - Cognition abilities: compositing the perception information and the knowledge in the LLM to deduce more complex answers
+        2. Data or annotations should not come from existing publicly available datasets
+        3. Instructions should be as concise as possible and in line with human cognition
+            - Instruction design may have large impact on output, all models should be tested under the same unified instructions for fair comparison
+        4. The responses of MLLMs should be intuitive and convenient for quantitative analysis
+            - Open-ended nature of MLLM answers poses significant challenges to evaluating results
+            - Existing methods use GPT or manual scoring (leads to problems)
+    
+    - We collect a comprehensive MLLM Evaluation benchmark, MME
+        1. Covers the examination of perception and cognition abilities
+            - Perception includes the recognition of coarse-grained and fine-grained objects
+                - Former identifies the existence, count, position and color of objects
+                - Latter recognizes movie posters, celebrities, scenes, landmarks, and artworks
+            - Cognition includes commonsense reasoning, numerical calculation, text translation and code reasoning
+                - Number of subtasks is up to 14
+        2. All instruction-answer pairs are manually constructed
+            - For the few public datasets involved, we only use images without directly relying on their original annotations
+            - Make efforts to collect data through real photographs and image generation
+        3. Instructions of MME are designed concisely to avoid the impact of prompt engineering on the model output
+            - We argue that a good MLLM should be able to generalize to such simple and frequently used instructions, which are fair to all models
+        4. Benefitting from out instruction design "please answer yes or no"
+            - We can easily perform quantitative statistics based on the "yes" or "no" output of MLLMs
+        
+    - Conduct massive experiments to evaluate the zero-shot performance of 30 advanced MLLMs on the 14 subtasks
+    - We can measure the range that current MLLMs can reach in each capability dimension
+
+    - We have summarized four prominent problems exposed in experiments, including inability to follow basic instructions, a lack of basic perception and reasoning, an object hallucination
+
+
+MME Evaluation Suite
+Instruction Design
+    - To facilitate quantitative performance statistics, the orientation of our instruction design is to let the model to answer "yes" or "no"
+    - As a result, the instruction consists of two parts, including a concise question and a description "Please answer yes or no."
+    - For each test image, we manually design two instructions, where the discrepancy lies in the questions
+    - The ground truth answer of the first question is "yes" and the second is "no"
+Evaluation Metric
+    - Since the output is limited to two types ("yes" or "no") it is convenient to measure the metrics of accuracy and accuracy+.
+        - Accuracy: is calculated based on each question (random accuracy = 50%)
+        - Accuracy+: based on each image where both of the two questions need to be answered correctly (random accuracy = 25%)
+    - Accuracy+ is a stricter measurement but also better reflects the comprehensive understanding degree of the model to the image
+    - We calculate the score of a subtask based on the sum of accuracy and accuracy+
+    - The perception score is the sum of scores of all perception subtasks
+    - The cognition score is calculated in the same way
+    - Full scores:
+        - Perception: 2000
+        - Cognition: 800
+Data Collection
+    - Perception Tasks
+        - We argue that perception is one of the most fundamental capabilities of MLLMs
+        - Lack of perception will easily lead to object hallucination problem
+        - Coarse-Grained Recognition
+            - The contents of coarse-grained recognition include the existence of common objects, and their count, color and position
+            - Images are sampled from COCO, but the instruciton-answer pairs are all manually constructed, rather than directly using publicly available annotations
+            - Require MLLMs to be able to understand the instructions and infer corresponding answers
+            - In each perception subtask of existence, count, color, and position, we prepare 30 images with 60 instruction-answer pairs
+        - Fine-Grained Recognition
+            - Fine-grained recognition is more about testing the knowledge resources of MLLMs
+            - The subtasks consist of recognizing movie posters, celebrities, scenes, landmarks, and artworks containing 147, 170, 200, 200, and 200 images respectively
+            - Celebrities: 
+                - Is the person in the photo named "x" ?
+        - OCR
+            - Foundational capability of MLLMs, serving for subsequent text-based tasks such as text translation and text understanding
+            - Images are sampled from [30] and all of the instruction-answer pairs are manually designed
+            - Considering that MLLMs are still in their infancy, we only choose the relatively simple samples in this version of MME
+            - The numbers of image and instruction-answer pairs are 20 and 40, respectively
+    - Cognition Tasks
+        - We evaluate if any MLLM can carry out further logical reasoning after perceiving the image
+        - To infer the correct answer, MLLMs need to follow the instruction, perceive the contents, and invoke the knowledge reserved in LLMs, which is much more challenging than the single perception tasks
+        - Commonsense Reasoning:
+            - Unlike ScienceQA dataset that requires specialized knowledge, the commonsense refers to the basic knowledge in daily life
+            - Given a photo of a down jacket, asking MLLMs whether it is appropriate to wear the cloth when it is cold (or hot)
+            - We expect the MLLM to perform well in a zero-shot setting
+            - All samples are manually photographed or generated by diffusion models
+            - I-A pairs are all manually designed
+            - 70 images and 140 instruction-answer pairs
+        - Numerical Calculation:
+            - It requires MLLMs to be able to read the arithmetic problem in the image and output the answer in an end-to-end capacity
+            - Only consider relatively easy arithmetic problems (addition and multiplication)
+            - There are 20 images and 40 instruction-answer pairs (all manually gathered)
+        - Text Translation:
+            - Considering MLLM supports both English and Chinese, we set the text translation subtask
+            - Require MLLMs to translate the Chinese written in an image to the corresponding English
+            - Only design basic translation problems, which will be updated according to the development of MLLMs in the future.
+            - 20 images and 40 instruction-answer pairs
+        - Code Reasoning:
+            - Requires MLLMs to read the code in the images and automatically complete logical operation inside the code
+            - A similar task that writes website code based on an image has been demonstrated in [59].
+            - Images are all manually taken, and instruction-answer pairs are all manually designed
+                - 20 images and 40 instruction-answer pairs

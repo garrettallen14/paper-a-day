@@ -1,0 +1,23 @@
+On the Content Bias in Fr ́echet Video Distance
+
+18 Apr 2024
+
+Abstract
+    - FVD, a prominent metric for evaluating video generation models is known to conflict with human perception occasionally
+    - We aim to explore the extent of FVDs bias toward per-frame quality over temporal realism and identify its sources
+    - FVD increases only slightly with large temporal corruption
+    - We analyze the generated videos and show that via careful sampling from a large set of generated videos that do not contain motions, one can drastically decrease FVD without improving the temporal quality
+    - Both studies suggest FVD's bias towards the quality of individual frames
+    - We further observe that the bias can be attributed to the features extracted from a supervised video classifier trained on the content-biased dataset
+    - We show that FVD with features extracted from recent large-scale self-supervised video models is less biased toward image quality
+
+
+Introduction
+    - FVD extends the image generation metric Fr ́echet Inception Distance (FID) to measure the quality and diversity of generated videos wrt the training set.
+    - Given N features fi for a set of generated/real videos, which are column vectors extracted from a pretrained video network, we fit a multivariate Gaussian with the mean mu and covariance sigma
+    - The performance of the video generator is then measured as the Fre`chet distance between the two Gaussian distributions
+
+    - Earlier studies have confirmed that FVD reliably reflects the model performance in various cases, such as training convergence, hyperparam tuning, and architecture design
+    - Several recent studies have reported cases where FVD scores contradict human judgement
+    - A recurrent argument is that FVD tends to value the image quality of individual frames more than the realism of motion
+    - 

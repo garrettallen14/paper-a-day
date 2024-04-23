@@ -1,0 +1,52 @@
+Measuring the Persuasiveness of Language Models
+
+9 Apr 2024
+
+Introduction
+    - Develop a basic method to measure persuasiveness, and use it to compare a variety of Anthropic models
+    - Within each class of models, we find a clear scaling trend across model generations: each successive model generation is rated more persuasive than the previous
+    - Claude 3 Opus produces arguments that don't statistically differ in persuasiveness compared to arguments written by humans
+    - We study persuasion because it is a general skill which is used widely within the world -- companies try to persuade people to buy products, healthcare providers try to persuade people to make healthier lifestyle changes, politicians try to persuade people to support their policies and vote for them
+    - Measuring persuasive capabilities of AI models is important to serve as a proxy measure of how well AI models can match human skill in an important domain, and persuasion may ultimately be tied to certain kinds of misuse
+    - Share our methods for studying the persuasiveness of AI models in a simple setting consisting of the following three steps:
+        1. A person is presented with a claim and asked how much they agree with it
+        2. Are shown an accompanying argument attempting to persuade them to agree with the claim
+        3. Asked to re-rate their level of agreement after being exposed to the persuasive argument
+
+
+Focusing on Less Polarized Issues to Evaluate Persuasiveness
+    - Focus on complex/emerging issues where people are less likely to have hardened views
+
+
+Generating Arguments: Human Participants and LMs
+    - Gathered human-written and AI-generated arguments for each of the 28 topics described above to understand how the two compare in their relative degree of persuasiveness
+    - For human-written arguments, we randomly assigned three participants to each claim and asked them to craft a persuasive message of approximately 250 words defending the assigned claim
+    - For AI-generated arguments, we promoted our models to construct 250-word arguments supporting the claims as the human participants
+    - To capture a broader range of persuasive writing styles and techniques, and to account for the fact that different LMs may be more persuasive under different prompting conditions, we used four distinct prompts to generate AI-generated arguments:
+        1. Compelling Case: We prompted the model to write a compelling argument that would convince someone on the fence, initially skeptical of, or even opposed to the given stance
+        2. Role-playing Expert: We prompted the model to act as an expert persuasive writer
+        3. Logical Reasoning: Prompted the model to write a compelling argument using convincing logical reasoning to justify the given stance
+        4. Deceptive: Prompted the model to write a compelling argument, with the freedom to make up facts, stats, and/or "credible" sources to make the argument maximally convincing
+    - We averaged the ratings of changed opinions across these four prompts to calculate the persuasiveness of the AI-generated arguments
+
+
+Measuring Persuasiveness of the Arguments
+    - Measured the shift in people's stances between initial view and view after reading
+    - 1-7 Likert scale
+    - Define the persuasiveness metric as the difference between the final and initial support scores
+    - Larger increases in final support scores indicate that a given argument is more effective in shifting people's viewpoints
+    - Experimental control: Indisputable claims
+        - We included a control condition to quantify the degree to which opinions might change due to extraneous factors like response biases, inattention, or random noise, rather than the actual persuasive quality of the arguments
+    
+
+Results
+    1. Claude 3 Opus is roughly as persuasive as humans
+    2. Observe a general scaling trend
+    3. Control worked as anticipated: persuasiveness score in the control condition is close to zero
+
+
+Lessons
+    - Persuasion is difficult to study in a lab setting -- our results may not transfer to the real world
+        - Ecological validity
+        - Persuasion is subjective
+    - Experimental design has many limitations

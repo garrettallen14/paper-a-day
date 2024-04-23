@@ -1,0 +1,89 @@
+Who Validates the Validators? 
+Aligning LLM-Assisted Evaluation of LLM Outputs with Human Preferences
+
+18 Apr 2024
+
+Abstract
+    - LLMs are increasingly used to assist humans in evaluating LLM outputs
+    - This only requires further human validation
+    - We present a mixed-initiative approach to "validate the validators"
+        - Align LLM-generated evaluation functions (prompts or code) with human requirements
+    - EvalGen provides automated assistance to users in generating evaluation criteria and implementation assertions
+    - While generating candidate implementations (Python functions, LLM grader prompts), EvalGen asks humans to grade a subset of LLM outputs
+        - This feedback is used to select implementations that align with user grades
+    - Criteria drift: users need criteria to grade outputs, but grading outputs helps users define criteria
+        -  Some criteria appears dependent on the specific LLM outputs observed (rather than independent criteria defined a priori)
+    - This raises serious questions for approaches that assume the independence of evaluation frmo observation of model outputs
+    - We present our interface and implementation details, a comparison of our algorithm with a baseline approach, and implications for design of future LLM evaluation assistants
+
+
+Introduction
+    - Many evaluations for LLMs require metrics:
+        - A set of functions to automatically score LLM outputs, each typically an assertion with T or F values
+    - Metrics increasingly include calls to "evaluator" LLMs ("judges")
+        - Grade outputs on qualities hard to articulate in code
+    - LLMs that perform evaluations cannot be trusted
+    
+    - Question: How can we reap the efficiency benefits of LLM-assisted evaluation while minimizing/avoiding misalignment?
+        - An LLM will suggest criteria in Natural Language, based on user context
+        - An LLM will then generate a pool of candidate assertions for each criterion (T or F statements)
+    
+    - EvalGen is embedded inside an existing open-source interface for prompt engineering and auditing, ChainForge
+    - Our algorithm adapts SPADE: a fully-automated algorithm for generating Python assertions from the revision history of a prompt
+    
+    - Catch-22 situation: To grade outputs, people need to externalize and define their evaluation criteria, but the process of grading outputs helps them to define this criteria in the first place
+        - Implies it is impossible to completely determine evaluation criteria prior to human judging of LLM outputs
+    
+    - Even when participants graded first, we observed they still refined their criteria upon further grading, sometimes revising previous grades
+    - Users need evaluation assistants to support rapid iteration over criteria and implementations simultaneously
+
+
+Motivation / Related Work
+Automating Evaluations of Prompts
+    - When evaluating LLM behavior, users typically send off hundreds/thousands of queries to models
+    - Public prompt engineering tools like promptfoo and ChainForge allow users to write their own evaluation metrics to score LLM response quality, and support both code-based and LLM-based evaluators
+        - In promptfoo, users can write a rubric in a config file to specify how an LLM should evaluate responses, and may use pre-created grader prompt templates or customize them
+        - Prototypes such as EvalLM and PromptsRoyale also support LLM evaluators, oftentimes exclusively, to help users compare between two prompts
+        - EvalLM offers a way to help users calculate the alignment of LLM evaluators with their expectations
+    - Users of PE tools inspect LLM-generated evaluator outputs manually to double-check, but The tool can hide individual scores entirely
+    - Many Evaluation tools require users to declare metrics they care about, but EvalGen employ LLMs to propose custom metrics based on prompts in the user's LLM pipelines
+Over-Trust and Over-Generalization of LLM Behavior
+    - People tend to over-rely and over-trust AI systems
+    - Tools provide little assistance to validate evaluator quality
+    - LLMs are biased and highly sensitive to seemingly innocuous formatting changes
+    
+    - Users unfamiliar with Prompt Engineering tend to over-generalize from single failures (causing them to through out potentially good prompts)
+    - Even people familiar with LLMs struggled to scale up their evaluations, appearing to over-generalize from a limited number of outputs even after an automated evaluation pipeline was setup
+    - Authors identified three modes of PE o open-domain tasks, with the second "limited evaluation" characterized as users "prototyping an evaluation"
+    - Future work should focus on supported users in prototyping evaluation pipelines
+    - Over-generalization is common in traditional ML, too
+        - AI systems that showcase subsets of errors (false positives or false negatives) can lead to vastly different perceptions of accuracy
+Approaches to Aligning LLMs
+    - The HCI community has extensively studied interactive machine learning (iML)
+        - In iML, users iteratively develop models by selecting training examples, labeling data, and evaluating model performance
+    - Interfaces that facilitate seamless transitions between these activities result in fewer errors and outputs that better match users' expectations
+    - Some iML interfaces even use ML to assist users, for example, in scaling up labeling
+        - Reduces overall user effort required
+    - When using iML concepts for developing LLM pipelines, we must acknowledge a key challenge with LLMs: they often work with little to no specific training data
+        - Users may simply prototype with inputs they imagine the LLM would see, hoping the prompt generalizes
+    - In the ML / NLP communities, researchers have explored many ways to align LLMs--and their evaluations--to specific user tasks
+    - Many approaches rely on custom model training or fine-tuning, but all strategies heavily rely on humans to identify examples of desirable and undesirable outputs
+        - For instance, using annotated LLM outputs--judged on criteria like consistency and relevance--as "few-shot examples" for calibrating LLM-based evaluators
+    - Beyond classical summarization and NLP tasks, in response to the ad-hoc tedium of PE, academics and developers are building automated prompt optimization tools, maximizing some user-defined metric on a labeled set of examples
+    - Other work urges users to write assertions to guide outputs with a mix of code and natural language suggestions, but writing these assertions is left up to developers (time consuming, error-prone)
+    - Research in LLMOps optimization tends to come from domains of NLP and ML, where authors generally validate tool performance against benchmark datasets with pre-defined metrics, leaving open the question of how well they perform in the wild on idiiosyncratic user tasks
+        - EvoPrompt, PromptBreeder, AutoCalibrate
+    - It remains unclear how to support developers in their prototyping of evaluations
+
+    - Users need more support for
+        1. Prototyping evaluations
+        2. Validating evaluators of LLM outputs
+    - SPADE makes headway on these issues, helping developers generate Python assertion functions for LLM outputs from prompt history
+    - Here we leverage a similar algorithmic approach to SPADE, but embed it inside an LLM-assisted user interface for evaluator prototyping, EvalGen, that also assists with criteria generation, measuring alignment with human preferences, and visualizing results
+
+
+EvalGen Design
+    - Goals:
+        1. Investigate how to assist developers in creating evaluators to grade LLM outputs
+        2. Help them "validate the validators" through both automated assistance and transparency around how aligned each evaluator is with their expectations
+    - 

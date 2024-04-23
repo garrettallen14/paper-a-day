@@ -96,3 +96,29 @@ Toward the complete Transformer
     - So, the same questions as for 1-hidden layer NNs may be asked:
     - Problem 1 (Approximation): Fix d,n>=2 and consider the 1-hidden layer Transformer w/MHSA. Can one approximate, in some appropriate topology, any cts and permutation-equivariant function f: (Sd-1)n -> (Sd-1)n by means of some fHtheta as H->+inf ? 
     - Feed Forward Layers: Complete Transformer dynamics combines all of the above mechanisms with a ffwd layer. This amounts to considering dynamics of the form: x`i(t) = Pxi(t) (...) layers are critical and drive the existing results on approximation properties of Transformers. Nevertheless, the analysis of this model is beyond the scope of our current methods
+
+
+Measure to Measure Flow Map
+    - An important aspect of Transformers is they are not hard-wired to take into account the order of the input sequence
+    - Each token xi(0) in Rd contains not only a word embedding wi in Rd, but also an additional positional encoding, which allows tokens to carry their position in the input sequence
+    - Therefore, an input is perfectly encoded as a set of tokens {x1(0),...,xn(0)}
+        - Output of a Transformer is also a probability measure (one that captures the likelihood of the next token)
+    - One may view Transformers as flow maps between probability measures on Sd-1
+    - To describe this flow map, we appeal to the continuity equation, which governs precisely the evolution of the empirical measure of particles subject to dynamics
+    - We add the projection on the sphere arising from layer normalization
+The Continuity Equation
+    - The vector field driving the evolution of a single particle in (SA) clearly depends on all n particles
+    - One can equiv. rewrite the dynamics:
+        - x`i(t) = X[mu(t)](xi(t)) for all i in n and t >= 0
+    - SA is a mean-field interacting particle system
+    - The evolution of mu(t) is governed by the continuity equation
+    Remark: Global existence of weak, measure-valued solutions to (3.4) for arbitrary conditions mu(0) in P(Sd-1) follows.
+    - P(Sd-1) := the set of Borel probability measures on Sd-1
+    Remark: Positional encoding (...)
+    - The analysis in this paper is focused on the flow of the empirical measure, but one can also consider (3.4) for arbitrary initial prob measures mu(0)
+
+
+Part 2. Clustering
+    - Clustering is of particular relevance for next-token prediction
+    - Output measure's clustering implies a small number of possible outcomes
+    - 

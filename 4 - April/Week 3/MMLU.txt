@@ -1,0 +1,42 @@
+MEASURING MASSIVE MULTITASK
+LANGUAGE UNDERSTANDING
+
+12 Jan 2021
+
+Abstract
+    - Measuring LLM multitask accuracy
+    - 57 tasks (elementary math, US history, compsci, law, etc)
+    - Requires models to possess extensive world knowledge and problem solving abilities
+    - Models also have lopsided performance and frequently do not know when they are wrong
+
+
+Introduction
+    - General Language Understanding Evaluation (GLUE) was introduced in 2018 to evaluate performance on a wide range of NLP tasks, and top models achieved superhuman performance within a year
+    - Researchers designed SuperGLUE with more difficult tasks
+        - Since this release, performance is again essentially human-level
+    - Recent benchmarks have similarly seen rapid progress
+    - Overall the near human-level performance on these benchmarks suggest they are not capturing important facets of language understandin
+    
+    - Evaluate models exclusively in zero-shot and few-shot settings
+    - This makes the benchmark more challenging and more similar to how we evaluate humans
+    - Ranges in difficulty from elementary to advanced professional level
+    
+    - Meaningful progress on our benchmark has only become possible in recent months
+    - GPT-3 does not excel at any single subject
+    - Average confidence can be up to 24% off the actual accuracy
+
+    - We comprehensively evaluate the breadth and depth of a model's text understanding by covering numerous topics that humans are incentivized to learn
+
+
+A Multitask Test
+    - We create a massive multitask test consisting of multiple-choice questions from various branches of knowledge
+    - There are 57 tasks in total
+    - Questions in the dataset were manually collected by graduate and undergraduate students from freely available sources online
+        - GRE and US Medical Licensing Exam questions
+        - Questions designed for undergrad courses and questions designed for readers of Oxford Univ Press books
+    - 15908 questions in total, split into few-shot dev, validation, and test sets
+        - Few-shot dev has 5 questions per subject
+        - Validation set may be used for selecting hyperparams (1540 questions)
+        - Test set has 14079 questions
+        - Each subject contains >100 test examples minimum
+    - (questions are sampled from crawled data)

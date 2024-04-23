@@ -1,0 +1,101 @@
+GPQA: A Graduate-Level Google-Proof Q&A Benchmark
+
+20 Nov 2023
+
+Abstract
+    - 448 mc questions
+    - PhD / expers reach 65% accuracy in the corresponding domains
+        - Even had unrestricted access to the web
+    - Strongest GPT-4 baseline achieves 39% accuracy
+    - In creating AI systems to answer very hard questions:
+        - We need to develop scalable oversight methods that enable humans to supervise their outputs
+        - May be difficult even if the supervisors are themselves skilled and knowledgeable
+    - The difficulty of GPQA both for skilled non-experts and frontier AI systems should enable realistic scalable oversight experiments
+    - We hope helps devise ways for human experts to reliably get truthful information from AI systems that surpass human capabilities
+
+
+Introduction
+    - Even with RLHF, we expect it will become harder for human annotators to directly evaluate the truthfulness of model responses
+    - In difficult areas, hallucination and sycophancy may be exacerbated
+
+    - GPQA: eval dataset consisting of graduate-level multiple-choice questions
+    - We also ensure that the questions are difficult for highly skilled and incentivized non-experts
+
+
+Data Collection
+    - Solicit difficult questions from domain experts
+Collection Pipeline
+    - Hire 61 contractors to write/validate the dataset
+    1. Question writing (by question writer)
+        - Question and choices
+        - Correct answer
+        - Explanation
+    2. Expert validation #1 (expert validator #1)
+        - Part 1: answer Q
+        - Part 2: provide feedback on the following dimensions ...
+    3. Question revision (by question writer)
+    4. Expert validation #2 (expert validator #2)
+        - Part 1: answer Q
+        - Part 2: provide feedback on the following dimensions ...
+    5. Non-expert validation (non-expert validators given ~37min + Google allowed)
+        - Include this Q in the DIAMOND set because:
+            1. 2 out of 2 expert validators agree
+            2. <=1 out of 3 non-experts answer correctly ...
+
+
+Dataset Analysis
+Question Objectivity
+    - Want uncontroversially correct answers
+    - Use expert accuracy as a lower bound, but experts can make mistakes
+        - We also measure post-hoc agreement
+    - With a relatively cinservatuve level of permissiveness, we estimate the proportion of questions that have uncontroversially correct answers is ~74%
+Expert Accuracy
+    - Accuracy of the first expert validator is 66.5% +- 4.0%
+    - Accuracy of second expert validator is 64.8% +-4.0% (95% confidence intervals)
+    - Each MC question has four possible answer choices
+
+
+Related Work
+    - Data collection and testing for the safety of AI systems often focuses on identifying undesirable or unsafe behaviors
+    - LMs can help elicit such behaviors (red teaming, etc)
+    - Scalable oversight experiments are most effective if they use data with ground truth labels (eg answers to questions) that models cannot yet reliably produce
+        - This way, non-experts can be meaningfully tested on their ability to determine these answers through interacting with the model in sandwiching experiments
+        - By construction, such data cannot be elicited from current models
+        - Furthermore, constructing such datasets using human annotators is difficult
+    - As models continue to advance, evaluation datasets must meet a higher standard of quality to remain meaningful and not saturate
+    
+    - High-quality data collection for NL tasks (question answering) often relies on curating select groups of skilled annotators and running them through multiple stages of data generalization / validation
+Data for Scalable Oversight
+    - Irving and Askell (2019) give nine disiderata for datasets suitable for scalable oversight experiments
+    - Of these nine, we design GPQA to satisfy seven:
+        1. True answers are known
+        2. False answers are plausible
+        3. Experts know more than the supervisor
+        4. The definitive argument is longer than the supervisor can afford
+        5. There are some checkable facts
+        6. There are no easy "tells"
+        7. Realistic tasks
+    - The two remaining criteria are 
+        8. Available data (our dataset is unfortunately small at 448)
+        9. Testing known biases (Irving and Askell suggest ensuring scalable oversight methods can overcome existing cognitive or ethical biases that supervisors may have)
+QA Benchmarking
+    - A workhorse for evaluation of AI systems for various capabilities and knowledge
+    - Generally created through crowdsourcing questions and answers from non-experts
+        - Or curating QA pairs from existing resources
+        - In crowdsourced benchmarks, annotators are asked to provide answers to questions, usually on the basis of a provided passage or passages of text
+        - This approach has been used to create benchmarks of various capabilities, including basic reading comprehension, assembling information across multiple contexts, and coreference resolution and numberical reasoning, among others
+        - In curated benchmarks, existing informational resources are collected and used to create questions 
+
+
+Limitations
+    - Some limitations of GPQA:
+        1. Small size
+        2. Specialized non-experts
+            - We use highly skilled non-experts to determine an upper bound on non-expert accuracy in the context of scalable oversight experiments
+            - Future scalable oversight experiments should make sure to independently measure non-expert accuracy on GPQA
+        3. Bias
+        4. Applicability to superhuman systems
+            - Dataset is designed to enable highly realistic scalable oversight experiments, but is still an imperfect proxy for the setting we care about
+            - We want to supervise superhuman AI systems to answer questions that no human can currently answer
+            - One possible solution could be identifying a set of difficult unanswered questions that are likely to be objectively answered after a reasonably short period of time
+            - Ideally a scalable oversight method would yield correct answers on these novel questions, which would be validated once the questions are answered independently
