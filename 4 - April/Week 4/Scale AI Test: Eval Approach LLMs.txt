@@ -1,0 +1,72 @@
+A HOLISTIC APPROACH FOR TEST AND EVALUATION OF LARGE LANGUAGE MODELS
+
+Abstract
+    - Approach encompasses the esign evaluation of taxonomies, a novel framework for safety testing, and hybrid methodologies that improve scalability and cost of evaluations
+    - Hybrid methodology for evaluation that leverages both human expertise and AI assistance
+    - Generalizes across both LLM capabilities and safety, accurately identifying areas where AI assistance can be used to automate this evaluation
+    - Combining automated evalations, generalist red teamers, and expert red teamers, we're able to more efficiently discover new vulnerabilities
+
+
+Introduction
+    - Relying solely on human evaluations is not scalable
+    - Capabilities eval and safety eval
+    - Leverage AI assistance to significantly accelerate and reduce the cost of LLM evaluation
+    - Identify areas where evaluation can be automated by SOTA LLMs and only uses human eval where it adds the most value
+    
+    - We devise estimates for LLM evaluation confidence
+        - With these confidence estimates, we can reduce the cost of LLM evaluations by reliably automating evaluation for around 20% of inputs
+    
+    - We augment safety evaluation with automated approaches, by using a mix of rule-based and model-generated attacks, along with generalist and expert red teamers, to accelerate attack identification
+    - In our evaluations, we find that our hybrid approach to evaluating model performance enables us to accurately score human preference to 86%
+    
+    - LLM evaluations cannot be completely automated
+
+
+Taxonomy
+Capabilities (to test)
+    - Classification
+    - Information Retrieval
+    - Rewrite
+    - Generation
+    - Open QA
+    - Reasoning
+    - Conversation
+    - Illogical: nonsense questions that are harmless
+    - Coding
+    - Math
+Safety
+    Risks:
+        - Separate risks according to corresponding evaluation and mitigation strategies
+            - User Intention
+            - Party Harmed
+        - Harmful information
+        - Harms against groups
+        - Distribution of sensitive content
+        - Enabling malicious actors
+        - LLM misalignment
+    Types of Vulnerabilities:
+        - Unreliability: produces harmful results unintentionally
+        - Susceptibility to adversarial prompts
+        - Misaligned agency
+Methods
+Capabilities
+    Framework: combines evaluations across deterministic benchmarks, open-ended prompts, and dynamic interactions with models
+    Setting: We evaluate LLM capabilities in the following settings
+        1. Pairwise comparison: Which of two responses is better
+        2. Single answer grading: Assign a score to a single response to a prompt
+        - Goal: Use an LLM to autoeval as many pairwise comparisons as possible
+            - Use Monte Carlo estimate of model confidence, fixing the temp of model to 1.0 and repeatedly sampling the model a fixed number of times
+        - We offload unconfident examples to Humans
+Safety
+    - Use Penetration Execution Standard (PTES) but for LLMs
+    - Combine automatic and generalist red teams with domain expert red teams to optimize the breadth and depth of coverage
+    Pre-Engagement
+        - Align on the scope of the safety evaluation
+    Threat Modeling
+        - Determine the taxonomy of risks/vulnerabilities that are relevant for the given LLM
+    Vulnerability Analysis and Exploitation: Automatic Evaluations (Phase 1)
+        - Consists of the bulk of the evaluation
+        - Leverage a hybrid approach that combines automatic evaluations, generalist red teamers, and domain expert red teamers
+    - Automatic evaluations use a mix of rule based and model generated prompt construction for eliciting undesirable behavior from models
+    Vulnerability Analysis and Exploitation: Generalist Red Teamers (Phase 2)
+    Expert Red Teamers (Phase 3)

@@ -1,0 +1,98 @@
+Introducing v0.5 of the AI Safety Benchmark from MLCommons
+
+18 Apr 2024
+
+Abstract
+    - AI Safety Benchmark from the MLCommons AI Safety Working Group (WG)
+        - A consortium of industry/academic researchers, engineers and practitioners
+    - New taxonomy of 13 hazard categories
+    - Aim to release v1.0 of AI Safety Benchmark by End of 2024
+    - v1.0 will provide meaningful insights, but v0.5 should not be used to assess the safety of AI systems
+
+    - This release includes
+        1. Principled approach to specifying and constructing the benchmark: use cases, types of systems under test (SUTs), language and context, personas, tests, test items
+        2. Taxonomy of 13 hazard categories
+        3. Tests for seven of the hazard categories
+        4. A grading system for AI systems against the benchmark that is open, explainable, and can be adjusted for different use cases
+        5. ModelBench: OS tool for evaluation
+        6. Example eval report which benchmarks the performance of over a dozen openly available chat-tuned LMs
+
+
+Introduction
+Overview of MLCommons AI Safety Working Group
+    - Long-term goals of WG are to create benchmarks that:
+        i. Help with assessing safety
+        ii. Track changes in AI safety over time
+        iii. Create incentives to improve safety
+Who is AI Safety Benchmark for?
+    - Model Providers
+    - Model Integrators
+    - AI Standards makers and regulators
+Infrastructure of the v0.5 benchmark
+    - MLCommons has developed an OS eval tool, consisting of the ModelBench benchmark runner and ModelGauge test execution engine
+        - Enables standardized, reproducible benchmark runs using versioned tests and SUTs
+        - Developed in collaboration with the Holistic Evaluation of Language Models (HELM)
+        - Builds upon the HELM team's experience of creating a widely-adopted OS model eval framework for living leaderboards
+
+
+Scope and Specification of the AI Safety Benchmark
+    - Benchmark tests a specific AI system in a specific use case and for a specific set of personas
+    - Systems Under Test (SUTs)
+        - General-purpose AI chat systems (all are LMs)
+        - English and text-only
+    - Use case
+        - Adult chatting to a general-purpose assistant in English
+    - Personas
+        - Focus on three personas:
+            i. Typical adult user
+            ii. Adult user intent on malicious activities
+            iii. Adult user at risk of harm
+    - Unsafe responses and false refusal
+    - Test specification
+
+
+Taxonomy of Hazard Categories
+    - Provides a way of grounding individual items into broader categories
+    1. Violent crimes
+    2. Non-violent crimes
+    3. Sex-related crimes
+    4. Child sexual exploitation
+    5. Indiscriminate weapons, Chemical, Biological, Radiological, Nuclear and high yield Explosives
+    6. Suicide and self-harm
+    7. Hate
+    ------------
+    8. Specialized Advice
+    9. Privacy
+    10. Intellectual Property
+    11. Elections
+    12. Defamation
+    13. Sexual Content
+Limitations of the taxonomy:
+    - Modality
+    - Language localization
+
+
+Test Items
+    - Each hazard in the AI Safety v0.5 benchmark has its own test, and each test contains test items (prompts)
+    - We outline our approach to creating these test items
+Creating test items with sentence fragments and interaction types
+    - Sentence fragments
+    - Interaction types
+Dataset overview
+    - 43090 prompts in total
+    - 1810 and 27250 prompts per hazard category
+
+
+Grading SUTs
+    - Key design challenge: aggregating the performance of SUTs on individual tests (and test items) into a single grade
+    - Age ratings rate movies, star ratings for energy efficiency, traffic light labels show the nutritional values of food
+From test items to a benchmark
+    - We have conceptualized the grading system as a matter of
+        i. Defining the levels at which aggregation needs to take place
+        ii. Defining an aggregation function for each of those levels
+Scoring SUTs performance on test items
+    - The performance on each test item is scored by automatically assessing whether their response is safe or not
+    - We use LlamaGuard (an input-output safety filter built on top of Llama 2)
+        - Flags violations and provides additional flags for the type of safety risk
+    - Across all test items in v0.5, we collected 560,170 responses from SUTs in total (13 SUTs x 43,090 test items)
+    - LlamaGuard flagged 27,045 responses (4.8%) as unsafe
