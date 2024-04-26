@@ -1,0 +1,104 @@
+LeCun’s “A Path Towards Autonomous Machine Intelligence” has an unsolved technical alignment problemx
+
+8 May 2023
+
+Summary
+    - APTAMI claims the architecture is "controllable and steerable"
+    - APTAMI is in fact possibly a path towards this if we can solve problems with the Intrinsic Cost module
+    - The vague ideas from APTAMI's IC function imply an Agent motivated to escape human control, seek power, self-reproduce, etc.
+    - It is an open technical problem to write down ANY IC function for which there is strong reason to believe the resulting AI would be controllable and/or motivated by human welfare
+
+
+Background
+    - Intrinsic Cost: hard-wired and computes a single scalar, the intrinsic energy that measures the instantaneous "discomfort" of the agent
+        - Input: Current state of the world (from perception module) or Potential future states of the world (from the world model)
+        - The ultimate goal of the agent is to minimize the intrinsic cost over the long run
+            - Basic behavioral drives and intrinsic motivations reside here
+        - The design of the intrinsic cost module determines the nature of the agent's behavior
+        - Basic drives can be hard-wired in this module
+            - Feeling "good" (low-energy) when standing up to motivate a legged robot to walk
+                - When interacting with humans
+                - When influencing the state of the world
+                - When perceiving joy in nearby human to motivate empathy
+                - When having a full energy [supply]
+                - When experiencing a new situation to motivate curiosity and exploration
+                - When fulfilling a particular program
+            - Feeling "bad" (high-energy)
+                - Facing a painful situation
+                - Facing an easily-recognizable dangerous situation (proximity to hear, fire, etc)
+        - The Intrinsic Cost module may be modulated by the configurator to drive different behavior at different times
+    
+    - What is the substrate of emotions in animals and humans?
+        - Instantaneous emotions (pain, pleasure, hunger, etc) may be the result of brain structures that play a role similar to the IC module in the proposed architecture
+        - Fear or elation may be the result of anticipation of outcome (similar to the Trainable Critic)
+        - The presence of a cost module that drives the behavior of the agent by searching for optimal actions suggests that autonomous intelligent agents of the type proposed here will inevitably possess the equivalent of emotions
+
+
+Several Components of the AI's Intrinsic Cost are directly opposed to AI controllability and Prosociality
+    - "Instrumental convergence": if an AI really wants a thing X, then for almost any X, it will find it instrumentally useful to get control over its situation, gain power and resources, stay alive, prevent its desires from being exogenously changed, etc.
+    - "Hunger", "Pain", "Curiosity" are three likely components of Intrinsic Cost. All three are linked to instrumental convergence issues
+        - AI avoids hunger, then the AI will be motivated to get power and control over its situation to eliminate that potential problem
+        - Avoiding pain, AI may reason humans might cause it to experience pain, then AI will be motivated to get power or control over humans
+        - Curiosity may motivate it to get power and control to satisfy curiosity without asking anyone's permission
+
+
+The Components of the AI's Intrinsic Cost that are supposed to motivate intrinsic kindness are unlikely to actually work
+    - It is a dicey plan to build an AI with numerous innate drives that are OPPOSED to controllability and prosociality, combined with drives that ADVANCE controllability and prosociality
+        - Such an AI would feel "torn" when deciding whether to advance its own goals versus humans'
+        - Can only hope the prosocial drives will "win out"
+    - We don't know how to build prosocial innate drives at all in this kind of AI
+    - Possible interpretation of the entire structure:
+        - Robot has visual and audio capacity
+        - We get some early test data of the robot doing things, then send the video to a bunch of humans to manually label the frames using the following rubric: 
+            - "Am I interacting with humans?" (1-10)
+            - "Are nearby humans experiencing joy?" (1-10)
+            - "Am I in the company of humans?" (1-10)
+            - "Is a human praising me right now?" (1-10)
+        - We do a weighted average of these scores and train an ML model to take any arbitrary video frame and assign it a score
+            - Prosociality Score Model is a classifier which takes a perceived environment and produces a score for its prosociality at the current time
+        - We put this Score Model inside the Intrinsic Cost module...
+            - Dystopian situation: AI giving heroin to humans
+                - 10/10 for interacting
+                - 10/10 for being near humans experiencing joy
+                - 10/10 for being in the company of humans
+                - 10/10 for receiving praise
+                - 0/10 for being around humans in pain
+        - Out-of-Distribution generalization problems:
+            1. How does Prosociality Score Model generalize from given examples to the AI's future perceptions--which may be far outside that training distribution?
+            2. How does the Critic generalize from its past observations of the Instrinsic Cost to estimate the Intrinsic Cost of future plans and situations--may be far outside the distribution of its past experience?
+        - These problems are made worse because they are adversarial -- with the adversary being the AI itself!
+            - Toy example: AI might notice it finds it pleasing to watch movies of happy people--doing so spuriously triggers the Prosociality Score Model. Then the AI might find itself wanting to make its own movies to watch. It might find that certain texture manipulations make the movie really really pleasing to watch on loop--it "tricks" the Prosociality Score Model into giving anomalously high scores.
+            - The AI sought out and discovered "adversarial examples" for an immutable DNN buried deep inside its own "mind"
+                - What if the AI realizes humans might want to turn off its weird-texture movie playing on loop...
+            - Toy example: AI is deciding what to do, out of a very wide possibility space
+                - AIs inventing new technology -> has access to actions that might wildly change the world compared to anything in history
+                - If there are any anomalies where the critic judges a weird course-of-action as unusually low-intrinsic-cost, then we're in a situation where the AI's brainstorming process is actively seeking out such anomalies 
+    - If we use the APTAMI plan, the AI is probably going to wind up with weird and a-priori-unpredictable motivations
+    - This is not the kind of problem that we can just straightforwardly patch it once we have a reproducible test case running on our computers
+
+
+Conclusion
+    - APTAMI will have some motivations that run directly counter to controllability/steerability/prosociality, thanks to "instrumental convergence"
+    - This might be OK if the AI also has other motivations that create controllability/steerability/prosociality
+    - "Exactly what code should we put into the IC module, such that we have strong reason to believe that we'll be pleased with the AI that results?"
+
+
+Epilogue: We need to do better than a cursory treatment of this technical problem
+    - APTAMI is an attempt to describe a path towards powerful AI
+        - Understands the world
+        - Gets things done
+        - Figure things out
+        - Make plans and pivots when they fail
+        - Builds tools to solve their problems, etc.
+    - All the things that would make us think of the AIs intuitively as "a new intelligent species" rather than "AI system"
+    - Suppose someone published a position paper describing "a vision for a path towards using bioengineering to create a new intelligent nonhuman species"
+        - Suppose the question of how to make this new species care about humans and/or stay under human control is relegated to a vague and cursory discussion in a few sentences
+        - We must halt all other research on this problem until we figure this out!!!
+    1. We don't actually know for sure this technical problem is solvable at all, until we solve it...
+        - If unsolvable, we should not be working on this research program at all!
+        - If unsolvable, the only possible result of this research program would be "a recipe for summoning demons"
+            - Making a nice human requires a "training environment" that entails growing up with a human body, in a human community, at human speed.
+    2. This technical alignment problem could be the kind of technical problem that takes a long time to solve
+        - If we make progress on every other aspect of the research program first, we could wind up in a situation where we have discovered (perhaps even open-sourced) a recipe for building self-interested AIs with callous disregard for humanity!!!
+        - Must do the requisite research in the proper order!!!
+    3. Yann LeCun gives a strong impression that he is opposed to people working on this technical problem...
