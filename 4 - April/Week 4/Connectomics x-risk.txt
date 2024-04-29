@@ -1,0 +1,60 @@
+Connectomics seems great from an AI x-risk perspective
+
+30 Apr 2023
+
+Context
+    - Is accelerating this technology going to increase the chance that our future transition to superhuman AI goes well?
+    - We answer this question for connectomics: science of mapping how neurons connect to each other in the brain
+TLDR
+    - Improved connectomics technology seems very helpful for the project of reverse-engineering circuitry in the hypothalamus and brainstem that implement the "innate drives" upstream of human motivations and morality
+    - Would NOT be very helpful for reverse-engineering the learning algorithms implemented by various parts of the brain, particularly neocortex. That is a good thing too
+        - Would lead to knowing how to build AGI
+        - Want to slow that progress down
+    - Improved connectomics tech might open up a path to achieving Whole Brain Emulation (WBE) earlier than non-WBE AGI.
+
+
+Background Considerations
+The Race 1: Reverse-engineering cortex versus hypothalamus and brainstem
+    - Theory: Parts of the brain are running large-scale learning algorithms (cortex, thalamus, striatum, cerebellum), while other parts of the brain are doing "other stuff"
+        - Large-scale learning algorithms are more-or-less the "secret sauce" of human intelligence
+        - The "other stuff" contains "innate drives"
+    - Would be good to reverse-engineer the hypothalamus and brainstem first, then reverse-engineer the cortex and other large-scale learning algorithms second
+    - We should mainly care about "how are reward signals calculated in the first place?"
+    - Understanding the cortex is probably objectively easier than understanding the hypothalamus and brainstem
+The Race 2: Reverse-engineering cortex versus wall-clock time
+    1. If AGI is invented later, we have more time for alignment research
+    2. If cortex is reverse-engineered later, it becomes more likely we'll get AGI via a different independent AI research program
+    3. Many other aspects of the world will change over time
+The Race 3: Whole Brain Emulation (WBE) versus other forms of AGI
+    - Radical advances in connectomics would be essential for WBE
+    - AI x-risk people treat the possibility of WBE before AGI as desirable but unrealistic
+    - With a WBE, we kinda know what we're getting:
+        - Prosocial person will become a prosocial WBE. AGI may have alien motivations
+        - Reasonably smart person will become a reasonably smart WBE
+    - If we have WBEs, what do we do with them?
+        - Make lots of WBEs, speed them up, and have them spend many subjective centuries in cushy VR environments pondering the problem of AI alignment and deployment
+        - Legalize WBE and ban any other form of AGI forever
+        - Take WBEs as the starting point
+    - Why unrealistic?
+        - In the course of trying to do WBE, we would necessarily wind up understanding brain learning algorithms well enough to build non-WBE brain-like AGI
+    - A radical advance in connectomics (every neuron and synapse in a human brain could be mapped), this is a start
+    - If we have complete human connectomes on a hard drive, we could hope for a few years of exclusively WBE
+
+    - Connectome is not enough for WBE
+    - Lots of things are not captured by the connectome
+    - Building brain-inspired AGI is infinitely easier than understanding the brain
+    - Understanding the brain well enough to simulate it requires:
+        A. Constraints derived from brain observations (connectomic data, lesion studies, neural recordings, understanding of how neurons work, etc)
+        B. Normative ideas about what that part of the brain is designed to do
+        C. Algorithmic understanding of how (B) might plausibly get done
+        D. Enough person-hours to fit the previous three puzzle-pieces together
+
+
+Connectomics
+    - Advances in connectomics are only slightly helpful for better understanding the cortex learning algorithm
+    - Super-helpful for understanding the hypothalamus and brainstem
+    - Radical advances in human connectomics would at least potentially put WBE on the table
+
+
+Closing promo
+    - 

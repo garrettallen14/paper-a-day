@@ -1,0 +1,103 @@
+Four visions of Transformative AI success
+
+17 Jan 2024
+
+Summary
+    - When people work towards a good future wrt TAI, whats the vision?
+        1. "Helper AIs"
+        2. "Autonomous AIs"
+        3. "Supercharged biological human brains"
+        4. "Don't build TAI"
+        
+
+Vision 1: "Helper AIs" -- do specifically what humans want them to do
+Typical Assumptions and Ideas
+    - TAI will look and act and be trained much like LLMs, but work better
+    - Slow takeoff, very high compute resources, very few big actors training and running
+    - Big picture stories
+        1. Vision 1 is a vision for the long-term future
+        2. Vision 1 is a safe way to ultimately get to Vision 2 (helper AIs can help solve technical problems related to AI alignment, set up better governance and institutions, or otherwise plan next steps)
+Causes for concern
+    - There is a risk that soeone makes an autonomous (vision 2) ruthlessly-power-hungry AGI (on purpose or by accident)
+    - Need to prevent this or hope that humans-with-AI-helpers can defend themselves against such AGIs
+    - Human bad actors will (presumably) be empowered by AI helpers
+    - "AI slave society" seems bad
+    - There is no sharp line between helper AIs and truly-autonomous AIs of vision 2
+        - There is a race-to-the-bottom competitive dynamic
+Who is thinking about this? What should you be working on?
+    - Main vision for LLM labs
+    - Technical directions: interpretability, scalable oversight, process-based supervision, RLHF
+    - If we imagine AIs doing what humans Collectively want, this gets us into some mechanism design challenges
+
+
+Vision 2: "Autonomous AIs"--AIs out in the world, doing whatever they think is best
+Typical assumptions and ideas
+    - People in this camp have an assumption that TAI will be more in the category of humans, animals and "RL agents" like AlphaStar.
+    - AIs which think, figure things out, exhibit plan and foresight, etc
+    - Become more and more competent over time as they figure out new things about the world
+    - There is no sharp line between helper AIs of vision 1 and truly-autonomous AIs of vision 2
+    - An important conceptual distinction is related to AI goals:
+        - In Vision 1, there's a pretty straightforward answer of what the AI is supposed to be trying to do--whatever the human supervisor had in mind, which can be inferred pretty well from some combination of general human data and talking to the human in question
+    - Coherent Extrapolated Volition:
+        - Yudkowsky: Friendly AI development
+        - Would not be sufficient to explicitly program what we think our motivations and desires are into an AI.
+        - We should find a way to program it in a way that it would act in our best interests... what we WANT it to do and NOT what we TELL it to do.
+    - Ambitious Value Learning
+    - Getting at the deep invariant core of "human values" through neuroscience rather than through human observation/interactions
+        - Begin with Whole Brain Emulation (WBE) of unusually decent and upstanding humans
+Potential causes for concern
+    - (pretty confident that) Once there are human-level-ish autonomous AIs doing what they think is best, the entire future of earth-originating life will rapidly stop being under any biological influence
+    - Humans will no longer have the ability to contribute to the economy, and will live and die depending on the AIs
+        - Optimistic: AIs will feel care and compassion towards humans
+        - Pessimistic: They won't care
+        - We don't want to be:
+            - Outcompeted
+            - Treated as pets
+    - Maybe these AIs will be conscious/sentient
+        - If humans go extinct, then hopefully our successors will be at least conscious
+        - S-risk: the reisk of the creation of intense suffering in the far future on an astronomical scale, vastly exceeding all suffering that has existed on Earth so far
+        - Strongly expect future powerful AIs to be conscious/sentient
+        - Hopefully they have human-flavored consciousness
+    - Risk that someone makes an autonomous ruthlessly-power-seeking AI which outcompetes AIs that care about humans and friendship and so on
+        - "We" including the good AIs must prevent this however we can
+Who is thinking about this?
+    - Human-brains involve within-lifetime model-based RL and the reward function for that system involves innat drives related to friendship, compassion, envy, boredom, and many other things core to humanity
+        - Figure out what that reward function is
+        - If we make an AI whose reward function overlaps with human innate social drives, then I wouldn't be able to guess what that AI will wind up doing and desiring in any detail, but I'm inclined to feel trust and affinity towards that AI anyway
+    - Whole Brain Emulation
+        - Connectomics
+    - Schmidhuber and Sutton expect a successor-species AI
+    - Building secure simulation sandbox AI testing environments seems like probably a great idea in this vision
+
+
+Vision 3: Supercharged biological human brains (via intelligence-enhancement or merging-with-AI)
+Typical Assumptions and ideas:
+    - Fine print:
+        1. Defining this vision as centrally involving actual biological neurons
+        2. Using the word "intelligence" as shorthand for a broad array of things that contribute to intellectual progress--creativity, insight, work ethic, experience, communication, "scout mindset", and so on
+    - Two stories:
+        1. Stepping-stone story: Supercharged human brains will solve the alignment problem or otherwise figure out how to proceed into one of the other three visions
+        2. End-state story: Supercharged human brains will become the superintelligent entities of the future, perhaps by "merging" with AI
+Potential causes for concern:
+    - Stepping-stone seems unobjectionable, but maybe these brains do not arrive in time to make any difference for TAI, and will only be modestly more competent than the traditional human brains of today
+    - The limit of enhanced biological intelligence does not get us anywhere close to competitive with the limit of silicon-chip AIs. Speed is still slow, neuron count is still limited, etc.
+        - This is fine in the context of stepping-stone story, but it is a big problem for the end-state story: if you want brains to reign supreme, you need a plan to stop people from making dramatically-more-competent brainless silicon-chip AIs
+    - I am very concerned that "merging" is one of those things that sounds great, but only if you don't think about it too hard
+Who is thinking about this? What should you be working on?
+    - Ray Kurzweil books, Neuralink, "We have to Upgrade" and more
+    - BCI
+    - Supercharged human brains by embryo selection, gene therapy, nootropics, etc
+
+
+Vision 4: Don't build TAI
+Typical Assumptions and ideas:
+    - An uneasy coalition between "don't ever" and "not yet"
+Potential Causes for concern:
+    - Delaying TAI, all for it
+    - Stopping TAI forever is crazy
+        - Unfeasible
+Who is thinking about this?
+    - Populist: Pause AI, stop.ai
+    - Technocrat: reach out to policymakers
+    - Take-matters-into-my-own-hands: Build a safe powerful Vision-1-ish AI and use it to unilaterally pause global R&D efforts towards TAI
+        - A pivotal act: refer to actions that will make a large positive difference a billion years later...

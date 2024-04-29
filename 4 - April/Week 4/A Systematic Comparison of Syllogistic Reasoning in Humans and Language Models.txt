@@ -1,0 +1,94 @@
+A Systematic Comparison of Syllogistic Reasoning in Humans and Language Models
+
+11 Apr 2024
+
+Abstract
+    - A central component of rational behavior is logical inference: the process of determining which conclusions follow from a set of premises
+    - Do LMs replicate human biases?
+    - We show that larger models are more logical than smaller models and more logical than humans
+    - Even the largest models still make systematic errors
+        - Show sensitivity to irrelevant ordering of variables in the syllogisms, and draw confident but incorrect inferences from particular syllogisms
+    - We find that language models often mimic the human biases included in their training data, but are able to overcome them in some cases
+
+
+Introduction
+    - Capacity to reason deductively--to determine which inferences, if any, follow from a given set of premises--is central to rational thought.
+    - Human reasoning often displays some systematic biases
+    - In recent years, LMs trained w/SSL appear to have ability to reason
+    
+    - Do LMs follow the rules of logic better than humans?
+    - Are their biases similar to humans?
+    - Address these questions with a detailed study of a particularly simply case--inferences from pairs of premises, or syllogisms:
+        - If all bakers are artists, and some bakers are chemists, then: some artists are chemists
+
+    - In a syllogism, each premise relates two terms with one of four quantifiers (traditionally known as "moods"): all, some, none, and some are not
+    - Inference is required to determine if there is a necessary relationship between the two remaining terms (here, artists and chemists) when the premises in question are true
+
+    - When human participants in experiments are asked to make syllogistic inferences, their responses often deviate from the rules of logic; in fact, for some syllogisms the vast majority of participants draw incorrect inferences
+
+    - We address this question in a detailed comparison between PaLM 2 and studies from cognitive psychology. We report:
+        1. LMs draw correct inferences more often than humans. Larger LMs better than smaller, but scale does not consistently lead to accuracy gains
+        2. LM errors are systematic, with very low accuracy on particular syllogism types. Syllogisms that LMs struggle with are a subset of those that humans find difficult
+        3. Like humans, LMs are sensitive to the ordering of terms in the premises of a syllogism even when it is logically irrelevant "figural effect"
+        4. LMs show many of the same syllogistic fallacies (high confidence, low accuracy) as humans
+        5. Using Mental Models theory from cogsci, we find quantitative evidence that larger LMs reason more deliberately than smaller ones
+
+
+Background
+    - Syllogisms: consist of two premises relating three variables (A,B, and C)
+        - Each premise relates just two of the variables, through one of four quantifiers, often referred to as "moods"
+        - The variables in each of the premises can be ordered in either of the two directions:
+            - All artists are bakers vs all bakers are artists
+Human Syllogistic Reasoning
+    - Conclusions humans draw from syllogisms often deviate from logical norms
+    - These errors are systematic: some syllogisms are much harder than others, and the incorrect conclusions that participants tend to draw are consistent across participants
+    - From the two premises:
+        1. No artists are bakers
+        2. All bakers are chemists
+        - Vast majority of participants incorrectly conclude that it is the case that no artists are chemists
+
+
+Methods
+Data
+    - Human behavioral data: 139 participants responded once to each of the syllogisms, choosing among nine options
+    - We generate syllogisms by replacing the abstract terms (A,B,C) in each syllogism with one of 30 content triples
+        - Chosen such that there is no obvious semantic association between the terms (one of the triplets included hunters, analysts and swimmers)
+Models and Inference
+    - PaLM 2 and Llama 2
+    - Zero-shot CoT prompting "think step by step"
+    - We randomize the order of conclusions in the prompt to controlfor LMs' sensitivity to answer ordering
+    - For each of the 1920 reasoning problems, we estimated the distribution over conclusions for each LM with a rejection sampling approach
+        - Samples were rejected if no conclusion was identified via uncased exact string match
+
+
+Results
+Do LMs Reason Accurately?
+    - First examine the PaLM 2 behavior on each of the 64 syllogism types separately
+    - LMs rarely produce the output "nothing follows"
+        - Correct conclusion for 37 of the syllogisms
+    - We restrict ourselves tgo the 27 syllogisms that license conclusions other than "nothing follows"
+    - We compute the LM's accuracy for each syllogism by dividing the number of logically valid conclusions produced by the LM by the total number of responses; note that some syllogisms have more than one valid conclusion (as many as four) and so the random baseline in Fig2 varies by syllogism
+    - Two largest models perform better than humans
+Do LMs Reason Like Humans?
+    - Human accuracy averaged across all syllogisms is ~50%
+    - Syllogisms that LMs struggle with are syllogisms that humans also find challenging
+        - Inverse is not true, multiple syllagisms that are hard for humans are easy for models
+    Comparing the distribution over responses
+        - There are eight possible conclusions... is the distribution over all responses, including incorrect ones, similar across humans and PaLM 2 models?
+        - We aggregate response counts for each syllogism and normalize them into a probability distribution
+        - We then correlate the probability estimates from humans with the estimates from PaLM 2 models across the entire dataset
+        - The correlation is fairly high across models, and is highest from PaLM 2 Small
+    Variable ordering effects
+        - Human's syllogistic inferences are sensitive to variable ordering, even when the ordering is logically irrelevant
+        - All models display a moderately larger bias than humans
+    Syllogistic fallacies
+        - In general, humans are well-calibrated syllogistic reasoners--their accuracy is inversely correlated with the entropy of their responses
+        - For most syllogisms where humans give incorrect answers, the particular incorrect answers they give vary substantially across individuals and trials
+
+        - There are exceptions to this tendency: in some cases, humans confidently and consistently choose a particular incorrect answer (low entropy <-> low accuracy)
+        - The distribution over responses elicited from humans for this syllogism has one of the lowest entropies in the dataset
+
+        - To identify potential fallacies in LMs, we fit a regression line relating entropy (in nats) and accuracy, then compute the residual for each syllogism
+    LMs avoid responding "nothing follows"
+        - An important divergence from human behavior is that LMs rarely produce the response "nothing follows", even for the 37 syllogisms for which this is the correct conclusion... we observe accuracies close to 0%
+        - This issue is particularly severe with zero-shot CoT method used

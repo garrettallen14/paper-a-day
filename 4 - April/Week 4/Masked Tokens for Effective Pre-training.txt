@@ -1,0 +1,40 @@
+Emerging Property of Masked Token for Effective Pre-training
+
+12 Apr 2024
+
+Abstract
+    - Driven by MLM success, MIM (masked image modeling) research is being explored
+    - Overall efficiency of MIM is occasionally hampered by the lengthy duration of pre-training phase
+    - Perspective: optimizing the masked tokens may help
+    - Explore inherent properties that a masked token ought to possess
+    - Explore 'data singularity' attribute inherent in masked tokens
+    - Through a comprehensive analysis of the heterogeneity between masked tokens and visible tokens within pre-trained models, we propose a novel approach: masked token optimization (MTO)
+        - Improve model efficiency through weight recalibration and the enhancement of the key property of masked tokens
+    - The proposed method serves as an adaptable solution that seamlessly integrates into any MIM approach that leverages masked tokens
+    - MTO achieves a considerable improvement in pre-training efficiency, resulting in an approximately 50% reductino in pre-training epochs required to attain converged performance
+
+
+Introduction
+    - A substantial amount of pretraining (800 to 1600 epochs) is essential to attain convergence of the Transformer for transfer learning
+    - Patch tokenization emulates the discrete nature of language tokens
+    - Raw pixel regression is adopted to attune with the continuous visual signals
+    - We cast the lengthy pre-training issue due to low convergence rate from the perspective of the optimization of masked tokens whcih arises as a lack of consideration of the inherent properties of masked tokens.
+    
+    - What properties should a masked token have within the realm of MIM?
+        i. Spatial Randomness: Masked tokens must be randomly selected from the corpus of input patches
+        ii. Substitutional Consistency: Randomly selected visible tokens should consistently be replaced with the same learnable parameters
+        iii. Data Singularity: a novel property that the masked token in the initial embedding should be unique token that are unlikely to manifest in the training data
+            - Employing masked tokens that are well differentiated from visible tokens enables the model to identify semantics within the training data, thereby improving focused pretext prediction capability
+    - Visual signals are inherently continuous, making it challenging for masked tokens to ensure data singularity 
+        - Cannot be explicitly differentiated like their discrete text token counterparts
+        - Due to clear semantics associated with each word in the text, the distinctiveness of masked tokens can easily be preserved during pretext prediction process
+        - Contrarily, the Tokenizer-based approach has reported that in image tokenizers, different semantic patches can have similar token under visual discretization
+        - This finding indicates that the task of distinguishing masked tokens from visible tokens is adverse in the context of the visual tokenizer, where patches are represented as continuous values
+    - Attaining the desired distinctiveness of the masked token to the training data solely relies upon the models convergence through a prolonged pre-training process
+    - We propose an analysis of masked tokens and optimization based on it by directing our attention toward the data singularity among the trifecta of properties
+
+
+Masked Token Optimization
+    - The semantic voidness within masked tokens exerts a detrimental impact on the process of learning features of visible tokens, thereby impeding the overall efficacy of the representation
+
+    - Basically just use unique tokens which cannot be found in the normal training data for masking

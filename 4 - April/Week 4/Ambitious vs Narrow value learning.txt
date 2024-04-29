@@ -1,0 +1,62 @@
+Ambitious vs. narrow value learning
+
+Paul Christiano
+11 Jan 2019
+
+Introduction
+    - Building an AI system that "learns what I want" and helps me get it
+    - People sometimes use different interpretations of this goal
+    - At two extremes:
+        1. AI learns my preferences over (very) long-term outcomes. 
+            - If I were to die tomorrow, it could continue pursuing my goals without me
+            - If humanity disappeared, it could rebuild the kind of civilization we would want
+            - AI might pursue radically different subgoals than I would on the scale of months and years, if it thinks those subgoals better achieve what I really want
+        2. AI learns narrower subgoals and instrumental values that I am pursuing
+            - Learns I am trying to schedule an appointment for Tuesday and I want to avoid inconveniencing anyone
+            - I am trying to fix a particular bug w/o introducing new problems
+            - It does not make any effort to pursue wildly different short-term goals than I would in order to better realize my long-term values, though it may help me correct some errors that I would be able to recognize as such
+
+
+Ambitious Approach
+    - Hard
+    - Requires understanding human preferences in domains where humans are typically very uncertain
+    - Requires extrapolation to radically unfamiliar domains, with decisions about issues like population ethics, what kind of creatures do we care about, new tech
+
+
+Narrow Approach
+    - Relatively tractable and well-motivated by existing problems
+    - Want to build machines taht help us do the things we want to do... so they need to be able to understand what we are trying to do and what instrumental values guide our behavior
+    - We are happy if the systems to at least as well as a human in determining "preferences"
+        - Make the kinds of improvements that humans would reliably consider improvements
+    - It's not clear that anything short of the maximally ambitious approach can solve the problem we ultimately care about.
+    - A sufficiently clever machine will be able to make long-term plans that are significantly better than human plans
+    - In the long-run, we will want to be able to use AI abilities to make these improved plans, and to generally perform tasks in ways that humans would never think of performing them--going far beyond correcting simple errors
+
+
+In defense of the narrow approach
+    - Probably takes us much further than it at first appears
+Instrumental Goals
+    - Humans have many clear instrumental goals like:
+        - "Remaining in effective control of AI systems I deploy"
+        - "Better understanding the world and what I want"
+    - A value learner may be able to learn robust preferences like these and pursue those instrumental goals using all of its ingenuity
+    - Such AI's would not necessarily be at a significant disadvantage wrt normal competition, yet the resources they acquired would remain under meaningful human control
+    - Requires robust definitions of concepts like "meaningful control", but does not require making inferences about cases where humans have conflicting intuitions, nor considering cases which are radically different from those encountered in training
+Process
+    - We can't infer human preferences over very distant objects, but we can infer human preferences well enough to guide a process of deliberation (real or hypothetical)
+    - Using the inferred preferences of the human could help eliminate some of the errors that a human would traditionally make during deliberation
+        - Presumably these errors run counter to a deliberator's short-term objectives
+        - This judgment doesn't require a direct understanding of the deliberator's big-picture values
+    - This kind of error-correction could be used as a complement to other kinds of idealization
+        - Providing human with a lot of time
+        - Allowing the human to consult a large community of advisors
+        - Allowing them to use automated tools
+    - The process of error-corrected deliberation could itself be used to provide a more robust definition of values or a more forward looking criterion of action, such as "an outcome/action is valuable to the extent that I would/did judge it valuable after extensive deliberation"
+Bootstrapping
+    - By interacting with AI assistants, humans can potentially form and execute very sophisticated plans
+    - Simply helping humans to achieve short-term goals may be all that is needed
+
+
+Conclusion
+    - Researchers in scalable AI control are too quick to dismiss the "narrow" value learning as unrelated to their core challenge
+    - I expect the availability of effective narrow value learning would significantly simplify the AI control problem even for superintelligent systems

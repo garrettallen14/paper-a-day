@@ -1,0 +1,54 @@
+The easy goal inference problem is still hard
+
+Paul Christiano
+11 Apr 2015
+
+Introduction
+    - One approach to AI Safety:
+        - Observe what the user of the system says and does
+        - Infer user preferences
+        - Try to make the world better according to the user's preferences, perhaps while working alongside the user and asking clarifying questions
+    - We can actually build systems which observe user behavior, try to figure out what the user wants, then help with this
+    - We would like to ensure that AI can also act effectively in the service of goals inferred from users
+
+    - This approach gives us a nice, concrete model of each difficulty we are trying to address
+    - Provides a relatively clear indicator of whether our ability to control AI lags behind our ability to build it
+    - By being technically interesting and economically meaningful now, it can help actually integrate AI control with AI practice
+
+
+Modeling Imperfection
+    - Assumption: it is possible to model a human as an imperfect rational agent, so we can extract the real values which the human is imperfectly optimizing
+    - The easy goal inference problem:
+        - Given access to the complete human policy, find a reasonable approximation to what a particular human wants
+    - This problem remains wide open, and we've made very little headway on the general case
+
+    - "Business as usual" progress in AI will probably lead to the ability to predict human behavior relatively well, and to emulate the performance of experts
+    - I really only care about the residual--what do we need to know to address AI control, beyond what we need to know to build AI?
+
+
+Narrow domains
+    - We can solve the very easy goal inference problem in sufficiently narrow domains, where humans can behave approximately rationally and a simple error model is approximately correct
+    - In the long run, humans may make decisions whose consequences aren't confined to a simple domain
+        - Desigining a city, running a company, setting good public policies
+
+
+Modeling "mistakes" is fundamental
+    - Many important applications require AIs to make decisions which are better than those of available human experts
+    - This is part of the promise of AI, and it is the scenario in which AI control becomes most challenging
+    
+    - Need an explicit model of human's mistakes or bounded rationality.
+    - This specifies what the AI should do differently in order to be "smarter", what parts of the human's policy it should throw out
+
+    - It implicitly specifies which of the human behaviors the AI should keep
+    - The error model isn't an afterthought -- it's the main affair
+
+
+Modeling "mistakes" is hard
+    - Humans are not rational agents with some noise on top
+    - Our decisions are the product of a complicated mess of interacting processes, optimized by evolution for the reproduction of our children's children
+    - We cannot use normal AI techniques to learn this kind of model -- what is it that makes a model good or bad?
+
+
+So what?
+    - Research should probably pay particular attention to the issue of modeling mistakes, and to the challenges that arise when trying to find a policy better than the one you are learning from
+    - It's worth doing more theoretical research to understand this kind of difficulty and how to address it

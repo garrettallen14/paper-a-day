@@ -1,0 +1,37 @@
+Let’s Think Dot by Dot:
+Hidden Computation in Transformer Language Models
+
+24 Apr 2024
+
+Abstract
+    - CoT responses from LMs improve performance
+    - Unclear to what extent these performance gains can be attributed to human-like task decomposition or simply the greater computation that additional tokens allow
+    - Transformers can use meaningless filler tokens (eg, '...') in place of CoT to solve two hard algorithmic tasks they could not solve when responding without intermediate tokens
+    - We find empirically that Learning to use filler tokens is difficult and requires specific, dense supervision to converge
+    - We provide a theoretical characterization of the class of problems where filler tokens are useful in terms of the quantifier depth of a first-order formula
+        - CoT tokens don't need to provide info about the intermediate computational steps involved in multi-token computations
+    - Our results show that additional tokens can provide computatinoal benefits independent of token choice
+
+
+Introduction
+    - Study the strict filler case where filler tokens are repeated dots, '.....'
+    - The utility of such tokens depends only on the availability of excess capacity in activation space
+    - The '.....' case is a minimal version of the more general setting where any sequence of filler tokens is provided between an input prompt and some complex output token
+    
+    - Filler tokens extend the expressive power of Transformers
+    - As single-token predictors, transformers can only solve problems in a complexity class called TC0 ... transformers cannot express problems like permutation composition or graph connectivity
+    - Linear or polynomial CoT steps can add power to transformers beyond TC0
+    - Transformers remain in TC0 even with a polynomial number of filler tokens
+        - We cannot expect filler tokens to let transformers solve problems outside TC0 (eg. graph connectivity)
+    - Our results suggest that filler tokens likely extend the expressive power of transformers within TC0
+
+    - Reasoning requiring many nested quantifiers becomes expressible for transformers with filler tokens whereas it is conjectured that no-intermediate-token, intermediate-answer transformers cannot solve
+    - We propose synthetic tasks for which transformers without CoT have been conjectured inadequate in expressivity and show that using filler tokens, transformers can solve these tasks
+
+    1. We construct two synthetic datasets, 3SUM and 2SUM-Transform
+        - Llama fails to solve task w/o the filler, but achieves 100% and 94% accuracy when provided filler tokens
+    2. Filler token performance increases over immediate answers as the length and complexity of inputs increase
+    3. We contextualize filler tokens wrt theoretical expressivity results high-lighting that filler-token prompting remains within circuit complexity class TC0, but we show empirically that they do seem to add power within TC0
+    4. We find that learning to use filler tokens is difficult and requires specific, dense supervision to converge... Standard CoT data is insufficient for models to learn to leverage filler tokens effectively
+
+

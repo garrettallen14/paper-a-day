@@ -102,3 +102,4 @@ Epilogue: We need to do better than a cursory treatment of this technical proble
         - If we make progress on every other aspect of the research program first, we could wind up in a situation where we have discovered (perhaps even open-sourced) a recipe for building self-interested AIs with callous disregard for humanity!!!
         - Must do the requisite research in the proper order!!!
     3. Yann LeCun gives a strong impression that he is opposed to people working on this technical problem...
+    

@@ -19,5 +19,5 @@ Introduction
 
     - Earlier studies have confirmed that FVD reliably reflects the model performance in various cases, such as training convergence, hyperparam tuning, and architecture design
     - Several recent studies have reported cases where FVD scores contradict human judgement
-    - A recurrent argument is that FVD tends to value the image quality of individual frames more than the realism of motion
-    - 
+
+    - FVD tends to value the 

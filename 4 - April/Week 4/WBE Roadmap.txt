@@ -1,0 +1,117 @@
+Whole Brain Emulation: A Roadmap
+
+2008
+
+Concept of Brain Emulation
+Little need for whole-system understanding
+    - Amount of functional understanding needed to achieve a 1-1 model is small
+    - Behavior is emergent from the low-level properties
+        - If coherent oscillations are important for conceptual binding, and these emerge from low-level properties of neurons and their networks, a correct and complete simulation of these properties will produce the coherence
+    - Cannot be achieved w/o some functional understanding
+        - Need models/theories for recognizing what data is relevant, would provide data for developing and testing these further
+Levels of Emulation and Success Criteria
+    - A 1-1 material copy o fthe brain appears to achieve all criteria
+    - Level 1:
+        - Parts list: An inventory of all objects on a particular size scale, their properties and interactions
+            - Low level neural structure, chemistry, dynamics accurate to resolution level
+        - Complete scan: A complete 3D scan of a brain at high resolution
+            - Resolution, information enabling structure to function mapping
+    - Level 2:
+        - Brain database: Combining the scan and parts list into a database mapping the low level objects of the brain
+            - 1-1 mapping of scan to simulation/emulation objects
+    - Level 3:
+        - Functional Brain Emulation: Simulating objects in a brain database. Produces a substantial range of species-typical basic emergent activity (eg. slow wave sleep state or awake state)
+            - Generically correct causal micro-dynamics
+    - Level 4:
+        - Species Generic Brain Emulation: The emulation produces the full range of species-typical emergent behavior and learning capacity
+            - Long term dynamics and adaptation
+            - Appropriate behavior responses
+            - Full-range learning capacity
+    - Level 5:
+        - Individual brain emulation: Produces emergent activity characteristic of that of one particular (fully functioning) brain
+            - Correct internal and behavior responses
+            - Retains most memories and skills of the particular brain that was emulated
+    - Level 6:
+        - Societal Role-Fit Emulation: Fill and be accepted into some particular social role
+        - Mind emulation: Subjective mental states (qualia/phenomenonal experience)
+        - Personality identity emulation: Correctly described as a continuation of the original minds
+Scale separation
+    - May appear unlikely that a complex system with many DoF like the brain could be modelled with the right causal dynamics, without taking into account the smallest parts
+    - Microstimulation of individual neurons can influence sensory decisions, showing that very small disturbances can scale up to behavioral divergences
+    
+    - State variables of complex systems can be quantitatively predicted when there is 'scale separation': when different aspects of the system exist on sufficiently (orders of magnitude) different scales (of size, energy, time, etc)
+        - They can become uncoupled
+
+    - When there is no scale separation, macroscale predictions become impossible without simulating the entire microscale
+
+    - Key assumption: at some intermediary level of simulation resolution between atomic and macroscopic, there exists at least one cut-off s.t. meeting criteria 1a and 1b at this level of resolution also enables the higher criteria to be met
+
+    - A simulation at a particular scale cannot be an emulation
+    - The causal dynamics of the simulation is not internally constrained, so it is not a 1-1 model of the relevant dynamics.
+Simulation scales
+    - Molecular
+    - Chemistry
+    - Genetic expression
+    - Compartment models
+    - Whole cell models
+    - Local network models
+    - System models
+
+    - Levels of emulation
+        1. Computational module: "Classic AI", high level representations of information and info processing
+        2. Brain region connectivity: Each area represents a functional module, connected to others according to a (species universal) "connectome"
+        3. Analog network population model: neurons populations and their connectivity. Activity and states of neurons or groups of neurons are represented as their time-averages. Similar to connectionist models using ANNs, rate-model neural simulations and cascade models
+        4. Spiking neural network: As above, plus firing properties, state, and dynamical synaptic states
+        5. Electrophysiology: As above, plus membrane states, ion concentrations, currents, voltages and modulation states
+        6. Metabolome: As above, plus concentrations of metabolites and neurotransmitters in compartments
+        7. Proteome: As above, plus concentrations of proteins and gener expression levels
+        8. States of protein complexes: As above, plus quaternary protein structure
+        9. Distribution of complexes: As above, plus "locome" information and internal cellular geometry
+        10. Stochastic behavior of single molecules: As above, plus molecule positions, or a molecular mechanics model of the entire brain
+        11. Quantum: Quantum interactions in and between molecules
+
+    - The amount of understanding needed to accurately simulate the relevant objects tends to increase radically for higher (low-numbered) levels: while basic mechanicsare well understood, membrane biophysics is complex and the computational functions of brain areas are likely exceedingly multifaceted
+
+    - Low level simulations require massive quantities of simple information, whereas higher levels require a smaller amount of very complex information (content of mental processes)
+    - Each level has its own characteristic size and time scale, restricting the required imaging resolution and simulation timestep
+    - Required resolution for WBEs is estimated ~level 4-6
+Forecasting
+    - Analysing requirements for emulation at each of the levels provides a way of bounding progress towards WBE
+    - It is likely possible to calculate the earliest point in time where there is enough resources to produce WBE on a given level at a certain price
+
+
+Roadmap
+Requirements
+    - Three main capabilities required:
+        1. Physically scan brains to acquire necessary info
+        2. Interpret the scanned data to build a software model
+        3. Ability to simulate this very large model
+    - Requires the development of three supporting tech areas:
+        1. Validation of scanning, scan interpretation, neuroscience models, implementation, and ways of testing success of WBE
+        2. Significant low-level understanding of neuroscience
+        3. Automating neuroscientific information gathering and experimentation
+Linkages
+    - Most of the capabilities needed for WBE are independent of each other, or form synergistic clusters
+Roadmap
+    - Phase 1: Developing the basic capabilities and settling key research questions to determine feasibility, level of detail and optimal techniques
+        - Partial scans, simulations and integration of research modalities
+    - Phase 2: Once the core methods have been developed and an automated scan-interpretation-simulate pipeline has been achieved, then first emulations are possible
+    - Key milestones:
+        - Ground truth models: biological "ground truth" is known and can be compared to scans, interpretations and simulations
+        - Determining appropriate level of simulation: determining whether there exists any suitable scale separation in brains (if not, WBE effort may be severely limited)
+        - Full cell simulation
+        - Body simulation
+        - Simulation hardware: special purpose
+        - Organism simulation
+        - Demonstration of function deduction: demonstrating that all relevant functional properties on a level can be deduced from scan data
+        - Complete inventory: complete database of entities at some level of resolution for a neural system
+        - Automated pipeline: a system able to produce a simulation based on an input tissue sample, going through the scan, interpretation and simulation steps w/o major human intervention
+        - Partial emulation
+        - Eutelic organism emulation
+        - Invertebrate WBE
+        - Small mammal WBE
+        - Large mammal WBE
+        - Human WBE
+Uncertainties and alternatives
+    - A successful emulation need not predict all details of the original behavior of the emulated system; it need only replicate computationally relevant functionality at the desired level of emulation
+    - 

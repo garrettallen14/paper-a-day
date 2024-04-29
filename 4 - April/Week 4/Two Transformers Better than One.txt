@@ -1,0 +1,45 @@
+TURING COMPLETE TRANSFORMERS: TWO TRANSFORMERS ARE MORE POWERFUL THAN ONE
+
+23 Sept 2023
+
+Abstract
+    - Presenting Find+Replace transformers, a family of multi-transformer architectures that can provably do things no single transformer can, and outperform GPT4 on several challenging tasks
+    - Traditional transformers are not turing complete
+    - We show how arbitrary programs can be compiled to Find+Replace transformers
+    - Aim to provide a theoretical basis for multi-agent architectures
+
+
+Introduction
+    - First computers were not turing complete
+    - Once the architecture of a transformer is frozen, there is a bounded amount of computation it can do
+    - This guarantees the model will fail to generalize beyond input of some length and complexity
+
+
+Transformers not turing complete
+    Defn: a computational model is said to be Turing-complete if it can be used to simulate any Turing machine
+    Proposition: If a model is not Turing Complete, there exists some computation it cannot perform
+
+    Defn: Given a finite vocabulary of symbols Sigma and a sequence length k, a fixed-len seq-to-seq model m is a function m:Sigmak -> Sigmak. We call the set of all fixed-len seq-to-seq models M(FS)
+    Assumption: Sigma contains two special tokens <eos> and <pad>
+
+    Defn: Given an input seq x in Sigmak, we can run a model m in M(FS) to termination by repeatedly applying m to x until m^n(x) contains an <eos> token. We call n the terminating number of m on x
+
+    Theorem: The halting problem for Turing Machines is undecidable
+    Lemma: If we can create algorithm which reliably decideds whether m terminates for all m in M(FS), then no model in M(FS) can be Turing Complete
+
+    Thereom: No model in M(FS) is Turing Complete
+Autoregressive Models
+    Defn: A model m iss autoregressive if it implements a function f: U(n<c) Sigma(n) -> Sigma(n+1)
+    Lemma: Any autoregressive model m must be in M(FS)
+Find+Replace Transformer
+Architecture
+    - Find+Replace Transformers are multi-transformer systems that operate on a sequence of arbitrary length, which we call the tape
+        - Comprised of Find Transformers, Replace Transformers, and a Map which is a function from Replace transformers to ordered sets of Find Transformers
+    - Find Transformers: identify parts of the sequence as input for Replace Transformers
+        - They each have a fixed context length k and look at every k-length sub-sequence of the tape, selecting the particular sub-sequence which leads to the highest actvation in the final layer
+    - Replace transformers:
+        - Take in the sub-sequences identified by Find transformers as input
+        - A replace transformer r takes as input the concatenation of the sub-sequences identified by the find transformers f in Map(r), then outputs a sequence of length k
+        - Replace transformer r has a context length k + sum(kf) for f in Map(r)
+            - Where kf is the context length of the find head f.
+    - THe output sequence of length k then replaces the sequence found by the first find Find transformer in Map(r)
