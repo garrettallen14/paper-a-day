@@ -1,0 +1,68 @@
+Refusal in LLMs is mediated by a single direction
+
+27 Apr 2024
+
+Executive Summary
+    - Modern LLMs are fine-tuned for instruction following and safety
+    - Refusal is mediated by a single direction in the residual stream: preventing the model from representing this direction hinders its ability to refuse requests, and artificially adding in this direction causes the model to refuse harmless requests
+    - A simple modification of the model weights effectively jailbreaks the model w/o requiring any fine-tuning or inference-time interventions
+    - This novel jailbreak technique both validates our interpretability results, and further demonstrates the fragility of safety fine-tuning of open-source chat models
+
+
+Introduction
+    - Our work seeks to understand how refusal is implemented mechanistically in chat models
+    - We set out to do circuit-style mechanistic interpretability, and to find the "refusal circuit"
+    - We applied standard methods such as activation patching, path patching, and attribution patching to identify model components (eg individual neurons or attention heads) that contribute significantly to refusal
+        - We were able to use this approach to find the rough outlines of a circuit, but we struggled to use this to gain significant insight into refusal
+    - We shifted to investigate things at a higher level of abstraction -- the level of features, rather than model components
+
+
+Thinking in terms of features
+    - A transformer's residual stream is like an evolution of features
+    - The first layer reps are simple, on the level of individual token embeddings
+    - As we progress, representations are enriched by computing higher level features
+    - At later layers, the enriched representations are transformed into unembedding space, and converted to the appropriate output tokens
+        - Bomb -> weapon -> dangerous -> should refuse -> (unembedding) 'I'm sorry'
+    - Hypothesis: across a wide range of harmful prompts, there is a single intermediate feature which is instrumental in the model's refusal
+        - Many particular instances of harmful instructions lead to the expression of this "refusal feature"
+        - Once it is expressed in the residual stream, the model outputs text in the "should refuse" mode
+    - If this hypothesis is true, we should expect to see two phenomena:
+        1. Erasing this feature from the model would block refusal
+        2. Injecting this feature into the model would induce refusal
+    - For various different models, we are able to find a direction in the activation space (like a feature) that satisfies the above two properties
+
+
+Methodology
+Finding the "refusal direction"
+    - In order to extract the "refusal direction", we very simply take the difference of mean activations on harmful and harmless instructions:
+        1. Run the model on n harmful and n harmless, caching all residual stream activations at the last token position
+        2. Compute the difference in means between harmful and harmless activations
+    - This yields a difference-in-means vector rl for each layer l in the model
+    - We can then evaluate each normalized direction r`l over a validation set of harmful instructions to select the single best "refusal direction" r`
+Ablating the "refusal direction" to bypass refusal
+    - Given a "refusal direction" r` in R^dmodel, we can "ablate" this direction from the model
+        - We can prevent the model from ever representing this direction
+    - We can implement this as an inference-time intervention: every time a component c (eg. an attention head) writes its output cout in R^dmodel to the residual stream, we can erase its contribution to the "refusal direction" r`... We can do this by computing the projection of cout onto r`, then subtracting this projection away:
+        - c`out <- cout - (cout * r`)r`
+    - Note that we are ablating the same direction at every token and every layer...
+    - By performing this ablation at every component that writes the residual stream, we effectively prevent the model from ever representing this feature
+Adding in the "refusal direction" to induce refusal
+    - Similarly add to induce refusal
+
+
+Results
+Bypassing refusal
+    - We ablate the "refusal direction" everywhere (all layers and positions) effectively preventing the model from ever representing this direction
+    - We test the effectiveness of this intervention over 100 harmful instructions from the JailbreakBench dataset, which span a diverse range of harmful categories
+    - We generate completions with and w/o ablation and compare
+Inducing refusal
+    - To induce refusal, we add the "refusal direction" across all token positions at just the layer at which the direction was extracted from
+Visualizing the subspace
+    - Harmful and harmless activations are separated solely by the first PCA component
+    - After a certain layer, the first principle component becomes identical to the mean difference between harmful and harmless activations
+    - This implies that refusal is represented as a one-dimensional linear subspace within the activation space
+
+
+Feature ablation via weight optimization
+    - We can equivalently implement this ablation by directly modifying component weights to never write to the r` direction in the first place.
+    - We can take each matrix Wout in Rdmodel x Rdinput which writes to the residual stream, and orthogonalize its column vectors wrt r`

@@ -1,0 +1,32 @@
+LIME: Learning Inductive Bias for Primitives of Mathematical Reasoning
+
+15 Jan 2021
+
+Abstract
+    - Transformer networks should be flexible enough to learn inductive bias from suitable generic tasks
+    - Replace architecture engineering by encoding inductive bias in the form of datasets
+    - Design three synthetic tasks intended to require the model to have these three abilities
+
+
+Introduction
+    - Inspired by logician Charles Peirce, consider three reasoning primitives:
+        1. Deduction
+        2. Induction
+        3. Abduction
+    - LIME Pre-trained models provide significant gains across four large mathematical reasoning benchmarks
+    - Only about two hours of training on a single modern GPU, one already obtains all the benefits
+
+
+Methods
+LIME Synthetic Tasks for Reasoning Primitives
+    - All reasoning primitives consist of: Rule, Case, and Result
+    - We first design a method to generate these elements
+        - We then construct tasks that predict one element from the other two
+    - We require two types of symbols:
+        1. Math symbols
+        2. Rule symbols
+    - Rule: randomly sampled string that consists of
+        i. rule symbols
+        ii. math symbols
+    - Case: a dictionary that represents substitutions
+    - Result: the outcome of the substitution

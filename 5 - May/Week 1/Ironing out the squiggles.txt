@@ -1,0 +1,57 @@
+Ironing Out the Squiggles
+
+29 Apr 2024
+
+Adversarial Examples: A Problem
+    - The same properties that make it easy to calculate how to adjust a model to make it better at classifying an image also make it easy to calculate how to adjust an image to make the model classify it incorrectly
+    - If we take the gradient of the loss wrt the pixels of the image (rather than the parameters of the model), that tells us which direction to adjust the pixels to make the loss go down--or up.
+    - A tiny step in that direction in imagespace perturbs the pixels of an image just so--making this one the tiniest bit darker, that one the tiniest bit lighter--in a way that humans don't even notice, but which completely breaks an image classifier sensitive to that direction in the conjunction of many pixel-dimensions
+
+    - Some might ask: why does it matter if our image classifier fails on examples that have been mathematically constructed to fool it?
+    - One Reply: gracefully handling untrusted inputs is a desideratum for many real-world applications
+    - Another: to plan good outcomes, we need to understand what's going on, and "the loss happens to increase in this direction" is at best only the start of a real explanation
+
+    - First guess: models are overfitting
+        - A hastily put-together conventional computer program that passes a test suite will have bugs in areas not covered by the tests
+    
+    - Adversarial examples often generalize between models
+    - "Adversarial Examples are Not Bugs, they are Features"
+        - Alternative explanation: adversarial examples arise from predictively useful features that happen to not be robust to "pixel-level" perturbations
+        - A high-frequency pattern that humans don't notice is fair game, obviously
+        - Evidence: a model trained exclusively on adversaria examples yielding good performance on the original, unmodified test set
+        - On this view, adversarial examples arise from gradient descent being "too smart" not "too dumb"
+            - The test suite didn't imply the behavior we wanted, which is our problem
+    - In "Adversarial Spheres"
+        - A simple synthetic dataset of two classes representing points on the surface of two concentric n-dim spheres of radiuses 1 and (arbitrarily chosen) 1.3
+
+
+Adversarial Training: A solution?
+    - We used SGD to find a NN to get low loss on an image classification task
+    - An adversary used SGD to find images on which our network gets High loss
+    
+    - In "Towards Deep Learning Models Resistant to Adversarial Attacks":
+        - Provide a formulation of the problem of adversarially robust classifiers
+        - Instead of finding paramts theta to minimize loss L on input x of indended class y, designers of a robust classifier are trying to minimize loss on inputs with a perturbation delta crafted by an adversary trying to maximize loss:
+        - In this formulation, the attacker's problem of creating adversarial examples, and defender's problem of training a model robust to them, are intimately related
+    - We change the image-classification problem statement to be about correctly classifying not just natural images, but an e-ball around them -> you've defeated all adversarial examples up to that e
+
+
+Adversarial Robustness is about aligning human and model decision boundaries
+    - What would it look like if we succeeded at training an adversarially robus classifier?
+        - Adversarial examples aren't machine-checkable
+        - We cannot write a function that either finds them or reports "No solution found"
+
+    - Imagespace is continuous
+        - An adversarially robust classifier: any perturbation that changes the model's output should also make a human classify the input differently
+        - Trying to find adversarial examples against a robust image classifier amounts to trying to find the smallest change to an image that alters what it "really" looks like (to humans)
+
+    - You might wonder what the smallest such change could be, or perhaps if there even is any nontrivially "smallest" change (significantly better than just interpolating between images)
+
+    - See images
+
+Implications for alignment?
+    - If AI doesn't see the world the same way we do, then there's no reason for it to steer towards world-states that we would regard as valuable
+        - Ex: emotion of boredom is the evolutionary solution to exploration-exploitation tradeoff... no need for boredom if you can just compute the optimal policy
+    - The optimistic argument goes: if instilling human values into future AGI is as easy as specifying desired behavior for contemporary generative AI, then we might be in luck?
+
+    
