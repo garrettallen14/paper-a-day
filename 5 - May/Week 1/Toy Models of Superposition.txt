@@ -3,4 +3,33 @@ Toy Models of Superposition
 14 Sep 2022
 
 Introduction
-    - It would be very 
+    - It would be very convenient if the individual neurons of ANNs corresponded to cleanly interpretable features of the input
+    - An "ideal" ImageNet classifier, each neuron would fire only in the presence of a specific visual feature (color red, left-facing curve, etc)
+    - LLMs it seems rare for neurons to correspond to clean features
+    
+    - Why is it that neurons sometimes align with features and sometimes don't?
+    - We use toy models -- small ReLU networks trained on synthetic data with spare input features -- to investigate how and when models represent more features than they have dimensions
+        - Called superposition
+    - When features are sparse, superposition allows compression beyond what a linear model would do, at the cost of "interference" that requires nonlinear filtering
+
+    - Consider a toy model where we train an embedding of five features of varying importance in two dimensions, add a ReLU, and vary the sparsity of the features
+    - Sparsity: the proportion of zero or near-zero values in a set of data (features are mostly zero for any given input)
+        - Natural language: each word considered a feature... since most words don't appear in a given sentence, the features are sparse
+        - Computer vision: Presence of specific objects => sparse features
+        - When input features are sparse, NNs can learn to represent more features than they have dimensions by superimposing them, tolerating some interference
+        - This is in contrast to the dense feature case, where the netword tends to learn an orthogonal basis of the most important features, leaving less important features not represented at all
+    - With dense features, a model learns to represent an orthogonal basis of the most important two features (similar to what PCA might give us)
+        - The other three features are not represented
+    - If we make the features sparse, this changes:
+        - As sparsity increases, models use "superposition" to represent more features than dimensions
+        - 0% sparsity: the two most important features are given dedicated orthogonal dimensions, while other features are not embedded
+        - 80% sparsity: the four most important features are represented as antipodal pairs
+            - The least important features are not embedded
+        - 90% sparsity: all 5 features are embedded as a pentagon, but now there is "positive interference"
+
+    - Models can store additional features in superposition by tolerating some interference
+    - Models can perform computation while in superposition
+    - NNs we observe in practice are in some sense noisily simulating larger, highly spare networks
+        - ie it is possible that models can be thought of doing "the same thing" as an imagined much-larger model representing the exact same features but with no interference
+
+    - 

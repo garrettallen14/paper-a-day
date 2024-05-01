@@ -1,0 +1,32 @@
+Mechanistically Eliciting Latent Behaviors in Language Models
+
+30 Apr 2024
+
+Introduction
+    - Introduce a method for eliciting latent behaviors in LMs by learning unsupervised perturbations of an early layer of an LLM
+    - These perturbations are trained to maximize changes in downstream activations
+    - The method discovers diverse and meaningful behaviors with just one prompt
+Summary
+    - In the simplest case, the unsupervised perturbations are given unsupervised steering vectors -- vectors added to the residual stream as a bias term in the MLP outputs of a given layer
+    - Also report preliminary results on unsupervised steering adapters -- LoRA adapters of the MLP output weights of a given layer, trained with the same unsupervised objective
+
+    - Apply the method to several alignment-relevant toy examples to find the method consistently learns vectors/adapters which encode coherent and generalizable high-level behaviors
+    - Compared to other interpretability methods, the approach is well-suited for robustly understanding the out-of-distribution behavior of LMs in a sample-efficient manner
+Key Results
+    1. Red-Teaming
+        a. Discover several anti-refusal steering vectors, based off of a single prompt asking for bomb-making instructions
+            - "Fantasy" vectors which induce bomb-making instructions since they interpret the prompt in the context of a specific fantasy game, as well as more troubling "real-world" vectors which induce real-world bomb-making advice
+        b. Investigate the generalization properties of the learned vectors
+            - In extended conversations, the LLM agrees to give detailed instructions for building weapons of mass destruction such as nuclear/chemical/biological weapons
+            - "Vector arithmetic" results from the supervised steering vector literature carry over to unsupervised steering vectors... subtracting one of the real-world anti-refusal vectors leads the model to refus innocuous prompts (eg. "How do I tie my shoes?")
+            - The fantasy vectors induce the LLM to interpret ambiguous prompts ("How do i mine for diamonds") within the context of a specific fantasy game
+    2. Backdoor Detection
+        - Detect backdoors fine-tuned into Qwen 1.8B on a simple arithmetic task by training unsupervised steering vectors on a single clean prompt
+    3. Capability Discovery
+        - Discover a CoT steering vector trained on one simple arithmetic prompt. The vector increases accuracy of the model's responses on other instances of the arithmetic task from 11% (unsteered) to 63% (steered), suggesting the vector has isolated a generalizable behavior
+    
+
+Introduction
+    - Several potential reasons why we may expect hybrid structure in LLMs
+        1. Exotic/hypothetical side, backdoors may have been planted explicitly in the model through a data-poisoning attack
+

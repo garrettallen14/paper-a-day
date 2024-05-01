@@ -1,0 +1,155 @@
+Zoom In: An Introduction to Circuits
+
+10 Mar 2020
+
+Abstract
+    - By studying the connections between neurons, we can find meaningful algorithms in the weights of neural networks
+    
+    - Many important transition points in the history of science have been moments when science "zoomed in"
+    - We develop a visualization or tool to allow us to see the world in a new level of detail
+
+    - Transitions weren't just a change in precision, but qualitative changes in what the objects of scientific inquiry are
+
+    - Visualizations of ANNs have revealed tantalizing hints/glimpses of a rich inner world within our models
+
+    - "Circuits" of connections between neurons seem to be meaningful algorithms corresponding to facts about the world
+        - You can watch a circle detector be assembled from curves
+        - A dog head be assembled from eyes, snout, fur, and tongue
+        - You can even find AND, OR, and XOR implementations
+
+    
+Three Speculative Claims
+    - One of the earliest articulations of modern cell theory: Theodor Schwann in 1839
+    - Schwann's Claims about Cells
+        1. Cell is the unit of structure, physiology and organization in living things
+        2. The cell retains a dual existence as a distinct entity and building block in the construction of organisms
+        3. Cells form by free-cell formation, similar to the formulation of crystals
+    - 3rd turned out to be horribly wrong
+    - Three Speculative Claims about Neural Networks:
+        1. Features
+            - The fundamental unit of NNs. They correspond to directions (a linear combination of neurons in a layer.. a "direction vector"). These features can be rigorously studied and understood
+        2. Circuits
+            - Features are connected by weights, forming circuits (A “circuit” is a computational subgraph of a neural network. It consists of a set of features, and the weighted edges that go between them in the original network. Often, we study quite small circuits — say with less than a dozen features — but they can also be much larger. (See the glossary for a detailed definition.))
+            - Circuits can be rigorously studied and understood
+        3. Universality
+            - Analogous features and circuits form across models and tasks
+    - We believe these claims are important to consider
+
+
+Claim 1: Features
+    - Features the fundamental unit of NNs... correspond to directions... can be rigorously studied / understood
+    
+    - Early layers contain features like edge / curve detectors, while later layers have features like floppy ear detectors or wheel detectors
+    - Nerons (or some cases, other directions in the vector space of neuron activations) are understandable
+
+    - Many neurons are initially mysterious, however, our experience is that there's usually a simple explanation behind these neurons, and they're actually doing something quite natural
+    - We're initially confused by high-low freq detectors, but in retrospect they are simple and elegant
+
+    - This introductory essay will only give an overview of a couple examples we think are illustrative, but will be followed both by deep dives
+Example 1: Curve detectors
+    - Curve detecting neurons can be found in every non-trivial vision model we've examined
+    - These units straddle the boundary between features that exist and features where there's significant skepticism
+
+    - Curve detectors are found in families of units, with each member of the family detecting the same curve feature in a different orientation... together they jointly span the full range of orientations
+
+    - Are these "curve detectors" really detecting curves?
+        1. curves cause these neurons to fire
+        2. each unit responds to cuves at different angular rotations
+        3. if there are other stimuli that cause them to fire, those stimuli are rare or cause weaker activations
+Example 2: High-low frequency detectors
+    - Curve detectors are an intuitive type of feature -- the kind of feature one might guess exists in NNs a priori
+
+    - Can we understand features that aren't intuitive?
+    
+    - High-low freq detectors are an example... we find them in early vision, and are actually quite simple
+        - They look for low-frequency patterns on one side of their receptive field, and high-frequency patterns on the other side
+        - Look for the same thing in different orientations
+    - These are useful because they're a heuristic for detecting the boundaries of objects, especially when the background is out of focus
+
+    - One hope: interpretability will teach us better abstractions for thinking about the world
+Example 3: Pose-invariant dog head detector
+    - As with any neuron, we can create a feature visualization and collect dataset examples
+    - If you look at the feature visualization, the geometry is not possible
+    - Feature visualization establishes a causal link, while dataset examples test the neuron's use in practice and whether there are a second type of stimuli that it reacts to
+Polysemantic Neurons
+    - Not all neurons yield nice, human-understandable concepts
+    - Neural networks often contain "polysemantic neurons" that respond to multiple unrelated inputs
+    - In InceptionV1, 4e:55 responds to cat faces, fronts of cars, and cat legs
+        - Feature visualization shows that its looking for cat eyes/whiskers, legs, and shiny fronts of cars, but not some shared feature
+
+    - We can still study such features, characterizing each different case they fire, and reason about their circuits to some extent
+
+    - Polysemantic neurons are a major challenge for the circuits agenda, significantly limiting our ability to reason about neural networks
+
+    - Our hope is that it may be possible to resolve polysemantic neurons, perhaps by "unfolding" a network to turn polysemantic neurons into pure features, or training networks to not exhibit polysemanticity in the first place
+    
+    - Question: why do polysemantic neurons form? "superposition"
+
+
+Claim 2: Circuits
+    - Features are connected by weights, forming circuits... these circuits can also be rigorously studied and understood
+
+    - All neurons in our network are formed from linear combinations of neurons in the previous layer, followed by ReLU
+    - If we can understand the features in both layers, we should also be able to understand the connections between them...
+    - We find it helpful to study circuits: sub-graphs of the network, consisting a set of tightly linked features and the weights between them
+
+    - Circuits seem to be tractable objects of study
+    - We've found beautiful rich structures, often with symmetry to them
+    - Once you understand what features they're connecting together, the individual floating point number weights in you NN become meaningful
+Circuit 1: Curve detectors
+    - Curve detectors are primarily implemented from earlier, less sophisticated curve detectors and line detectors
+        - Used in the next layer to create 3d geometry and complex shape detectors
+    - There's a long tail of smaller connections to other features, but this seems to be the primary story
+
+    - Curve detectors are excited by earlier detectors in similar orientations
+    - Curve detectors are inhibited by earlier detectors in opposing orientations
+
+    - The weights rotate with the orientation of the curve detector
+Circuit 2: Oriented Dog Head detection
+    - Curve detector circuit is a low-level circuit and only spans two layers
+    - We discuss a higher-level circuit spanning across four layers
+    - This circuit teaches us about how NNs implement sophisticated invariances
+
+    - A huge part of what an ImageNet model has to do is tell apart different animals
+    - It develops a large number of neurons dedicated to recognizing dog related features, including heads
+    - Within this "dog recognition" system, one circuit strikes us as particularly interesting: a collection of neurons that handle dog heads facing to the left and dog heads facing to the right
+        - Over 3 layers, the network maintains two mirrored pathways, detecting analogous units facing tothe left and to the right
+    - At each step, these pathways try to inhibit each other, sharpening the contrast... finally, it creates invariant neurons which respond to both pathways
+    - We call this pattern "unioning over cases" The network separately detects two cases (left and right) and then takes a union over them to create invariant "multifaceted" units
+    - Note that, because the two pathways inhibit each other, this circuit actually has some XOR like properties
+
+    - This circuit is striking because the network could have easily done something much less sophisticated
+        - The network carves apart the left and right cases and handles them separately
+
+    - This summary of the circuit is only scratching the surface of what is going on... Every connectino between neurons is a convolution, so we can also look at where an input neuron excites the next one
+
+
+Circuit 3: Cars in Superposition
+    - There is a car detecting neuron in InceptionV1 (mid-late layer)
+        - Using features of the previous layers, it looks for wheels at the bottom of the conv window, and windows at the top
+    - Rather than create another pure car detector at the next layer, it spreads the car feature over a number of neurons that seem to primarily be doing something else, (ie dog detectors)
+        - This suggests that polysemantic neurons are deliberate
+        - You can imagine a world where the process of detecting cars and dogs was deeply intertwined in the model for some reason, and as a result polysemantic neurons were difficult to avoid
+        - Instead, the model has a "pure neuron" then mixed it up with other features... ie. Superposition
+        - This allows the model to use fewer neurons, conserving them for more important tasks
+        - As long as cars and dogs don't co-occur, the model can accurately retrieve the dog feature in a later layer, allowing it to store the feature w/o dedicating a neuron
+Circuit Motifs
+    - We see the same abstract patterns over and over
+        - Equivariance
+        - Unioning over cases
+        - Superposition
+    - In biology, a circuit motif is a recurring pattern in complex graphs 
+        - Helpful to understanding one motif can give researchers leverage on all graphs where it occurs
+    - It is quite likely that studying motifs will be important in understanding the circuits of ANNs
+    - We expect investigations of motifs to be well served by us first building up a solid foundation of well understood circuits first
+
+
+Claim 3: Universality
+    - Analogous features and circuits form across models and tasks
+
+    - First layer of vision models will learn Gabor filters
+    - Different NNs can develop highly correlated neurons
+        - But a fur texture detector and a sophisticated dog body detector could be highly correlated despite being semantically different
+    - Adopting a meaningful feature-skeptic perspective, it is not definitive
+
+    - Only have anecdotal, but encouraging evidence
