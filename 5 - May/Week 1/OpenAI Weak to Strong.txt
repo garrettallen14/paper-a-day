@@ -1,0 +1,29 @@
+HOW WEAK-TO-STRONG GENERALIZATION FITS INTO ALIGNMENT
+
+    - It is important for AI devs to have a plan for aligning superhuman models ahead of time--before they have the potential to cause irreparable harm
+    - Our plan for aligning superintelligence is a work in progress, but we believe that weak-to-strong techniques could serve as a key ingredient
+
+High-level plan
+    1. Once we have a model that is capable enough that it can automate ML--and in particular alignment--research, our goal will be to align that model well enough that it can safely and productively automate alignment research
+    2. We will align this model with weak-to-strong generalization techniques
+    3. We will valudate that the resulting model is aligned
+    4. Using a large amount of compute, we will have the resulting model conduct research to align vastly smarter superhuman systems. We will bootstrap from here to align arbitrarily more capable systems
+
+Eliciting key alignment-relevant capabilities with weak-to-strong generalization
+    - There are many different alignment-relevant capabilities we could try to elicit from a superhuman model:
+        - Safety: does a given behavior risk the safety of human lives/well-being in important ways?
+        - Honesty: is a given natural language statement true or false?
+        - Instruction following: does a given behavior produced by an AI system follow a user's instruction faithfully?
+        - Code security: does some given code have important security vulnerabilities or back-doors? Is it safe to execute it?
+
+Alignment plan assumptions
+    - For a given alignment plan, it is also often unclear which subproblems the plan attempts to solve, and which subproblems the plan assumes are unlikely to be an obstacle
+    - As a result, we think enumerating assumptions is an important part of making progress on alignment
+
+    - Assumptions we make for an alignment plan based on weak-to-strong generalization:
+        - No deceptive alignment in base models
+        - Elicited concepts are sufficiently robust, or do not need to be
+        - The concepts we care about are natural to future AGI
+        - Sufficiently gradual takeoff
+        - Moderately superhuman models are sufficient to solve alignment
+        - No need to solve human values

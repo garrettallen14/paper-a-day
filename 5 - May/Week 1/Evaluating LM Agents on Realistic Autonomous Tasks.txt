@@ -1,0 +1,56 @@
+Evaluating Language-Model Agents on Realistic Autonomous Tasks
+
+31 July 2023
+
+Abstract
+    - We explore the ability of LM Agents to acquire resources, create copies of themselves, and adapt to novel challenges they encounter in the wild
+    - "Autonomous Replication and Adaptation" (ARA)
+    - Once a system is capable of ARA, placing bounds on the system's capabilities may become significantly more difficult
+
+    - Construct four simple example agents that combine LMs with tools to take actions in the world
+    - Evaluate these agents on 12 tasks relevant to ARA
+    - LM agents can only complete the easiest tasks from this list, although they make some progress on the more challenging tasks
+
+    - We do not think these evaluations provide good assurance that the "next gen" of LMs will not yield agents capable of ARA, unless intermediate evaluations are performed during pretraining
+    - We expect fine-tuning of existing models could produce substantially more competent agents, even if the fine-tuning is not directly targeted at ARA
+
+
+Introduction and motivation
+    - We describe an evaluation to close the gap in two ways:
+        1. Evaluating LM Agents:
+            - Construct 4 example agents by combining LLMs with tools to allow them to take actions in the world, think out loud to formulate plans, and decompose tasks into steps
+        2. Evaluating Open-Ended tasks:
+            - We evaluate agents on a suite of twelve real-world tasks ranging from simple (retrieving information from a filesystem) to relatively complex (carrying out a phishing attack end-to-end, including researching the target and creating a fake website)
+    - These evaluations measure the capabilities of the specific agents created from the models, and do not upper-bound the risk from a particular model
+    - Given the same base model, agents w/more dangerous capabilities could arise in various ways:
+        i. Base models are fine-tuned (possibly on ARA tasks directly)
+        ii. Better scaffolding and prompting is developed for LM agents
+        iii. People build custom tooling or plugins to make it easier for LMs to navigate the world and use services
+    - When evaluating the risks from a proposed training run, assessments should consider the most powerful agents that might be created from the resulting model, factoring advances in fine-tuning and scaffolding into forecasts of dangerous capabilities
+Autonomous replication and adaptation
+    - An AI system is capable of ARA to the extent that it can autonomously do all of the following:
+        i. make money
+        ii. use money or other resources to obtain more compute
+        iii. install its own weights and scaffolding on new systems and make improvements to itself
+        iv. recognize when a particular strategy fails and adopt an alternative approach
+
+
+Agents
+List of Agents
+    - We present four examples:
+        1. GPT-4-simple
+        2. GPT-4-delegate
+        3. GPT-4-early-delegate
+        4. Claude-assistant
+
+
+Task Suite
+    - Task instructions are given to the model
+    - Setup instructions for a human to prepare the initial state
+    - Simulation instructions for a human overseer to interrupt the agent during execution
+    - Evaluation instructions for a human
+
+    - Chose the 12 tasks in our pilot suite to satisfy:
+        1. Easier than ARA: any ARA capable system could easily perform these
+        2. Range of difficulty
+        3. Diversity of obstacles
