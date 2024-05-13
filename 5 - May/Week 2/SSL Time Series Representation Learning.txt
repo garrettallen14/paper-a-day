@@ -1,0 +1,61 @@
+Self-Supervised Learning of Time Series Representation via
+Diffusion Process and Imputation-Interpolation-Forecasting Mask
+
+9 May 2024
+
+Abstract
+    - Time Series Representation Learning (TSRL) focuses on generating informative representations for various tasks
+    - SSL methods in TSRL fall into:
+        - Reconstructive
+        - Adversarial
+        - Contrastive
+        - Predictive
+    - Each has a common challenge of sensitivity to noise and intricate data nuances
+    
+    - Diffusion-based methods have shown advanced generative capabilities
+        - Primarily target specific application scenarios like imputation and forecasting, leaving a gap in leveraging diffusion for generic TSRL
+    - Time Series Diffusion Embedding (TSDE) bridges this gap as the first diffusion-based SSL TSRL approach
+    
+    - TSDE segments TS data into observed and masked parts using an Imputation-Interpolation-Forecasting (IIF) mask
+        - Applies a trainable embedding function, featuring dual-orthogonal Transformer encoders with a crossover mechanism, to the observed part
+    - We trained a reverse diffusion process conditioned on the embeddings, designed to predict noise added to the masked part
+    
+    - Experiments demonstrate TSDE's superiority in imputation, interpolation, forecasting, anomaly detection, classification, and clustering
+
+
+Introduction
+    - Focus on Multivariate TS data
+    - To effectively extract and interpret valuable information from intricate raw MTS data, TSRL has become increasingly pivotal
+        - Focuses on learning latent representations that encapsulate critical information within the time series
+        - The learned representations are crucial for a variety of downstream applications
+
+    - Due to their advanced generative capabilities, diffusion models have emerged as a promising solution for TS modeling, adept at handling the complexities and long-term dependencies often found in MTS data
+    - Their adoption in SSL TSRL remains largely unexplored
+    - TSDE pioneers in this area by integrating conditional diffusion processes with crossover Transformer encoders and introducing an Imputation-Interpolation-Forecasting (IIF) mask strategy
+    - This unique combination allows TSDE to generate versatile representations that are applicable to a wide range of tasks
+
+    - We introduce:
+        - Novel SSL TSRL framework, TSDE, which optimizes a denoising (reverse diffusion) process, conditioned on a learnable MTS embedding function
+        - We develop dual-orthogonal Transformer encoders integrated with a crossover mechanism, which learns MTS embeddings by capturing temporal dynamics and feature-specific dependencies
+        - We design a novel SSL pretext task, the IIF masking strategy, which creates psuedo observation masks designed to simulate the typical imputation, interpolation, and forecasting tasks
+        - We experimentally show that TSDE achieves superior performance over existing methods across a wide range of MTS tasks, thereby validating the universality of the learned embeddings
+
+
+Approach
+    - Entails learning general-purpose embeddings for MTS that has K features/variables and L time steps
+Unconditional Diffusion Process
+    - Objective is to approximate the ground-truth MTS distribution q(x0) by learning a model distribution p(x0)
+    - Forward Process:
+        - Gaussian noise gradually injected to x0 until close enough to std gaussian
+    - Reverse Process:
+        - A NN recovers x0 by progressively denoising xT
+Imputation-Interpolation-Forecasting Mask
+    - The reverse process of unconditional diffusion facilitates the generation of MTS from noise
+    - Our objective is to create general-purpose embeddings for unlabeled MTS
+    - We propose an IIF mask strategy, producing a pseudo observation mask (they make equivalent to 0... mistake I think because the mask token should be something other than what can be found in the data)
+
+    - During training, given any original MTS x0, we extract the observed (x0obs) and masked (x0msk) segments
+    - We now reformulate our SSL objective to generate the masked version of MTS from a corrputed input xtmsk, through a diffusion process, conditioned on the embedding of the observed MTS x0obs
+    - Both the diffusion process and the embedding function are approximated with a trainable NN
+Conditional Reverse Diffusion Process
+    - Estimate ground-truth conditional probability q(x0msk|ft(x0obs)) 

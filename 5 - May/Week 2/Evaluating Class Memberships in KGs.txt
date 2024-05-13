@@ -1,0 +1,26 @@
+Evaluating Class Membership Relations in Knowledge Graphs using LLMs
+
+25 Apr 2024
+
+Abstract
+    - KGs have class membership relations, assigning entities to a given class
+    - Propose a new method for evaluating the quality of these relations 
+        - Process descriptions of a given entity and class using zero-shot CoT classifier w/ NL intensional definition of a class
+    - We evaluate the method w/Wikidata and CaLiGraph + 7 LLMs
+
+
+Preliminaries
+    - Knowledge graphs:
+        - I an infinite set of IRIs, B infinite set of blank nodes, L infinite set of literals
+        - Knowledge graph G is a set of triples {(s,p,o) | sinS, pinP, oinO}
+            - S set of subjects, P set of properties, O set of objects
+        - A class is an entity that represents a set of entities sharing common properties / relationships in G
+
+
+Experiments
+    - Q: Can classifiers exhibit good alignment w/KGs?
+    - Q: Can classifiers detect missing / incorrect relations?
+
+    - Input: pair of classes c,d from G | (c, subClassOf, d) in G
+    - Output: confusion matrix M
+    

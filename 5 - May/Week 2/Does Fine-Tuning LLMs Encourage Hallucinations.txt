@@ -1,0 +1,33 @@
+Does Fine-Tuning LLMs on New Knowledge Encourage Hallucinations?
+
+9 May 2024
+
+Abstract
+    - During SFT, model can learn to hallucinate factually incorrect responses
+    - We study the impact of such exposure to new knowledge on the capability of the fine-tuned model to utilize its pre-existing knowledge
+    - We design a controlled setup, focused on closed-book QA
+    - We vary the proportion of the fine-tuning examples that introduce new knowlddge
+    
+    - LLMs struggle to acquire new factual knowledge through fine-tuning, as FT examples that introduce new knowledge are learned significantly slower than those consistent with the model's pre-trained knowledge
+    - As examples w/new knowledge are eventually learned, they linearly increase the model's tendency to hallucinate
+
+    - Implies: Models mostly acquire factual knowledge through pre-training and FT teaches them to use it more efficiently
+
+
+Study Setup
+    - MD is a model obtained by FT M on D
+    - When constructing D, our objective is to reflect instruction tuning on diverse knowledge-intensive tasks while maintaining control over the experimental setting
+
+    - Focus on factual knowledge (subjext, relation, object) triplets, converted into closed-book QA format
+
+Categories:
+    - Known:
+        - Highly Known: Greedy decoding always correct
+        - Maybe Known: Greedy decoding sometimes correct
+        - Weakly Known: Greedy never correct, but temperature increase sometimes correct
+    - Unknown: Model never correct
+
+Knowledge Type Value and Impact
+    - Unknown examples are harmful
+    - MaybeKnown examples are essential
+    - Limited knowledge enhances overfitting

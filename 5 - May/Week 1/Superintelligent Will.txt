@@ -1,0 +1,45 @@
+THE SUPERINTELLIGENT WILL: 
+MOTIVATION AND INSTRUMENTAL RATIONALITY IN ADVANCED ARTIFICIAL AGENTS
+
+2 May 2012
+
+Abstract
+    - This paper discusses the relations between intelligence and motivation in AI Agents
+    - Theses 1: Orthogonality
+        - Intelligence and final goals (purposes) are orthogonal axes along which possible artificial intellects can freely vary
+        - Any level of intelligence could be combined with any final goal
+    - Theses 2: Instrumental Convergence
+        - As long as they possess a sufficient level of intelligence, agents having any of a wide range of final goals will pursue similar intermediary goals because they have instrumental reasons to do so
+
+
+Orthogonality of motivation and intelligence
+Avoiding anthropomorphism
+    - A space in which all possible minds can be represented, then all human minds constitutes a small and fairly tight cluster within that space
+    - Would be easier to create an AI with simple goals than to build one that has a human like set of values and dispositions
+Orthogonality Thesis
+    - "Intelligence" -> capacity for instrumental reasoning
+    - Intelligent search for instrumentally optimal plans and policies can be performed in the service of any goal
+    - Intelligence and motivation can be thought of as a pair of orthogonal axes on a graph whose points represent intelligent agents of different paired specifications
+        - Each point in the graph represents a logically possible agent
+        - It may be impossible for an unintelligent system to have very complex motivations
+            - Complex motivations would place significant demands on memory
+        - For an agent to "have" a set of motivations, this set may need to be functionally integrated with the Agent's decision-processes (places demands on processing power and perhaps on intelligence)
+        - For minds that can modify themselves, there may also be dynamical constraints: an intelligent mind with an urgent desire to be stupid might not remain intelligent for very long
+    
+    - Orthogonality Thesis:
+        - Intelligence and final goals are orthogonal axes along which possible agents can freely vary.
+        - More or less, any level of intelligence could in principle be combined with, more or less, any final goal.
+    
+    - Humean theory of motivation:
+        - Beliefs alone (what is the right thing to do) cannot motivate action: some desire is required.
+        - Sufficient intelligence might entail the acquisition of certain beliefs, and these beliefs would necessarily produce certain motivation
+        - Belief and motive are separate (!)
+        - It may be possible for orthogonality to be true even if Humean theory is false if it were possible to build a cognitive system ("optimization process") with arbitrarily high intelligence but with constitution so alien as to contain no clear functional analogues to what in humans we call "beliefs" and "desires"
+    - The orthogonality thesis makes a claim about relationship between motivation and intelligence, rather than motivation and rationality
+
+    - "Intelligence": something like instrumental rationality -- skill at prediction, planning and means-ends reasoning in general
+    - Even if there are objective moral facts that any fully rational agent would comprehend, and even if these moral facts are somehow intrinsically motivating (such that anybody who fully comprehends them is necessarily motivated to act in accordance with them) this need not undermine the orthogonality thesis
+    
+    - Reason for focusing on intelligence: on instrumental rationality, this is the most relevant concept if we are trying to figure out what different kinds of systems would do
+    - Normative questions, ie whether their behavior would count as being prudentially rational or morally justifiable, can be important in various ways
+        - However, such questions should not blind us to the possibility of cognitive systems that fail to satisfy substantial normative criteria but which are nevertheless very powerful and able to exert strong influence on the world

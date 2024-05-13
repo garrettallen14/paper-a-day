@@ -1,0 +1,18 @@
+The Alignment Problem from a Deep Learning Perspective
+
+19 Mar 2024
+
+Abstract
+    - W/o substantial effort to prevent it, AGIs could become misaligned
+    - We briefly outline how the deployment of misaligned AGIs might irreversibly undermine human control over the world
+    - We review research directions aimed at preventing this outcome
+
+
+Introduction
+    - We hypothesize and defend factors that could lead to large-scale risks if AGIs are trained using modern DL techniques
+    - We focus on AGIs pre-trained w/ SSL and RLHF
+    - RLHF will encourage the emergence of three problems:
+        1. Human feedback rewards models for appearing harmless and ethical, while also maximizing useful outcomes
+            - Incentivizes situationally-aware reward hacking
+        2. RLHF-trained AGIs will likely learn to plan towards misaligned internally-represented goals that generalize beyong the RLHF fine-tuning distribution
+        3. Such a misaligned AGI would likely pursue these goals using unwanted power-seeking behaviors
