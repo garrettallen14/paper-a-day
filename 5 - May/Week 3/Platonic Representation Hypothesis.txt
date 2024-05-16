@@ -1,0 +1,198 @@
+The Platonic Representation Hypothesis
+
+13 May 2024
+
+Abstract
+    - Argument: Representations in AI models are converging
+    - We first survey examples in the literature
+    - Then demonstrate convergence across modalities
+    - Hypothesis: driving towards a shared statistical model of reality, akin to Plato's concept of an ideal reality
+
+
+Introduction
+    - "Platonic representation" in reference to Plato's Allegory of the Cave
+        - An ideal reality that underlies our sensations
+    - "Anna Karenina scenario": all well-performing neural nets represent the world in the same way
+    - The "happy representation" that is converged upon is one that reflects a statistical model of the underlying reality
+
+
+Representations are converging
+    - Preliminaries: We restrict our attention to representations that are vector embeddings
+    - Kernels are commonly used to assess representations: they capture relative structures among data samples, which is the learning signal
+    - We define representational alignment as a measure of the similarity of the similarity structures induced by two representations (ie a similarity metric over kernels)
+
+    - Representation: assigns a feature vector to some data input
+    - Kernel: characterizes how a representation measures distance/similarity between points
+    - Kernel-alignment metric: Measures the similarity between two kernels
+    
+    - We use a mutual nearest-neighbor metric measuring the intersection of the k-nn sets induced by two kernels K1, K2, normalized by k
+Different models, with different architectures and objectives, can have aligned representations
+    - Rising number of systems built on pre-trained foundation models
+    - Different fms arrive at the same representation
+
+    - One study measures representational similarity through model stitching
+        - Given models f & g, an intermediate representation from f is integrated into g via a learned affine stitching layer h, resulting in a new stitched model:
+            - F = f1*...*fk* h * gk+1*...*gm
+            - If F has good performance => f and g have compatible representations at layer k, up to the transform h
+    - Another demonstrates the feasibility of "zero-shot" model stitching w/o learning a stitching layer.
+        - Models often embed data in remarkably similar ways
+        - They considered the kernel K defined by learned representations and showed that K serves as a bridge between models, allowing an encoder trained in one language to work effectively with a decoder in another
+    - Another extends this idea to individual neurons and found "Rosetta Neurons" which are activated by the same pattern across a range of vision models
+        - These form a common dictionary independently discovered by all models
+Alignment increases with scale and performance
+    - Larger models exhibit greater alignment w/each other compared to smaller ones
+        - Models w/similar outputs also have similar internal activations
+    - As models continue to scale, they will become similar it seems
+
+    - We evaluate the transfer performance of 78 vision models
+        - Trained w/varying architectures, training objectives, and datasets
+        - We bin these models based on their avg transfer performance on the VTAB dataset and then measure the avg kernel alignment of the models within each bin
+        - Results indicate that models w/ high transfer performance form a tightly clustered set of representations, while odels with a weak performance have more variable representations
+    - Models that are competent all represent data in a similar way: all strong models are alike, each weak model is weak in its own way
+
+    - Various models are aligning toward a unified representation, but does this convergence extend to model weights?
+    - There is ample evidence that models with the same architecture will often converge to the same basin of weights
+    - This implies it is possible to merge separately trained models of the same architecture and achieve some of the capabilities of all models in the mixture
+Representations are converging across modalities
+    - Do models trained on different modalities also converge? Yes.
+
+    - One study extends model stitching to the cross-modal setting, finding that a single linear projection is sufficient to stitch a vision model to an LLM and achieve good performance on VQA and image captioning
+    - Another study shows that linear stitching can also work in the opposite direction, aligning text inputs to visual outputs
+    - Many recent Language-vision models stitch pre-trained language and vision models together
+        - LLaVA demonstrates SOTA results by projecting visual features into a language model with a 2-layer MLP
+
+    - Other works show further kinds of evidence of cross-modal synergy
+    - Achiam found that jointly training a LM w a VM improves performance on language tasks, compared to training the LM on its own
+    - Sharma probed the visual knowledge of LLMs trained only on language data, by converting images into code that an LLM can process. They find that LLMs have rich knowledge of visual structures, to the extent that decent visual representations can be trained on images generated solely by querying an LLM to produce code and rendering the response
+
+    - In visual generation, LLMs show abilities to augment captions with visual strucutres and improve generation quality
+    - In other modalities, Ngo and Kim show auditory models are also roughly aligned with LMs up to a linear transformation, and Ng demonstrate the effectiveness of using pretrained LMs for facial motion prediction
+
+    - We set out to address these claims in a broader scope to determine whether models are indeed learning an increasingly modality-agnostic representation of the world
+    - We sampled a variety of models trained either solely on vision or solely on language, and compared their representations as they became larger and more competent over many tasks
+
+    - We assess alignment between a suite of LMs and VMs
+    - So far we have only defined alignment for two kernels defined over the same input space
+
+    - To measure cross-modal alignment, we use paired datasets to bridge the two modalities
+        - Wikipedia captions
+    - The better an LLM is at LMing, the more it tends to align with vision models, and the converse is true as well
+Models are increasingly aligning to brains
+    - Neural networks also show substaintial alignment with biological representations in the brain
+    - This commonality may be due to similarities in the task and data constraints both systems are confronted with
+    - Even though the mediums may differ, the fundamental problem faced by brains and machines is the same: efficiently extracting and understanding the underlying structure in image, text, sound, etc
+
+    - The tasks that the human visual system has been honed to perform through evolution are also the ones that we train our neural nets to perform
+        - Performance over such tasks implies brain alignment
+    - Conwell shows that training data plays a large role in alignment
+    - Psychophysical studies show agreement between how humans perceive visual similarity and how models do, even when the models are trained on tasks that are seemingly unrelated to mimicking human perception
+Does alignment predict downstream performance?
+    - We would expect that alignment improves performance on downstream tasks, and current results support this idea
+
+
+Why are representations converging?
+    - Modern ML models are generally trained to minimize the empirical risk with possible implicit and/or explicit regularization
+    - In following sections, we lay out how each component in optimiation plays a role in facilitating representational convergence
+Convergence via Task Generality
+    - Each training datapoint and objective (task) places an additional constraint on the model
+    - As data and tasks scale, the volume of representations that satisfy these constraints must proportionately grow smaller
+    - Multitask Scaling Hypothesis:
+        - There are fewer representations that are competent for N tasks than there are for M < N tasks.
+        - As we train more general models that solve more tasks at once, we should expect fewer possible solutions.
+    - Contravariance principle:
+        - The set of solutions to an easy goal is large, while the set of solutions to a challenging goal is comparatively smaller.
+    - We argue that this narrower solution set also generalizes better
+    - As data scales, models that optimize the empirical risk Ex~dataset also improve on the population risk Ex~reality
+        - They become better at capturing statistical structures of the true data generating process (reality)
+
+    - Recent work has demonstrated a power law relationship between data scale and model performance
+    - This implies that with enough data, one ought to converge to a very small solution set with irreducible error -- the inherent epistemic uncertainty of the world
+    
+    - As more models are trained on internet-scale data, the set of solutions that satisfies all data constraints must become relatively small
+    
+    - In addition to data-scaling, many modern representation learning objectives L(f,x) directly optimize for multi-task solving
+        - Contrastive learning finds a distance structure over data samples that optimizes many classification tasks
+        - MAE optimize randomly sampled reconstruction tasks
+        - Autoregressive LM can also be seen as optimizing a diverse set of tasks
+    - Such multi-task objectives may be more effective than single-task ones due to the fact that they impose more task constraints on the representation, leading to a smaller and higher-quality solution space
+Convergence via Model Capacity
+    - Suppose there is a globally optimal representation for standard learning objectives
+    - Then, scaling a model as well as improved optimization should be more effective at finding better approximations to this optimum
+    - With the same training objective, larger models will thus tend toward this optimum
+    - When different training objectives share similar minimizers, larger models are better at finding these minimizers, and will train to similar solutions over the training tasks
+
+    - We summarize this hypothesis as follows:
+        - The Capacity Hypothesis:
+            - Bigger models are more likely to converge to a shared representation than smaller models
+Convergence via Simplicity Bias
+    - Models may develop distinct internal representations
+    - Simplicity Bias Hypothesis:
+        - Deep networks are biased toward finding simple fits to the data, and the bigger the model, the stronger the bias. Therefore, as models get bigger, we should expect convergence to a smaller solution space
+    - Such simplicity bias could be coming from explicit regularization
+    - Deep networks naturally adhere to Occam's razor: implicitly favoring simple solutions that fit the data
+
+
+What representation are we converging to?
+    - Task and data pressures, combined with model capacity can lead to convergence.
+    - We now study What exactly is the endpoint of all this convergence.
+
+    - The representation we are converging to is a statistical model of the underlying reality that generates our observations
+    - Such a representation would naturally be useful toward many tasks
+    - The representation might be relatively simple, assuming that scientists are correct in suggesting that the fundamental laws of nature are indeed simple functions, in line with the simplicity bias hypothesis
+
+    - But what exactly is "a statistical model of the underlying reality"?
+    - We formalize one definition w/concrete mathematical statements
+    - Importantly, this section should be read as just one concrete candidate for the form of the platonic representation
+An Idealized World
+    - A world consists of a sequence of T discrete events denoted Z := [z1,...,zT], sampled from some unknown distribution P(Z)
+    - Each event can be observed in various ways
+    - An observation is a bijective, deterministic function obs: Z -> . that maps events to an arbitrary measurement space
+
+    - One can think of an event as corresponding to the state of the world at some point in time, but it is also fine to simply consider an event as any variable that indexes observations, with no further physical meaning
+
+    - In this idealized world, knowing P(Z) would be useful for many kinds of predictions; this would constitute a world model over the events that cause our observations.
+    - We will next show that a particular representation of P(Z) is recovered by certain constrastive learners
+A family of contrastive learners converge to a representation of P(Z)
+    - Consider a contrastive learner tha models observations that cooccur together
+    - For simplicity, we ground our discussion with the following definition of cooccurrence probability, Pcoor, of two observations xa and xb, both occuring within some window Twindow:
+        - Pcoor(xa, xb)
+    
+    - Consider positive pairs as two observations nearby in time and negative pairs as observations drawn from any point in time
+    - Our contrastive learner tries to classify if a pair is positicve or negative by learning a representation st the dot-product kernel approximates the log odds ratio up to some offset where KPMI is the pointwise mutual information (PMI) kernel, and cX(xa) is constant in xb
+    - We note that is a common setting for SSLs
+
+    - Therefore, for any modality in our idealized world, we observer representational convergence to the same kernel, which represents certain pairwise stats of P(Z)
+    - This suggests that certain rep learning algs boil down to a simple rule: find an embedding in which similarity equals PMI.
+    - We note that this idea is consistent with prior works that have used PMI as a similarity measure for clustering in vision and language
+
+
+What are the implications of convergence?
+Scaling is sufficient, but not necessarily efficient:
+    - As resources are scaled (# params, # datapoints, # flops), representations are converging, regardless of other modeling choices and even data modality
+    - Different methods can scale with different levels of efficiency
+Training data can be shared across modalities:
+    - Suppose you have access to N images and M sentences, and want to learn the best representation.
+    - If there is indeed a modality-agnostic platonic representation, then the image data should help find it.
+    - If you want to train the best vision model, you should train it both on N images and M sentences
+    - Many vision models are fine-tuned from pretrained LLMs
+    - Training on images improved performance on text
+Ease of Translation and Adaptation Across Modalities
+    - When two representations are aligned, transitioning from one to the other should be a simple function that's easily obtained
+    - This implies that language models would achieve some notion of grounding in the visual domain even in the absence of cross-modal data.
+    - The primary advantage of cross-modal data could then simply be sample efficiency.
+Scaling may reduce hallucination and bias
+    - A prominent shortcoming of current LLMs is their propensity to hallucinate, or output false statements
+    - We would expect hallucinations to decrease with scale
+    - Our hypothesis is conditioned on the training data for future models
+
+
+Counterexamples and Limitations
+Different modalities may contain different information
+    - Two different models cannot converge to the same representation if they have access to fundamentally different information
+    - Our mathematical argument only strictly holds for bijective projections of Z, so that the information in all the projections is equivalent to the information of the underlying world
+    
+    - A more nuanced version of our hypothesis will need to be developed to handle the case of non-bijective observations and abstract concepts
+    - A starting point: different models will converge to the same representation when the input signals are sufficiently high information and the models are sufficiently high capacity
+Not all representations are presently converging
+    - Our argument has mainly focused on two modalities: vision and language
+    - While we do expect other modalities will follow similar trends, we have yet to see the same level of convergence

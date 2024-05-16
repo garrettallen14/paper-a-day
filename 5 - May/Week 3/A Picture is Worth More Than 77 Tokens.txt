@@ -1,0 +1,24 @@
+A Picture is Worth More Than 77 Text Tokens:
+Evaluating CLIP-Style Models on Dense Captions
+
+14 Dec 2023
+
+Abstract
+    - Curation methods for massive VLM datasets trade off between dataset size and quality
+    - Even highest quality are far too short to capture the rich visual detail in an image
+    - To show the value of dense and highly-aligned image-text pairs, we collect the aligned descriptions averaging above 1000 words each
+    - With precise and reliable captions associated with specific parts of an image, we can evaluate VLMs understanding of image content with a novel task that matches each caption with its corresponding subcrop
+    - As current models are often limited to 77 text tokens, we also introduce a summarized version in which each caption length is limited
+
+
+Introduction
+    - SOTA VLMs are often trained on large scale datasets crawled from the web
+    - Formed by collecting images and using alt-text (or other local text) to create loose image-text pairs
+        - Throwing loose captions out entirely in favor of generated captions can improve results
+    - In the absence of high quality captions to evaluate VLMs, benchmarks such as ARO and VL-Checklist often complement image-caption pairs with hard negatives
+
+
+Dataset Construction
+    - 8012 images from SA-1B each w/a complete description aiming to capture the full visual detail of what is present in the image
+    - Much of the description is directly aligned to submasks of the image
+    - They use summarization to get submask length down

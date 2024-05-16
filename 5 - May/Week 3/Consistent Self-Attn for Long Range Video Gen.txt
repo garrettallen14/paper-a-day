@@ -1,0 +1,92 @@
+STORYDIFFUSION: CONSISTENT SELF-ATTENTION
+FOR LONG-RANGE IMAGE AND VIDEO GENERATION
+
+2 May 2024
+
+Abstract
+    - We propose a new way of SA calculation, Consistent SA
+    - Boost consistency between generated images and augments prevalent pre-trained diff-based text-to-image models in a zero-shot manner
+    - Extending to long-range video gen, we further introduce a novel semantic space temporal motion prediction module, Semantic Motion Predictor
+        - Trained to estimate the motion conditions between two provided images in the semantic spaces
+        - Converts the generated sequence of images into videos w/smooth transitions and consistent subjects
+        - Significantly more stable than the modules based on latent spaces only
+        - By merging these two novel components, StoryDiffusion can describe a text-based story w/consistent images or videos encompassing a rich variety of contents
+
+
+Introduction
+    - Aim to generate images and videos with consistent characters in terms of both identity and attire, while maximizing the controllability of the user via text prompts
+    - Common approach: preserve consistency between different images via a temporal module
+        - This requires extensive computational resources and data
+    - We target to explore a lightweight method w/minimum data and computational cost (even zero-shot)
+
+    - If we can use a reference image to guide the SA calculation, the consistency between the two images is supposed to improve significantly
+
+    - Different from standard self-attention operating on the tokens representing a single image, Consistent Self-Attention incorporates sampled reference tokens from the reference images during the token similarity matrix calculation and token merging
+    - The sampled tokens share the same set of Q-K-V weights and thus no extra training is required
+
+    - Consistent SA builds correlations across images in the batch, generating consistent character images in terms of identity and attire, such as clothes
+    - This enables us to generate subject-consistent images for storytelling
+
+    - Contributions
+        - Training-free and hot-pluggable attention module
+        - Maintain the consistency of characters in a sequence of generated images for storytelling with high text controllability
+        - Propose a new motion prediction module that can predict transitions between two images in the semantic space, termed Semantic Motion Predictor. Can generate significantly more stable long-range video frames that can easily be upscaled to minutes
+        - We demonstrate that our approach could generate long image sequences or videos based on a pre-defined text-based story w/proposed Consistent SA and Semantic Motion Predictor with motions specified by text prompts
+
+
+Method
+    - First stage: StoryDiffusion utilizes Consistent SA to generate subject-consistent images in a training-free manner
+    - Second stage: StoryDiffusion creates consistent transition videos based on these consistent images
+    - Split the story into 5 prompts and Generate in a batch
+        - Pass the stories into text-to-image diffusion UNet with consistent Self-attention
+Training-Free Consistent Images Generation
+    - How to maintain consistency of characters within a batch of images
+    - We need to establish connections between images within a batch during generation
+    - Insert Consistent Self-Attention into the location of the original SA in the existing UNet architecture of image generation models and reuse the original SA weights to remain training-free and pluggable
+
+    - (Batch size, Number tokens, Channel number)
+    - The original SA is performed within each image feature independently
+
+    - To build interactions among the images within a batch to keep subject consistency, our Consistent SA samples tokens Si from other image features in the batch:
+        - Si = RandSample(I1,I2,...,IB)
+        - RandSample is a random sampling function
+    - After sampling, we pair the sampled tokens Si and image feature Ii to form a new set of tokens Pi
+    - We perform linear projections on Pi to generate the new key KPi and value VPi for Consistent SA
+        - Original Query Qi is not changed
+Consistent SA Algorithm:
+    def ConsistentSA(images_features, sampling_rate, tile_size):
+        - image tokens: [B,C,N]
+        - sampling rate: Float(0-1)
+        - tile_size: Int
+
+        output = zeros(B,N,C)
+        count = zeros(B,N,C)
+        W = tile_size
+
+        # for t in range Num tokens per_image - tile size
+        for t in range(0, N - tile_size + 1):
+            tile_features = images_tokens[t:t+W, :, :]
+            reshape_feature = tile_feature.reshape(1,W*N, C).repeat(W,1,1)
+
+            # Concat the tokens from other images w the original tokens
+            token_KV = concat([sampled tokens, tile features])
+            token_Q = tile_features
+
+            # Perform attention calculation
+            X_q, X_k, X_v = Linear_q(token_Q), Linear_k(token_KV), Linear_v(token_KV)
+            output[t:t+w, :, :] += Attention(X_q, X_k, X_v)
+            count[t:t+w, :, :] += 1
+
+        output = output/count
+        return output
+Semantic Motion Predictor for Video Generation
+    - The sequence of generated character-consistent images can be further refined to videos by inserting frames between each pair of adjacent images
+    - Semantic Motion Predictor:
+        - Encodes the image into the image semantic space
+            - use a pretrained CLIP image encoder to leverage zero-shot capabilities for enhancing performance
+        - At start frame Fs and end frame Fe, we get
+            Ks, Ke = E(Fs, Fe)
+        - We train a transformer-based predictor to perform predictions of each intermediate frame
+        - The predictor first performs linear interpolation to expand the two frames Ks and Ke into the sequence K1,...,KL
+
+        - We decode these predicted frames in the image latent space into the final transition vide
