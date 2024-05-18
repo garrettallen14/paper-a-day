@@ -1,0 +1,59 @@
+Chameleon: Mixed-Modal Early-Fusion Foundation Models
+
+16 May 2024
+
+Abstract
+    - Chameleon: early-fusion token-based mixel-modal models capable of understanding and generating images and text in any arbitrary sequence
+    - We outline a stable training approach from inception, an alignment recipe, and an architectural parameterization tailored for the early-fusion, token-based, mixed-modal setting
+    - The models are evaluated on a comprehensive range of tasks, including VQA, image captioning, text generation, image generation, and long-form mixed modal generation
+    - Step towards unified modeling of full multimodal content
+
+
+Introduction
+    - Introduce:
+        - Query-key normalization & revised placement of layer norms
+        - We show how to adapt the SFT approaches for LLMs to mixed-modal setting
+        - Train Chameleon-34B on 5x num tokens as Llama-2
+
+
+Pre-training
+    - Chameleon represents images + text as series of discrete tokens
+    - We present any ordering of images and text during training ranging from text-only, to single text/image pairs to full interleaved text-image documents
+Tokenization
+    - Image Tokenization
+        - We train a new image tokenizer which encodes a 512x512 image into 1024 discrete tokens from a codebook of size 8192
+        - A core weakness of the tokenizer is in reconstructing images with a large amount of text, therefore upper bounding the capability of the model when it comes to heavy OCR-related tasks
+    - Tokenizer
+        - We train a BPE tokenizer over a subset of training data outlined below with a vocab size of 65,536, which includes the 8192 image codebook tokens, using the sentencepiece library
+Pre-Training
+    - First stage ~80% of training
+        - Use a data mixture of very large scale completely unsupervised datasets:
+            1. Text-only: 2.9T
+            2. Text-image: 1.5T, images resized and cropped into 512x512 images for tokenization
+            3. Text/Image Interleaved: 400B
+    - Second stage ~20%
+        - Lower the weight of the first stage data by 50% and mix in higher quality datasets while maintaining a similar proportion of image text tokens
+Stability
+    - It was challenging to maintain stable training when scaling the Chameleon models above 8B parameters and 1T tokens, with instabilities often only arising very late in training
+Architecture
+    - Largely follows LLaMa-2
+        - RMSNorm for normalization
+        - SwiGLU for activation
+        - RoPE for positional embeddings
+    - Standard LLaMa arch showed complex divergences due to slow norm growth in the mid-to-late stages of training
+        - The cause of divergence was from the softmax operation being problematic when training with multiple modalities of significantly varying entropy due to the translation invariant property of softmax
+        - Each modality tries to "compete" with the other by increasing its norms slightly
+            - This manifests in divergences once we get outside the effective representation range of bf16
+            - aka logit drift problem for unimodal
+    - Softmax happens in two places: core attention mechanism and softmax over the logits
+        - We use QK-Norm which directly controls the norm growth of input to the softmax by applying layer norm to the query and key vectors within the attention
+        - To stabilize Chameleon-7B, we needed to introduce dropout after the attn and feed-fwd layers, in addition to QK-norm
+        - This recipe was not enough to stabilize Chameleon-34B, which required an additional re-ordering of the norms
+    - Benefit of the Swin transformer norm strat is that it bounds the norm growth of the feed-fwd block, which can become additionally problematic given the multiplicate nature of the SwiGLU activation function.
+Optimization
+    - Our training process uses AdamW
+    - We apply a z-loss regularization to avoid the problem of logit shift in the final softmax
+Inference
+    - ******* Data-dependencies per-step: given that our decoding formulation changes depending on whether the model is generating images or text at a particular step, tokens must be inspected at each step (ie copied form GPU to CPU in a blocking fashion) to guide control flow (this is an L)
+    - Masking for modality-constrained generation: to facilitate exclusive generation for a particular modality, tokens that do not fall in a particular modality space must be masked and ignored when de-tokenizing
+    - Fixed-sized text units: Unlike text-only generation, which is inherenetly variable-length, token-based image gen produces fixed-size blocks of tokens corresponding to an image

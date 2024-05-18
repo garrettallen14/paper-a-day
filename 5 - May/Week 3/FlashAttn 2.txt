@@ -1,0 +1,148 @@
+FlashAttention-2:
+Faster Attention with Better Parallelism and Work Partitioning
+
+18 Jul 2023
+
+Abstract
+    - Attention layer is main bottleneck in scaling transformers
+        - Runtime / memory increase quadratically with sequence length
+    - FlashAttention exploits the asymmetric GPU memory heirarchy to bring significant memory saving (linear instead of quadratic) and runtime speedup (2-4x) with no approximation
+    - FlashAttention is still not nearly as fast as optimized matrix-multiply (GEMM) operations, reaching only 25-40% of the theoretical maximum FLOPs/s
+        - We observe that the inefficiency is due to suboptimal work partitioning between different thread blocks and warps on the GPU, causing either low-occupancy or unnecessary shared memory reads/writes
+    
+    - We propose FA-2, with better partitioning to address these issues
+        1. Tweak the algorithm to reduce the number of non-matmul FLOPs
+        2. Parallelize the attention computation across different thread blocks to increase occupancy
+        3. Within each thread block, we distribute the work between warps to reduce communication through shared memory
+    - These yield around 2x speedup compared to FlashAttention, reaching 50-73% of the theoretical maximum FLOPs/s on A100 and getting close to the efficiency of GEMM operations
+
+
+Introduction
+    - As context length increases, FlashAttention is still not nearly as efficient as other primitives such as matrix-multiply (GEMM)
+    - FA is already 2-4x faster than a standard attention implementation, but the forward pass only reaches 30-50% of the theoretical maximum FLOPs/s of the device
+    - Backward pass is more challenging, reaching only 25-35% of the maximum throughput on A100 GPU
+
+    - In contrast, optimized GEMM can reach up to 80-90% of the theoretical maximum device throughput
+
+    - Through careful profiling, we observe that FA still has suboptimal work partitioning between different thread blocks and warps on the GPU, causing either low-occupancy or unnecessary shared memory reads/writes
+
+    - Building on FA, we propose FA-2 with better parallelism and work partitioning to address these challenges
+        1. We tweak algorithms to reduce the # of non-matmul FLOPs while not changing the output
+            - Non-matmul FLOPs only account for a small fraction of the total FLOPs, but they take longer to perform as GPUs have specialized units for matrix multiply
+            - As a result, the matmul throughput can be up to 16x higher than non-matmul throughput
+            - It is thus important to reduce non-matmul FLOPs and spend as much time as possible doing matmul FLOPs
+        2. We parallelize both the fwd and bwd pass along the sequence length dimension, in addition to batch and num of heads dimension
+            - Increases occupancy in the case where the sequences are long (and hence batch size is often small)
+        3. Even within one block of attention computation, we partition the work between different warps of a thread block to reduce communication and shared memory reads/writes.
+
+
+Background
+Hardware Characteristics
+    - GPU performance characteristics
+        - Consists of compute elemends and a memory heirarchy
+        - Contain specialized units to accelerate matrix-multiply in low-precision (eg Tensor Cores on Nvidia GPUs for FP16/BF16)
+        - Memory Heirarchy:
+            - High-bandwidth memory (HBM)
+            - On-chip SRAM (shared memory)
+    - Execution model
+        - Threads split into warps in blocks are scheduled to run on Streaming Multiprocessors (SMs)
+        - Threads in a warp can communicate by fast shuffle instructinos or cooperate to perform matrix mult
+        - Warps in a thread can communicate by R/W to shared memory
+        - Each kernel loads inputs from HBM to registers and SRAM, computes, then writes outputs to HBM
+Standard Attention Implementation
+    - Given Q,K,V we want to compute attn output O
+    - S = QK^T, P = softmax(S), O = PV
+    - Softmax is applied row-wise
+    - For MHA, this computation is performed in parallel across many heads, and parallel over the batch dimension
+    - Backwards pass:
+        - dO is the gradient of O wrt some loss function
+        - dV = P^TdO
+        - dP = dOV^T
+        - dS = dsoftmax(dP)
+        - dQ = dSK
+        - dK = QdS^T
+    - Standard implementations materialize the matrices S and P to HBM, which takes O(N^2) memory
+        - Often N >> d (d is head dimension)
+        1. Calls matrix-mult (GEMM) subroutine to multiply S = QK^T and writes result to HBM
+        2. Loads S from HBM to compute softmax and write the result P to HBM
+        3. Calls GEMM to get O = PV
+FlashAttention
+    - Algorithm to reduce memory reads/writes while maintaining same output (no approximation)
+    - Forward pass:
+        - Tiling to reduce memory IOs
+            1. Load blocks of inputs from HBM to SRAM
+            2. Compute attention wrt the block
+            3. Updating the output w/o writing the large intermediate matrices S and P to HBM
+        - As the softmax couples entire rows or blocks of row, online softmax can split the attention computation into blocks, and rescale the output of each block to finally get the right result
+        - By significantly reducing the amount of memory reads/writes, FlashAttention yields 2-4x wall-clock speedup
+    - Online softmax:
+        - Consider one row block of the attention matrix S, [S1, S2] for some matrices S1, S2.
+        - We want to compute softmax of this row block and multiply with the value, of the form [V1, V2]^T
+        - Standard softmax:
+            m = max(rowmax(S1), rowmax(S2))
+            l = rowsum(e^(S(1)-m)) + rowsum(e^(S(2)-m))
+            P = [P1 P2] = diag(l)^-1 [e^(S1-m) e^(s2-m)]
+            O = [P1 P2] [V1 V2]^T = diag(l)^-1e^(S1-m)V1 + e^(S2-m)V2
+        - Online softmax computes "local" softmax wrt each block and rescales to get the right output at the end:
+            m1 = rowmax(S1)
+            ...
+        - Online softmax enables tiling to reduce memory reads/writes
+    - Backward pass:
+        - By re-computing the values of the attn matrices S and P once blocks of inputs Q,K,V are already loaded to SRAM, FlashAttention avoids storing large intermediate values
+        - Yields 10-20x memory saving depending on sequence length
+        - Bwd pass also achieves 2-4x wall-clock speedup
+
+
+FlashAttention-2: Algorithm, Parallelism, and Work Partitioning
+    - Reduce number of non-matmul FLOPs
+    - Parallelize the computation on different thread blocks to make full use of GPU resources
+    - Partition the work between different warps within one thread block to reduce the amount of shared memory access
+    - 2-3x speedup
+Algorithm
+    - Fwd pass changes:
+        1. We do not rescale both terms of the output update by diag(l2)^-1
+            - Instead maintain an "un-scaled" version of O2 and keep around the statistics l2
+            - Only at the end of every loop do we scale the final Olast by diag(llast)^-1 to get the right output
+        2. We do not have to save both the max mj and the sum of exponentials lj for the bwd pass
+            - We only need to store the logsumexp Lj = mj + log(lj)
+    - Causal masking:
+        - One common use case is in auto-regressive LM where we need to apply a causal mask
+            1. Any blocks where all the col indices are more than row indices, we can skip the computation of that block
+            2. We do not need to apply the causal mask for blocks whose row indices are guaranteed to be strictly less than the col indices
+    - Alg1 returns correct output with no approximation, using O(N^2d) FLOPs and requires O(N) additional memory beyond inputs and output
+    - Bwd pass:
+        - Essentially same to FlashAttention
+        - Minor tweak: only use the row-wise logsumexp L instead of both the row-wise max and row-wise sum of exponentials in the softmax
+        - We include the bwd pass description of Alg 2 for completeness
+    - Multi-query attn and grouped-query attn
+        - MQA and GQA are variants of attn where multiple heads of query attend to the same head of key and value
+        - Reduces size of KV cache during inference
+        - Instead of duplicating K V heads for computation, we implicitly manipulate the indices into the head to perform the same computation
+        - In bwd pass, we sum the gradients dK and dV across different heads implicitly duplicated
+Parallelism
+    - FlashAttention parallelizes over batch size and num heads
+    - We use 1 thread block to process one attn head, and there are overall batchsize * num heads thread blocks
+    - Each thread block is sched to run on a SM
+
+    - For long sequences (small batch sizes / num heads) we additionally parallelize over the sequence length dimension
+    - Fwd pass:
+        - The outer loop is embarrassingly parallel, and we schedule them on different thread blocks that do not need to communicate with each other
+        - We also parallelize over the batch dim and num of heads dim as done in FlashAttention
+        - Increased parallelism over sequence length helps improve occupancy when batch size and num heads are small
+    - Bwd pass:
+        - The only shared computation between different column blcoks is in update dQ where we need to load dQi from HBM to SRAM, then on chip we update dQi and write back to HBM
+        - We thus parallelize over the seq length dimension as well and schedule 1 thread block for each column block of the bwd pass
+        - We use atomic adds to communicate between diff thread blocks to update dQ
+Work Partitioning Between Warps
+    - We decide how to partition the work between different warps
+    - We typically use 4 or 8 warps per block
+    - Figure 3
+    - Fwd pass:
+        - We split Q across 4 warps while keeping K and V accessible by all
+        - Reduces shared memory reads/writes
+    - Bwd pass:
+        - Choose to partition the warps to avoid "split-K" scheme
+        - Still requires some synchronization
+    - Tuning block sizes:
+        - Typically choose blocks of size {64,128}x{64,128} depending on the head dimension d and the device shared memory size
+        - We manually tune for each head dimensions since there are essentially only 4 choices for block sizes, but this could benefit from auto-tuning
