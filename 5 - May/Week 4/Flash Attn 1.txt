@@ -1,0 +1,93 @@
+FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness
+
+23 Jun 2022
+
+Abstract
+    - Transformers are slow / memory hungry
+        - Time / memory complexity of SA is quadratic in sequence length
+    - Approximate attn methods trade off model quality to reduce compute complexity
+        - Often do not achieve wall-clock speedup
+    - Missing principle: make attention algorithms IO-aware
+        - Account for reads/writes between levels of GPU memory
+    - We propose FlashAttention, an IO-aware exact attention algorithm that uses tiling to reduce # of memory reads/writes between GPU HBM and on-chip SRAM
+    - We analyze IO complexity of FA, showing it requires fewer HBM accesses than std attention, and is optimal for a range of SRAM sizes
+    - We extend FA to block-sparse attention
+        - Approximate attention alg that is faster than any exiting approx attention method
+    - FA trains Transformers faster than existing baselines
+    - Enable longer context in Transformers
+
+
+Introduction
+    - Need to make attention algorithms IO-aware
+        - Need to carefully account for reads/writes to different levels of fast and slow memory (eg between fast GPU on-chip SRAM and relatively slow GPU HBM)
+    - On modern GPUs, compute speed has out-paced memory speed, and most operations are bottlenecked by OP/B
+    - IO-aware algorithms have been critical for similar memory-bound operations, when reading and writing data can account for a large portion of the runtime
+    - Common Python interfaces such as PyTorch, Tensorflow do not allow fine-grained ctrl of memory accesses
+
+    - Flash Attention: computes attn with far fewer memory accesses
+    - Goal: Avoid read/write the attn matrix to and from HBM
+        i. Compute softmax reduction w/o access to the entire input
+        ii. Avoid storing the large intermediate attn matrix for the bwd pass
+    - We apply two well-established techniques
+        i. Restructure attn computation to split the input into blocks and make several passes over the input blocks, thus incrementally performing softmax reduction (aka tiling)
+        ii. We store the softmax normalization factor from the fwd pass to quickly recompute attn on-chip in the bwd pass
+            - This is faster than the std approach of reading the intermediate attn matrix from HBM
+    - We implement Flash Attention in CUDA to achieve fine-grained control over memory access and fuse all the attn operations into one PGU kernel
+    - Even w/increased FLOPs due to recomputation, our algorithm runs faster and uses less memory (linear in sequence length)
+
+    - We analyze IO complexity of FlashAttention, proving it requires O(N^2d^2M^-1) HBM accesses, where d is the head dim, M is size of SRAM
+        - Compare to O(Nd+N^2) of std attn
+        - For typical d and M, Flash Attn requires many times fewer HBM accesses compared to std attention
+        - We provide a lower bound, proving that no exact attn algorithm can asymptotically improve on the # of HBM accesses over all SRAM sizes
+
+
+Background
+Hardware Performance
+    - A100 GPU Memory Hierarchy
+        - HBM Memory: 40-80 GB
+            - HBM Bandwidth: 1.5-2.0 TB/s
+        - On-Chip SRAM: 192 kb for each of the 108 SMs
+            - SRAM Bandwidth: 19 TB/s
+Algorithm 0: Std Attention Implementation
+    - Load Q,K by blocks from HBM
+        - Compute S = QK^T
+        - Write S to HBM
+    - Read S from HBM
+        - Compute P = Softmax(S)
+        - Write P to HBM
+    - Load P and V by blocks from HBM
+        - Compute O = PV
+        - Write O to HBM
+    - Return O
+
+
+FlashAttention: Algorithm, Analysis, Extensions
+An Efficient Attention Algorithm with Tiling and Recomputation
+    - Main idea: split the inputs Q,K,V into blocks, load them from slow HBM to fast SRAM, then compute the attn output wrt these blocks
+        - By scaling the output of each block by the right normalization factor before adding them up, we get the correct result at the end
+    - Tiling
+        - We compute attn by blocks
+        - Softmax couples colns of K, so we decompose the large softmax with scaling
+        - For numerical stability, the softmax vector is computed as (...)
+        - To keep track of some extra statistics m(x), l(x), we can compute softmax one block at a time
+        - We thus split the inputs Q,K,V into blocks, compute the softmax values along with extra statistics and combine the results
+    - Recomputation
+        - Goal: do not store O(N^2) intermediate values for bwd pass
+        - Bwd pass typically requires the matrices S,P to compute the gradients wrt Q,K,V
+        - By storing the output O and softmax normalization stats (m,l) we can recompute the attn matrix S and P easily in the bwd pass from blocks Q,K,V in SRAM
+            - A form of selective gradient checkpointing
+        - While gradient checkpointing has been suggested to reduce the maximum amount of memory required, all implementations have to trade speed for memory
+        - In contrast, even with more FLOPs, our recomputation speeds up the bwd pass due to reduced HBM accesses
+    - Kernel Fusion: Tiling enables us to implement our algorithm in one CUDA kernel
+        - Load input from HBM, performing all the computation steps (matrix-mult, softmax, optionally masking and dropout)
+        - Write result back to HBM
+        - Avoids repeatedly reading/writing inputs and outputs from and to HBM
+Algorithm 1: FlashAttention
+    - Set block sizes: Bc = [M / 4d], Br = min([M/4d], d)
+    - Initialize O = zeros, l = zeros, m = -inf all in HBM
+    - Divide Q into Tr = [N/Br] blocks Q1,...,QT of size Br x d each, and divide K, V in to Tc = [N / Bc] blocks K1,...,KTc and V1,...,VTc
+    - Divide O into Tr vlocks Oi,...,OTr, divide l into Tr blocks, divide m into Tr blocks
+    - for 1 <= j <= Tc:
+        - Load Kj, Vj from HBM to on-chip SRAM
+        - for 1 <= i <= Tr:
+            

@@ -1,0 +1,85 @@
+cuDNN: Efficient Primitives for Deep Learning
+
+18 Dec 2014
+
+Abstract
+    - We present a library of efficient implementations of DL primitives
+    - Optimizing DL kernels is difficult and time-consuming
+    - As parallel architectures evolve, kernels must be reoptimized, making maintaining codebases difficult over time
+    - HPC has produced BLAS
+        - No analogous for DL
+    - We create a library with similar intent to BLAS
+        - Optimized routines for DL workloads
+
+
+Introduction
+    - Library providers will be able to take advantage of their deep understanding of parallel architectures to provide optimal efficiency
+    - Goal: make it much easier for DL frameworks to take advantage of parallel hardware
+    - Provide a flexible, easy-to-use C-language API for DL workloads that integrates neatly into existing frameworks
+    - Provides immediate efficieny gains
+    - Optimize performance across a wide range of potential use cases, including small mini-batch sizes
+
+
+Library
+    - Enable the community of NN frameworks to benefit equally from its APIs
+    - Provide lower-level computational primitives to simplify integration with existing DL frameworks, each with their own abstractions
+    - cuDNN supports fwd & bwd prop variants of all routines in single and double precision floating-point
+        - These include conv, pool & activation functions
+        - Also includes a set of auxiliary tensor transformation routines that allow for the easy manipulation of 4d-tensors
+Overview and Handles
+    - Library exposes a host-callable C language API
+    - Requires input and output data be resident on the GPU, analogously to cuBLAS
+    - Library is thread-safe and routines can be called from different host threads
+    - Conv routines for the fwd / bwd passes use a common descriptor that encapsulates the attributes of the layer
+    - Tensors and filters are represented in opaque descriptors, with the flexibility to specify the tensor layout using arbitrary strides along each dimension for tensors
+Spatial Convolutions
+    - CNNs: batched convolution
+    - cuDNN's conv routines incorporate implementations of both the convolution as well as the cross-correlation variants of these functions
+    - These functions support user-defined strides along each dimension of the input/output tensors
+    - Different frameworks store tensors using different memory layouts:
+        - Some framworks interleave feature maps, others keep them separate
+    - cuDNN allows the user to specify memory layout, making it easier to integrate into existing frameworks
+    - Routines have a mode to either return raw gradients or accumulate them in a buffer as needed for models with shared parameters or a directed acyclic graph structure
+Other Functions
+    - cuDNN also provides other commonly used functions for DL:
+        - Sigmoid, ReLU, Hyperbolic Tangent
+        - Softmax routine
+        - Avg / maxpool operations
+        - Tensor transformation routines
+    - Possible to write programs that train std CNNs w/o writing any parallel code, but simply using cuDNN and cuBLAS
+
+
+Implementation
+    - Most are straightforward, CNN is not as obvious
+    - GOAL: Provide performance as close as possible to matrix multiplication, while using no auxiliary memory
+    - GPU memory is high bandwidth, but low capacity => a scarce resource
+    - When training DNN, GPU memory should be filled with data, params, neuron responses, but not auxiliary data structures... we do not consider these approaches for cuDNN
+
+    - One approach: lower the convolutions into a matrix multiplication
+        - Reshape filter tensor F into matrix Fm w/dims KxCRS
+        - Gather a data matrix by duplicating the original input data into Dm with dims CRS x NPQ
+        - Computation can then be performed with a single matrix multiply to form output matrix Om w dims KxNPQ
+
+    - Lowering convs to matrix mult can be efficient, since matrix multiplication is highly optimized
+        - High ratio of OP/B, which increases as the matrices get larger
+        - Most effective when it creates large matrices for multiplication
+        - Disadvantage: forming Dm involves duplicating the input data up to RS times, which can be a prohibitively large temporary allocation
+            - Work-around: some implementations materialize Dm piece by piece, calling matrix-mult iteratively for each element of the mini-batch
+                - This limits the parallelism
+                - Lowers computational intensity of the convs, because Dm must be written and read, requiring significantly more memory traffic as a more direct approach
+    - Another approach: FFT
+Our Approach
+    - NVIDIA provides a matrix multiplication routine that achieves a substantial fraction of FLOP throughput on GPUs
+    - Fixed size submatrices of the inputs A and B are successively read into on-chip memory, and used to compute a submatrix of the output C
+    - We compute on tiles of A and B while fetching the next tiles of A and B from off-chip memory into on-chip caches and other memories
+        - This technique hides the latency associated with data transfer, allowing matrix-mult computation to only be limited by FLOP time
+    
+    - Convs can be lowered onto matrix-mult
+        - This approach provides simplicity of implementation as well as consistency of performance across the parameter space, although materializing the lowered matrix in memory can be costly
+    - Our solution follows this approach, but we avoid costly memory by instead lazily materializing Dm in on-chip memory only, rather than by materializing in off-chip memory before calling a matrix-mult routine
+    - Since tiling required for matrix-mult routine is independent of any params from the conv, the mapping between the tile boundaries of Dm and the conv problem is non-trivial
+        - Our approach entails computing this mapping and using it to load the correct elements of A and B into on-chip memories, dynamically as the computation proceeds
+        - This allows our conv alg to exploit optimized infrastructure for matrix-mult
+    - We require additional indexing arithmetic compared to matrix-mult, but fully leverage the computational engine of matrix-mult to perform the work
+Performance
+    - Conv routines in cuDNN provide competitive performance with zero auxiliary memory required

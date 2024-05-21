@@ -1,0 +1,62 @@
+Why GEMM is at the heart of deep learning
+
+20 Apr 2015
+
+Introduction
+    - Making DL faster and more power efficient => Focusing on a function called GEMM
+    - GEMM is part of the Basic Linear Algebra Subprograms (BLAS) library first created in 1979
+    - Image breaking down the time for typical deep CNN doing image recognition for Alex Krizhevsky's Imagenet architecture
+        - fc => fully connected layer
+        - conv => conv layer
+        - both fc and conv are implemented using GEMM
+            - 95% GPU and 89% on CPU time is spent on these layers
+    
+    - GEneral Matrix to Matrix Multiplication (GEMM) multiplies two matrices together to get an output one
+        - Works on very large matrices with lots of FLOPs
+
+
+Fully-Connected Layers
+    - Fully-connected layers are the classic NNs and are easiest to start w/how GEMM is used for these
+    - Straight forward GEMM computation, just take the input MxK and take a column from the weights Kx1, multiply these to get Mx1 as the first column of the output
+
+
+Convolutional Layers
+    - Using GEMM for conv layers is less obvious
+    - Conv treats the input as a 2D image, with a number of channels for each pixel
+    - Number of channels can be in the hundreds, unlike 3 channel RGB
+    - Conv operation produces its output by taking a number of filter weights ('kernels' of weights) and applying them across the image
+
+    - Each filter weights is another 3D array of numbers (depth, k, k)
+    - A filter is applied to a grid of points across the input image
+    - At each point where it's applied, all of the corresponding input values and weights are multiplied together, and summed to produce a single output value at that point
+    - Stride determines the spacing between the filter applications
+        - Stride=1 on a 256x256 input image => the filter is applied at every pixel & the output is the same width / height as the input
+        - Stride=4 => output is 64x64
+    - Typical stride values are less than the radius of the filter, so there is often overlap at the edges
+
+
+How GEMM works for Convolutions
+    - Here is how the operation is expressed in terms of a matrix multiplication
+        1. Turn the input from an image (3D array) into a 2D array we can treat as a matrix
+    - Each filter is applied as a little 3D cube within the image, so we can take each one of these cubes of input values and copy them out as a single column into a matrix
+        - im2col (image-to-column)
+
+    - There is a serious expansion in memory size that occurs when we do this conversion if the stride is less than the filter radius
+        - Pixels that are included in overlapping kernel sites will be duplicated in the matrix
+        - However, the wastage is outweighed by the advantages
+
+    - Given the input image is in matrix form, you do the same for each filter's weights, serializing the 3D cubes into rows as the second matrix for multiplication
+    - The final GEMM is:
+        - Patch 1 (1xK) x Kernel 1 (Kx1) = 
+            - Where K = the number of values in each patch and filter, so it's filter width * filter height * depth
+        - The resulting matrix is of size: num patches x num filters
+    - This matrix is treated as a 3D array by subsequent operations, by taking the number of filter dimension as the depth, then splitting the patches back into rows and columns based on their original position in the input image
+
+
+Why GEMM works for Convolutions
+    - Programmers have spent decades optimizing code to perform large matrix to matrix multiplications
+    - The benefits from the very regular patterns of memory access outweigh the wasteful storage costs
+    - cuDNN paper good intro, but also describe why they ended up with a modified version of GEMM as their favored approach
+    - There are lots of advantages to being abel to batch up a lot of input images against the same filters at once
+
+    - The main competitor to the GEMM approach is Fourier transforms to do the operation in frequency space, but the use of strides makes it hard to be as efficient

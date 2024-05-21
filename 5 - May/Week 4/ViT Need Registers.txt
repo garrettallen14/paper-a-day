@@ -1,0 +1,63 @@
+VISION TRANSFORMERS NEED REGISTERS
+
+12 Apr 2024
+
+Abstract
+    - We identify and characterize artifacts in feature maps of ViT networks
+    - Artifacts correspond to high-norm tokens appearing during inference primarily in low-informative background areas of images, that are repurposed for internal computations
+    - We propose a simple yet effective soln based on providing additional tokens to the input sequence to fill that role
+    - This solution fixes that problem entirely for both supervised and self-supervised models
+    - Sets new SOTA and leads to smoother feature maps and attn maps for downstream visual processing
+
+
+Introduction
+    - DINO produces models that contain explicit information about the semantic layout of an image
+    - Qualitative results show that the last attn layer naturally focuses on semantically consistent parts of images and often produces interpretable attn maps
+    - Object discovery algs such as LOST build on top of DINO
+        - Can detect objects w/o supervision by gathering information in attn maps
+
+    - DINOv2 provides features that allow tackling dense prediction tasks
+        - Surprisingly incompatible with LOST
+        - Exposes the presence of artifacts in the feature maps of DINOv2 not present in the first version of the model
+    
+    - In this work, we develop methods to detect these artifacts
+    - Observe they are tokens with roughly 10x higher norm at the output and correspond to a small fraction of the total sequence (2%)
+    - These tokens appear around the middle layers of the ViT, only appearing after sufficiently long training of a large transformer
+
+    - We evaluate outlier tokens w simple linear models to understand the information they contain
+    - We observe that compared to non-outlier tokens, they hold less info about their original position in the image or original pixels in their patch
+
+    - Suggestion: model learns to recognize patches containing little useful information and recycle the corresponding tokens to aggregate global image information while discarding spatial information
+    - We append additional tokens (aka registers) to the token sequence, independent of the input image
+    - We train several models with and without this modification and observe that the outlier tokens disappear from the sequence entirely
+    - Performance of the model increases in dense prediction tasks, and the resulting feature maps are significantly smoother
+
+
+Problem Formulation
+    - Most modern ViTs exhibit artifacts in attn maps
+Atrifacts in local features of DINOv2
+    - Artifacts are high-norm outlier tokens
+        - Need a quantitative way of characterizing artifacts appearing in local features
+        - Difference between "artifact" and real patches is the norm of their token embedding at the output of the model
+    - Tokens with norm higher than 150 will be considered as "high-norm" tokens
+    - We use high-norm and outlier interchangably
+Outliers appear during the training of large models
+    - 40 layer ViT
+        - Around layer 15, high-norm patches differentiate themselves
+        - When looking at distribution of norms along training of DINOv2 we see that these outliers only appear after one third of training
+High-norm tokens appear where patch information is redundant
+High-norm tokens hold little local information
+    - We probe the patch embeddings for different information
+    - Position prediction:
+        - We train a model to predict the position of each patch token in the image
+        - High-norm tokens have much lower accuracy than other tokens
+    - Pixel reconstruction:
+        - High-norm tokens worse again
+Artifacts hold global information
+    - To evaluate how much global information is gathered, we evaluate on std image rep learning benchmarks
+Hypothesis and Remediation
+    - Large, sufficiently trained models learn to recognize redundant tokens, and use them to store, process, and retrieve global information
+    - We posit that this happens when patches are deemed undesirable
+    - We explicitly add new tokens to the sequence st the model can use these as registers
+        - Added after the patch embedding layer, with a learnable value such as [CLS] token
+    - At the end of the ViT, these tokens are discarded, and the [CLS] token and patch tokens are used as image representations as usual

@@ -1,0 +1,31 @@
+Automatically Correcting Large Language Models:
+Surveying the landscape of diverse self-correction strategies
+
+30 Aug 2023
+
+A Taxonomy for Correcting LLMs with Automated Feedback
+Conceptual Framework
+    - Language Model
+    - Critic Model
+    - Refine Model
+What Gets Corrected?
+    - Hallucination
+    - Unfaithful Reasoning
+    - Harmful content
+    - Flawed code
+What is the source of the feedback?
+    - Self-feedback
+    - External feedback
+        - Other models
+        - External tools
+        - External knowledge
+        - External eval metrics
+What is the format of the feedback?
+    - Scalar value feedback
+    - NL
+When to correct the model?
+    - Training-time
+    - Generation-time
+    - Post-hoc
+
+RLHF etc.. ble
