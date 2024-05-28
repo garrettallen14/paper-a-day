@@ -1,0 +1,91 @@
+DeepSeek-Prover: Advancing Theorem Proving in
+LLMs through Large-Scale Synthetic Data
+
+23 May 2024
+
+Abstract
+    - LLMs show promise in mathematical reasoning, their advancement in formal theorem proving is hindered by a lack of training data
+    - We introduce an approach to generate extensive Lean 4 proof data derived from high-school and undergraduate-level mathematical competition problems
+    - This approach involves translating natural language problems into formal statements, filtering out low-quality statements, and generating proofs to create synthetic data
+    
+    - We fine-tune DeepSeekMath 7B on this synthetic dataset, which comprises 8 million formal statements with proofs
+        - Our model achieves whole-proof generation accuracies of 46.3% with 64 samples and 52% cumulatively on the Learn 4 miniF2F test, surpassing baseline GPT-4 at 23% w/64 samples and a tree search RL method at 41%
+    - Our model successfully proved 5 out of 148 problems in the Learn 4 Formalized International Mathematical Olympiad (FIMO) benchmark, while GPT-4 failed to prove any
+
+    - These results demonstrate the potential of leveraging large-scale synthetic data to enhance the theorem-proving capabilities in LLMs
+
+
+Introducvtion
+    - We propose a method for generating extensive Lean 4 proof data from informal mathematical problems
+    - Our approach translates high-school and undergraduate-level mathematical competition problems into formal statements
+    - We automate proof generation using a LLM and verify the correctness of these proofs within the Learn 4 environment
+        - Primary challenge: ensure scale and quality of synthetic data
+
+    - Quality Assurance:
+        1. Filter out simple statements 
+            - Use a quality scoring model
+            - Exclude invalid statements via a hypothesis rejection strategy
+        2. Generate synthetic statements from informal math problems 
+            - Use an under-trained LLM fine-tuned on limited data
+            - These statements are used to generate corresponding proofs
+            - Proofs validated using a Lean 4 verifier
+        3. Correct theorem-proof pairs are used to further train the initial model
+        - Through several iterations, the model trained on large-scale synthetic data becomes significantly more powerful than the originally under-trained LLMs, resulting in higher-quality theorem-proof pairs
+    - Scale Assurance:
+        - Our method addresses the challenge of the large search space for proofs
+        - A significant cause of delays is the generation of unprovable statements
+        - We propose proving negated statements in parallel
+    - Overall
+        - Introduce an iterative method to synthesize 8 million formal statements, each accompanied by a formal proof, from informal math problems
+        - Our model, trained on this synthetic dataset, achieves SOTA performance on benchmarks, with whole-proof generation accuracies of 46.3% using 64 samples and 52% cumulatively on the Lean 4 miniF2F test
+
+
+Approach
+Autoformalization
+    - By autoformalizing these informal mathematical problems, we can generate a vast repository of formal statements
+    - We have observed that problems with explicit conditions and well-defined goals are typically easier to formalize compared to advanced mathematical topics that necessitate intricate definitions and constructions
+        - We primarily examine high school / undergrad level competition problems
+    - To compile, we employed web scraping and careful data cleaning techniques to extract problems from online resources featuring high school and undergrad exercises, exams and competitions
+        - Results in 869,659 high-quality natural language math problems
+
+    - We initialize DeepSeek-Prover with DeepSeekMath-Base 7B model
+        - Model struggled to convert informal math problems into formal statements initially
+        - We fine-tuned the DeepSeek-Prover model using the MMA dataset, which comprises formal statements from Lean 4's mathlib that were back-translated into NL problem descriptions by GPT-4
+    - We instruct the model to translate these NL problems into formal statements in Lean 4 using a structured approach
+
+    - Prompt: 
+        Mathematical Problem in NL: 
+        {problem}
+        Translate the problem to Lean 4 (only the core declaration):
+        '''lean4'''
+Quality Filtering
+    - The quality of the autoformalized statements was found to be suboptimal due to two main issues
+        1. Many formal statements were overly simplistic
+            - We develop scoring criteria and provided examples from miniF2F-valid as few-shot examples to guide the DeepSeek-Prover model in evaluating the content and quality of these statements using a CoT approach
+            - Those that are evaluated 'fair' or 'poor' were excluded
+        2. Formal statements that, although provable, are based on inconsistent hypotheses leading to vacuous conclusions
+    - By applying this dual strategy of model scoring and hypothesis rejection, we curated a refined set of 712,073 high-quality formal statements, providing a robust foundation for further proof synthesis
+Statement Proving
+    - After creating a substantial corpus of high-quality formal statements, we employed the model to search for proofs of these statements
+
+    - We minimize resource wastage on unprovable statements and improve the efficiency of the proof search process
+        - We exploit the logical symmetry between a statement and its negation to accelerate proof synthesis
+        - Dual concurrent proof searches for each synthetic statement
+    - All validated proofs, whether they justify the original theorems or their negations, are then aggregated to further train the DeepSeek-Prover
+        - Thus, this dual approach serves as a form of data augmentation, enriching the dataset with both propositions and their negations--even if the original propositions were not correctly formalized by the model
+Iterative Enhancement
+    - The entire pipeline heavily relies on DeepSeek-Prover
+    - We must enhance the model's performance each iteration
+        - We consistently fine-tune the model with newly generated data
+    - The updated model is then utilized for subsequent autoformalization iterations
+        - The model incrementally improves in strength and efficacy after each cycle of refinement and application
+        - This process continues until no further gains are observed
+
+
+Experiments
+Experimental Setup
+    - DeepSeekMath-Base 7B
+        - Decoder-only transformer pre-trained on a corpus comprising 120B math-related tokens
+    - We fine-tuned this using a global batch size of 512 and constant learning rate of 1x10^-4 incorporating 6,000 warmup steps with synthetic data
+Effectiveness of Iterative Enhancement
+    - Goes from ~36% avg -> ~51% avg in 5 iterations

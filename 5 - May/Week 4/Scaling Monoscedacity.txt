@@ -1,0 +1,36 @@
+Scaling Monosemanticity: 
+Extracting Interpretable Features from Claude 3 Sonnet
+
+21 May 2024
+
+Abstract
+    - Eight months ago, we showed Sparse Autoencoders can recover monosemantic features from a small one-layer transformer
+    - Worry: this won't scale
+    - We show we can extract high-quality features from Claude 3 Sonnet
+    - Many features are multilingual and multimodal
+    - Safety-relevant features: plausibly connected to a range of ways in modern AI systems may cause harm
+    - Key Results:
+        - Scaling laws can be used to guide the training of SAEs
+        - Resulting features are highly abstract
+        - Systematic relationship between frequency of concepts and the dictionary size needed to resolve features for them
+        - Features can be used to steer LMs
+
+
+Scaling Dictionary Learning to Claude 3 Sonnet
+    - Linear representation hypothesis: neural networks represent meaningful concepts - features - as directions in their activation spaces
+    - Superposition: NNs use the existence of almost orthogonal directions to represent more features than there are dimensions
+    - We use dictionary learning
+
+
+Sparse Autoencoders
+    - Goal: decompose the activations of a model into more interpretable pieces
+    - We train a SAE on the model activations
+        - SAEs: an instance of a family of "sparse dictionary learning" algorithms that seek to decompose data into a weighted sum of sparsely active components
+    - SAE consists of two layers
+        1. Encoder maps the activity to a higher-dim layer via a learned linear transformation followed by a ReLU nonlinearity
+        2. Decoder attempts to reconstruct the model activations via a linear transformation of the feature activations
+    - Model is trained to minimize a combination of reconstruction error and L1 regularization penalty on the feature activations, which incentivizes sparsity
+
+    - SAE provides us with an approximate decomposition of the model's activations into a linear combination of "feature directions" (SAE decoder weights) with coefficients equal to the feature acitvations
+    - The sparsity penalty ensures that, for many given inputs to the model, a very small fraction of features will have nonzero activations
+    - 

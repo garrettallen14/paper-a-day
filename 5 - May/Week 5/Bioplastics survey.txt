@@ -1,0 +1,63 @@
+Recent Advances in Bioplastics: Application and Biodegradation
+
+15 April 2020
+
+
+Bioplastics
+    - 1% of total plastic production
+    - Biodegradable market => $6.73b 2025
+    - PHA / PLA are main contributors to growth of biobased biodegradable plastics
+        - Market share of 1.2%  and 13.9% of bioplastic market respectively
+        - % wt of 2.11 million tonnes of bioplastics produced
+    - PHAs biodegradable, optically active polymers synthesised by many bacteria as a stress response during inorganic nutrient deprivation while carbon is in excess.
+        - Produced via microbial fermentation processes and extracted by microbial cell lysis
+        - Biocompatible, biodegradable, non-toxic polyesters
+        - Exhibit similar thermoplastic properties to petrochemical plastics
+    - PHB most widely studied PHA polymer and exhibits brittle and highly crystalline characteristics similar to those of polypropylene
+    - PLA is biobased and biodegradable polyester
+Bio Based, Biodegradable Plastics
+    - Polyactic acid (PLA)
+    - Polyhydroxyalkanoates (PHA)
+    - Cellulose
+    - Starch
+    - Bio-polybutylene succinate (Bio-PBS)
+Oil Based Plastics, Biodegradable
+    - Polycaprolactone (PCL)
+    - Polybutylene succinate (PBS)
+    - Polybutylene adipate (PBA)
+Non-biodegradable
+    - Polyethylene terephthalate (PET)
+    - Polyethylene (PE)
+    - Polystyrene (PS)
+    - Polypropylene (PP)
+
+
+Bioplastics and Biodegradation
+    - Can offer some technological innovations, but are not holistic technological solutions
+    - Whether a material will completely biodegrade in a certain environment depends on its characteristics such as crystallinity, but also on the presence of additives, such as plasticisers, and the environmental conditions where the plastic is located
+        - Presence of adequate microorganisms, temp, moisture, pH
+    - PLA is highly crystalline
+        - Good for applications
+        - Higher temperatures required for degradation
+        - Reaches international stds for biodegradation in industrial composting and anaerobic digestion conditions, but shows very slow rate of degradation in soil and water, with estimates being that it would take decades or longer to completely degrade depending on the environment
+
+    - TPS and PHB were the only bioplastics that satisfied the criteria for biodegradation proposed by international standards across various environemnts representing managed / unmanaged environments
+    - Blending of polymers with the aim of improving mechanical properties could have a positive / synergistic effect on their biodegradation capacity, but could also decrease the potentials of individual components
+        - Blending PLA with oil-based, but biodegradable PCL resulted in improved mechanical properties and biodegradability of PLA under home composting conditions
+
+
+Biodegradable Polymers in Packaging
+    - Glass, paper, wood, metal, and plastics are used for primary, secondary, tertiary packaging
+    - In primary packaging, the material is usually in direct contact with goods, while secondary / tertiary packaging are used to assist the transport of the primary packed goods
+    - As already stated, approximately 40% of the produced plastic goes to packaging sector
+
+    - Compared to thermoplastic synthetic polymers, biobased polymers suffer from high price, challenges in processing with traditional tech, and inferior performances in terms of functional and structural properties
+        - Examples of usage, but not broadly applied
+Starch
+    - Highest share in global production capacities of biodegradable plastics
+        - Corn, wheat, rice, potatoes, tapioca, peas
+    - Limitations
+        1. Innate hydrophilicity
+        2. Brittleness
+    - Physical and chemical modifications are main routes to improving the properties of TPS
+        - 
