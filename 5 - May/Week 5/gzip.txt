@@ -1,0 +1,82 @@
+gzip Predicts Data-dependent Scaling Laws
+
+26 May 2024
+
+Based paper: Benchmarking for datasets
+
+Abstract
+    - Scaling laws: predict LM performance as a function of parameter count and tokens trained on
+        - Enables optimal allocation of a fixed compute budget
+    - This suggests scaling laws are agnostic to training data
+    - We generate training datasets of varying complexities by modulating the syntactic properties of a PCFG
+        1. Scaling laws are sensitive to differences in data complexity
+        2. gzip, a compression algorithm is an effective predictor of how data complexity impacts scaling properties
+    - We propose a new data-dependent scaling law for LM's that accounts for the training data's gzip-compressibility;
+        - The compute-optimal frontier increases in dataset size preference (over parameter count preference) as training data becomes harder to compress
+
+
+Intro
+    - NN perf inc w/more training
+    - When scaling compute:
+        - Increase param vs dataset size
+    - Scaling laws determine what allocation will maximize performance given a compute budget
+    - Probabilistic Context-Free Grammars (PCFG) which are relatively naturalistic (can model language, code, etc) controllable in syntactic complexity, and follow some well-understood information-theoretic principles
+
+    - As the training data becomes less compressible (more complex), the scaling law's compute-optimal frontier gradually increases its preference for dataset size over parameter count
+    - We then measure the compressibility of real-world code & natural language datasets, showing that the former is considerably more compressible and thus subject to a predictably different scaling law
+
+    - We could reach the performance of StarCoder with 24% fewer FLOPs ($278k in H100 hours)
+
+
+Related Work
+Syntax & Information Theory
+    - Long history of work in linguistics has sought to apply information-theoretic measures to natural language
+    - Entropy can be operationalized in a number of concrete ways to measure the informational complexity of a linguistic distribution
+    - Entropy measure of 'goodness':
+        - Measure whether it grows as the syntactic complexity of a language increases
+        - Straight-fwd to compute in closed-form
+    - Context-free (type 2) grammars, we must estimate entropy from a set of generated samples
+
+    - We can use gzip, a lossless compression utility that implements DEFLATE to estimate the entropy of sampled linguistic sequences
+
+    - Beyond a critical model size, the compression rate (accounting for parameter count) reverses its improvement
+    - Compression algorithms can heuristically measure the structure learned by language models
+
+    - Natural languages vary in their learnability, and LMs struggle to model syntactically 'impossible' languages
+
+
+Modulating Data Complexity via Syntactic Properties of a PCFG
+    - PCFGs are fundamental tool in computational linguistics
+        - Model the syntax of natural languages
+        - Extends the concept of a standard Context-Free Grammar (CFG)
+        - Associate probabilities with its production rules, so to enable ambiguity and variability in a quantifiable manner
+
+    - They use the same grammar rules generated from the document... (?)
+gzip-compressibility Measures Syntactic Complexity
+    - We choose a metric to estimate the complexity of our datasets
+    - Need measure of complexity that can apply to real-world token sequence datasets to see whether our data-sensitive scaling results on PCFGs generalize to real-world datasets
+    - One might try to use grammar induction to identify the underlying syntax of a real-world dataset and then compute complexity from its syntactic properties, this is computationally intensive and difficult with noisy web-data
+
+    - We choose a compresion algorithm, gzip, to estimate the complexity of a dataset by virtue of considerable theoretical work estabilishing compressibility
+
+    - gzip Compressibility increases with complexity of the PCFG
+
+
+Are Scaling Laws Sensitive to Data Complexity
+    - To identify the scaling law for a datset, we train a set of models of varying sizes
+    
+    - More compressible dataset => Quicker to converge
+        - Need more compute to model more complex datasets
+    - Need more evidence to determine if the compute-optimal frontier directionally shifts based on data complexity
+
+    - Need to compute the law for each dataset and examine its fitted parameters
+Computing Data-Sensitive Scaling Laws from gzip-compressibility
+    - Scaling law functional form
+        - Predicts training loss as a function of model & dataset size
+Eliminatic Syntactic Parameters as a Confounder of Compressibility
+    - Possibility: our compressibility measure is confounded by some underlying syntactic property (eg vocab size)
+    - Still predicts scaling law parameter shifts
+    - We empirically show the contrapositive, demonstrating that when we widely vary syntactic properties, there is no significant shift in scaling law parameters
+
+    - We have shown that scaling laws are dependent on training data and gzip-compressibility is a strong predictor of how data complexity will impact scaling properties
+    - We provide fitted coefficients for predicting scaling parameters as a funtion of H (gzip-compressibility) and offer an adjustment-based formulation of the data-dependent scaling law to make our small scale synthetic experiments more adaptable to training frontier models

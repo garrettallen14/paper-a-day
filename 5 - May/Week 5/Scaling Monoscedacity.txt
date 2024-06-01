@@ -1,0 +1,161 @@
+Scaling Monosemanticity: 
+Extracting Interpretable Features from Claude 3 Sonnet
+
+21 May 2024
+
+Abstract
+    - Eight months ago, we showed Sparse Autoencoders can recover monosemantic features from a small one-layer transformer
+    - Worry: this won't scale
+    - We show we can extract high-quality features from Claude 3 Sonnet
+    - Many features are multilingual and multimodal
+    - Safety-relevant features: plausibly connected to a range of ways in modern AI systems may cause harm
+    - Key Results:
+        - Scaling laws can be used to guide the training of SAEs
+        - Resulting features are highly abstract
+        - Systematic relationship between frequency of concepts and the dictionary size needed to resolve features for them
+        - Features can be used to steer LMs
+
+
+Scaling Dictionary Learning to Claude 3 Sonnet
+    - Linear representation hypothesis: neural networks represent meaningful concepts - features - as directions in their activation spaces
+    - Superposition: NNs use the existence of almost orthogonal directions to represent more features than there are dimensions
+    - We use dictionary learning
+
+
+Sparse Autoencoders
+    - Encoder maps the activity to a higher-dim layer via a learned linear transformation followed by a ReLU nonlinearity
+        - The units of this high-dim layer as "features"
+    - Decoder attempts to reconstruct the model activations via a linear transformation of the feature activations
+        - Model trained to miniize a combination of
+            1. Reconstruction error
+            2. L1 regularization penalty on the feature activations, incentivizing sparsity
+    - SAE provides us with approx decomp of the model's activations into a linear combination of "feature directions" (SAE decoder weights)
+        - Coeff equal to the feature activations
+        - Sparsity penalty ensures that for many given inputs to the model a very small fraction of features will have nonzero activations
+    - For any given token in any context, the model activations are "explained" by a small set of active features
+
+    - As a preprocessing step we apply a scalar normalization to the model activations so their average squared L2 norm is the residual stream dimension, D
+    - We denote the normalized activations as x in RD and attempt to decompose this vector using F features as follows
+
+
+Our SAE Experiments
+    - We trained 3 SAEs:
+        - 1M, 4M and 34M
+        - Num training steps for the 34M feature run was selected using a scaling laws analysis to minimize the training loss given a fixed compute budget
+    - Use an L1 coefficient of 5, perform a sweep over a narrow range of learning rates and chose the value that gave us the lowest loss
+    - For all three SAEs, the avg number of features active (ie nonzero activations) on a given token was fewer than 300, and the SAE reconstruction explained at least 65% of the variance of the model activations
+    - At end of training, we defined "dead" features as those which were not active over a sample of 10^7 tokens
+    - The proportion of dead features was roughly 2% for the 1M SAE, 35% for the 4M SAE, 65% for the 34M SAE
+        - We expect that improvements to the training procedure may reduce num of dead features in future experiments
+
+
+Scaling Laws
+    - Training SAEs on larger models is computationally expensive
+    - Must understand
+        1. Extent to which additional compute improves dictionary learning results
+        2. How that compute should be allocated to obtain the highest-quality dictionary possible
+    - Loss function is a useful proxy for assessing quality
+
+    - Dictionaries with low loss values tend to produce interpretable features and improve other metrics of interest
+
+    - With this proxy, we treat dictionary learning as a standard ML problem, to which we can apply "scaling laws" framework for hyperparameter optimization
+    - Loss decreases approx according to a power law wrt compute
+
+    - As compute budget increases, the optimal allocations of FLOPs to training steps / num features both scale approximately as power laws
+
+    - In general, the optimal number of features appears to somewhat more quickly than the optimal num of training steps
+
+
+Four Examples of Interpretable Features
+    - Goal: demonstrate that interpretable features exist, leaving strong claims to a later section
+    - Our interpretations are good descriptions of what the features represent and how they function in the network
+
+    - Features:
+        1. Golden Gate Bridge
+        2. Brain sciences
+        3. Monuments and popular tourist attractions
+        4. Transit infrastructure
+
+    - We show representative examples from the top 20 text inputs in our SAE dataset, as ranked by how strongly they activate that feature
+    - A larger, randomly sampled set of activations can be found by clicking on the feature ID
+    - The highlight colors indicate activation strength at each token
+        - White -> no activation
+        - Dark Orange -> strongest activation
+    - Claims
+        1. When feature is active, the relevant concept is reliably present in the context (specificity)
+        2. Intervening on the feature's activation produces relevant downstream behavior (influence on behavior)
+
+
+Specificity
+    - Goal: rigorously measure the extent to which a concept is present in a text input
+
+    - We focused on features that unambiguously corresponded to sets of tokens and computed the likelihood of that set of tokens relative to the rest of the vocab
+    - Does not generalize to more abstract features
+
+    - We use automation and construct the following rubric for scoring how a feature's description relates to the text on which it fires.
+    - We ask Claude 3 Opus to rate feature activations at many tokens on that rubric.
+        0 -- feature is completely irrelevant
+        1 -- feature is related to the context, but not near the highlighted text / only vaguely related
+        2 -- feature is only loosely related
+        3 -- feature cleanly identifies the activating text
+
+    - By scoring examples, we provide a measure of specificity for each feature
+
+    - The features in this section are selected to have straightforward interpretations, to make automated interpretability analysis more reliable
+
+    - Roughly 1000 activations of the feature drawn from the dataset are used to train the dictionary learning model
+    - We plot the frequency of each rubric score as a function of the feature's activation level
+        - Inputs that induce strong feature activations are all judged to be highly consistent with the proposed interpretation
+
+    - Hard to quantify sensitivity - how reliably a feature activates for text that matches our proposed interpretation
+
+    - We observe that the Golden Gate Bridge feature still fires strongly on the first sentence of the Wikipedia article for the GGB in various languages
+
+
+Influence on Behavior
+    - We experiment with feature steering
+    - We "clamp" specific features of interest to artificially high / low values during the forward pass
+    - We conduct these experiments with prompts in the "Human:"/"Assistant:" format that Sonnet is typically used with
+    - We find feature steering is remarkably effective at modifying model outputs in specific, interpretable ways
+    
+    - Clamping GGB feature to 10x its maximum activation value induces thematically-related model behavior
+
+
+Sophisticated Features
+    - We have presented features in Claude 3 Sonnet that fire on relatively simple concepts
+    - Code error feature
+        - When clamped, hallucinates an error message!
+        - When given negative activation, continues generation as if no bug was provided
+            - Rewrites the code without the bug!!!
+    - Features Representing Functions
+        - Activates on functions that add numbers
+            - Correctly handles function composition !!!
+
+
+Features versus Neurons
+    - Are the feature directions SAEs uncover more interpretable than, or even distinct from, the neurons of the model ?
+    - We fit our SAEs on residual stream activity
+    - Residual stream activity receives inputs from all preceding MLP layers
+        - It could be the case that SAEs identify feature directions in the residual stream whose activity reflects the activity of individual neurons in the preceding layers
+
+        - If this were the case, SAE would not be useful, as we could have identified the same features by simply inspecting MLP neurons
+    - For a random subset of the features in our 1M SAE, we measure the Pearson correlation between its activations and those of every neuron in preceding layers
+    - For the vast majority of features, there is no strongly correlated neuron
+        - For 82% of our features, the most-correlated neuron has correlation of 0.3 or smaller
+
+    - Even if dictionary learning features are not highly correlated with any individual neurons, it could still be the case that the neurons are interpretable
+    - Upon manual inspection of a random smaple of 50 neurons and features, the neurons appear significantly less interpretable than the feautures, typically activating in multiple unrelated contexts
+
+
+Feature Survey
+    - Features are rich and diverse
+    - We have millions of features. Scaling feature exploration is an important open problem
+    - We have made some progress in characterizing the space of features, aided by automated interpretability
+    - We focus on the local structure of features, which are often organized in geometrically-related clusters sharing a semantic relationship
+    - We then turn to understanding more global properties of features, such as how comprehensively they cover a given topic or category
+    - We then examine some categories of features we uncovered through manual inspection
+
+
+Exploring Feature Neighborhoods
+    - We walk through the local neighborhoods of several features of interest across the 1M, 4M and 34M SAEs, with closeness measured by the cosine similarity of the feature vectors
+    - We find that this consistently surfaces features that share a relatede meaning or context -- the interactive feature UMAP has additional neighborhoods to explore
