@@ -159,3 +159,122 @@ Feature Survey
 Exploring Feature Neighborhoods
     - We walk through the local neighborhoods of several features of interest across the 1M, 4M and 34M SAEs, with closeness measured by the cosine similarity of the feature vectors
     - We find that this consistently surfaces features that share a relatede meaning or context -- the interactive feature UMAP has additional neighborhoods to explore
+
+    - Distance in decoder space maps roughly onto relatedness in concept space
+    
+    - Feature splitting: features in smaller SAEs "split" into multiple features in a larger SAE, which are geometrically close and semantically related to the original feature, but represent more specific concepts
+
+
+Feature Completeness
+    - How complete is the space of concepts... Does the model have a feature corresponding to every major world city?
+    - We used Claude to search for features which fired on members of particular families of concepts/terms
+        1. We pass a prompt with the relevant concept (eg. "Feynman") to the model and see which features activate on the final token
+        2. We take the top 5 features by activation magnitude and run them thru our automated interpretability pipeline
+            - Ask Sonnet to provide explanations of what those features fire on
+        3. We look at each of the top 5 explanations and a human rater judges whether the concept, or some subset of the concept, is specifically indicated by the model-generated explanation as the most important part of the feature
+
+    - We find increasing convergence of concepts as we increase the number of features, though even in the 34M SAE, we see evidence that the set of features we uncovered is an incomplete description of the model internal representations
+        - We confirmed Sonnet can list all of London boroughs, however we can only find features corresponding to about 60% of the boroughs in the 34M SAE
+        - This suggests that the model contains many more features than we have found, which may be able to be extracted with even larger SAEs
+
+    - What determines whether a feature corresponding to a concept is present in our SAEs?
+        - Can look at freq of elements in a proxy of the SAE training data
+        - We find that representation in our dictionaries is closely tied with the freq of the concept in the training data
+        - Chemical elements often almost always have corresponding features in our dictionary
+            - Those which are mentioned rarely or not at all do not
+        - It is unclear to what extent feature learning is dependent on frequency in the model's training data rather than on the SAE's training data
+        - Frequency in training data is measured by a search for <space>[Name]<space>
+
+    - We quantified this relationship for four different categories of concepts:
+        - Elements, cities, animals and foods
+        - 100-200 concepts per category
+        - Focused on concepts that could be unambiguously expressed by a single word and with a wide dist of frequencies in text data
+        - We found a consistent tendency for larger SAEs to have features for concepts that are rarer in the training data, with "threshold" freq required for a feature to be present being similar across categories
+
+    - The frequency in the training data at which the dictionary becomes more than 50% likely to include a concept is consistently slightly lower than the inverse of the number of alive features
+
+
+Feature Categories
+    - Through manual inspection, we identify a number of other interesting categories of features. Here we describe several in spirit of providing a flavor of what we see in our dictionaries rather than attempting to be complete or prescriptive
+    - Person Features
+    - Country Features
+    - Basic Code Features
+        - Highlighting different syntax elements or other low-level concepts in code
+        - Beginnings of conditionals
+        - Function arguments
+        - Comments
+        - Loop ranges
+    - List Position Features
+        - 1st entry, 2nd entry, ... all different features
+
+
+Features as Computational Intermediates
+    - Features let us examine the intermediate computation that the model uses to produce an output
+    - We observe that in prompts where intermediate computation is required, we find active features corresponding to some of the expected intermediate results
+
+    - A simple strat to identify causally important features: compute attributions, which are local linear approximations of the effect of turning a feature off at a specific location on the model's next-token prediction
+    - We also perform feature ablations, clamping a feature's value to zero
+    
+    - We find the middle layer residual stream of the model contains a range of features causally implicated in the model's completion
+
+
+Example: Emotional Inferences
+    - John says, "I want to be alone right now." John feels
+        - The model must parse the quote from John, identify his state of mind, and then translate that into a likely feeling.
+    - If we sort features by either their attribution or their ablation effect on the completion "sad" as opposed to "happy" the top two features are:
+        - A need or desire to be alone
+        - Expressions of sadness
+    - Both features contribute to the output... this implies that the model has partialy predicted a sentiment from John's statement but will do more downstream processing on the content of his statement (as represented by the first feature) as well
+
+    - In comparison, the features with the highest avg activation on the context are less useful for understanding how the model actually predicts the next token in this case
+        - The top feature is the same as given by attributions
+        - 2nd and 3rd features are less abstract
+            - One fires on "be" in "want to be" and variants
+            - One fires on the word "alone"
+Example: Multi-Step Inference
+    - We investigate an incomplete prompt requiring a longer chain of inferences:
+        - Fact: The capital of the state where Kobe Bryant played basketball is
+    - To continue this text, the model must identify where Kobe played basketball, what state that place was in, and the capital of that state
+    - We compute attributions and ablation effects for the completion "Sacramento" wrt the baseline "Albany"
+    - Top 5 features:
+        - Kobe feature
+        - California feature
+            - Activates most strongly on text after "California" is mentioned, rather than "California" itself
+        - A "capital" feature
+        - LA feature
+        - Lakers feature
+
+    - Depending on the choice of baseline token, we find attribution and ablation can surface less obviously completion-relevant features
+
+
+Searching for Specific Features
+    - SAEs contain too many features to inspect exhaustively
+    - It is necessary to develop methods to search for features of particular interest, such as those relevant for safety, or those that provide special insight into the abstractions and computations used by the model
+
+Single Prompts
+    - Targeted prompts
+        - We simply supplied a single prompt that relates to the concept of interest and inspect the features that activate most strongly for specific tokens in that prompt
+        - Much more effective by automated interp labels, which made it easier to get a sense of what each feature represents at a glance
+
+Prompt Combinations
+    - Can select for features using sets of prompts
+    - We filter for features active for all prompts in the set
+    - Often include several "negative" prompts and filtered for features that were also not active in those prompts
+
+    - Filtering via negative prompts was especially important when using images, as we found a set of content-nonspecific features which often activated strongly across many image prompts
+
+Geometric Methods
+    - We uncovered some interesting features by exploiting the geometry of the feature vectors of the SAE
+    - Nearest neighbor features w/high cosine similarity
+
+Attribution
+    - We selected features based on estimates of their effect on model outputs
+    - We sorted features by the attribution of the logit difference between two possible next-token completions to the feature activation
+
+Safety-Relevant Features
+    - We report discovery of unsafe features
+    - Unsafe code, bias, sycophancy, deception and power seeking, dangerous or criminal information
+    - Safety-Relevant Code Features
+    - Bias Features
+    - Sycophancy Features
+    
