@@ -1,0 +1,133 @@
+Towards Monosemanticity: 
+Decomposing Language Models With Dictionary Learning
+
+4 Oct 2023
+
+Abstract
+    - Toy Models of Superposition, three strategies to finding a spare and interpretable set of features if indeed hidden by superposition:
+        1. Creating models w/o superposition (encouraging activation sparsity)
+            - Insufficient to prevent polysemanticity
+        2. Using dictionary learning to find an overcomplete feature basis in a model exhibiting superposition
+            - Overfitting issues
+        3. Hybrid approaches
+    
+    - In this paper we use a weak dictionary learning algorithm: sparse autoencoder to generate learned features from a trained model that offer a more monosemantic unit of analysis than the model's neurons themselves
+    - Our approach here builds on a significant amount of prior work, especially in using dictionary learning and related methods on NN activations
+
+
+Problem Setup
+    - Key challenge of reverse engineering NNs is curse of dimensionality
+        - Larger models -> volume of the latent space representing the model's internal state grows exponentially
+    - Approach currently is to decompose into independent components, each of which we can understand on its own
+    - Rewrite neural networks in ways that don't make reference to certain hidden states
+    - Even in a simple one-layer transformer with an MLP layer w/ReLU
+        - Need a way to decompose the MLP layer
+    - We aim to take the MLP activations and decompose them into "features"
+        - We decompose into more features than there are neurons
+        - MLP layer likely uses superposition
+
+Transformer: 1 attn block, 1 MLP block (ReLU), 512 MLP size, Dataset 100b tokens, Loss: Autoregressive Log-Likelihood
+Sparse Autoencoder: 1 ReLU (up) 1 Linear (down), 512(1x)-131072(256x), Dataset Transformer MLP Activations (8bn samples), Loss: L2 reconstruction + L1 on hidden layer activation
+
+
+Features as a Decomposition
+    - NNs may have interpretable linear directions in activation space
+    - If linear directions are interpretable, there may be some "basic set" of meaningful directions which more complex directions can be created from
+    - We call these directions "features"
+        - We will decompose models into these features
+    - Sometimes individual neurons appear to be these basic interpretable units, but often this is not the case
+    - We decompose the activation vector xj as a combination of more general features which can be any direction
+        - xj ~= b + sum(fi(xj)di)
+        - Where xj is the activation vector of length dMLP for datapoint j,fi(xj) is the activation of feature i, each di is a unit vector in activation space called the direction of feature i and b is a bias
+    - In our SAE, the feature activations are the output of the encoder
+        fi(x) = ReLU(We(x-bd)+be)i
+        - We is the weight matrix of the encoder and bd, be are a pre-encoder and an encoder bias
+        - The feature directions are the columns of the decoder weight matrix Wd
+    - If such a sparse decomposition exists, it raises an important question: are models in some fundamental sense composed of features or are features just a convenient post-hoc description?
+Superposition Hypothesis
+    - We should expect the feature directions to form an overcomplete basis
+        - Our decomposition should have more directions di than neurons
+        - Feature activations should be sparse, because sparsity is what enables this kind of noisy simulation
+    - Mathematically identical to the classic problem of dictionary learning
+
+
+What makes a good decomposition?
+    - Suppose a dictionary exists s.t. the MLP activation of each datapoint is in fact well approximated by a sparse weighted sum of features
+    - This decomposition will be useful for interpreting the NN if:
+        1. We can interpret the conditions under which each feature is active
+            - We have a description of which datapoints j cause the feature to activate
+            - Makes sense on a diverse dataset
+        2. We can interpret the downstream effects of each feature, ie the effect of changing the value of fi on subsequent layers
+        3. The features explain a significant portion of the functionality of the MLP layer
+    - A feature decomp satisfying these criteria allow us:
+        1. Determine contribution of a feature to the layer's output
+        2. Monitor the network for activation of specific features
+        3. Change the behavior of the network in predictable ways by changing feature activations in an earlier layer
+        4. Demonstrate the network has learned certain properties
+        5. Demonstrate the network is using a given property of the data in producing its output on a specific example
+        6. Design inputs meant to activate a given feature and elicit certain outputs
+
+
+SAEs to Find Good Decompositions
+    - A large set of sparse features could be represented in terms of directions in a lower dim space
+    - We seek a decomposition which is sparse and overcomplete
+    - We're only asking for a sparse decomp of the activations, so we make no use of the downstream effects of di on the model output
+    - We'll be able to use those downstream effects in later sections
+
+    - Overcomplete makes this setting very different from similar approaches seeking sparse disentanglement in the literature.
+
+    - At the heart of dictionary learning is an inner problem of computing the feature activations fi(x) for each datapoint x, given the feature directions di
+    - On its surface, this problem may seem impossible: we're asking to determine a high-dim vector from a low-dim projection
+        - We're trying to invert a very rectangular matrix
+        - But this is a high dim matrix which is sparse -> NP-hard
+
+
+SAE Setup
+    - SAE is a model with a bias at the input, a linear layer with bias and ReLU for the encoder, then another linear layer and bias for the decoder
+    - We train this autoencoder using the Adam optimizer to reconstruct the MLP activations of our transformer model, with an MSE loss plus an L1 penalty to encourage sparsity
+    - We found a couple of principles important in training the autoencoder
+        1. Scale really matters
+            - More data -> "sharper" and more interpretable features
+            - Use 8b training points for the autoencoder
+        2. Over the course of training some neurons cease to activate, even across a large num of datapoints
+            - "Resampling" these dead neurons during training gave better results by allowing the model to represent more features for a given autoencoder hidden layer dimension
+            - We periodically check for neurons which have not fired in a significant number of steps and reset the encoder weights on the dead neurons to match data points that the autoencoder does not currently represent well
+
+Advice for Training Sparse Autoencoders: 
+Architecture
+    - Dictionary learning model is one hidden layer MLP
+    - Trained as an autoencoder, using the input weights as an encoder and output weights as the decoder
+    - The hidden layer is much wider than the inputs and applies a ReLU non-linearity
+    - We use the default Pytorch Kaiming Uniform initialization
+        x = x - bias_decoder
+        x = ReLU(encoder * x + bias_encoder)
+        x = decoder * x + bias_decoder
+        loss
+    - Hidden layer is overcomplete m>=n, and the MSE is a mean over each vector element, while L1 penalty is a sum
+    - The hidden layer activations f are our learned features
+    - We subtract the decoder bias from the inputs, and call this a pre-encoder bias
+    - Decoder is also referred to as the "dictionary" while the encoder can be thought of as a linear, amortized approximation to more powerful sparse coding algorithms
+Hyperparameter Selection
+    - Quantitatively measuring interpretability is difficult / slow
+    - Proxy metric: Training loss, Feature density histograms, L0 norm, Reconstructed Transformer NLL
+Neuron Resampling
+    - Over the course of training, some neurons die
+    - We resample them
+    
+    - Nuance around dead neurons is the ultralow density cluster
+    - If we increase the num training steps then networks will kill off more of these ultralow density neurons
+    - The num of dead neurons that appear over training depends on a number of factors like:
+        - Learning rate
+        - Batch size
+        - Dataset redundancy
+        - Num training steps
+        - Optimizer used
+    
+    - Approach used in this work:
+        1. At training steps 25k, 50k, 75k, 100k, identify which neurons have not fired in any of the previous 12.5k training steps
+        2. Compute the loss for the current model on a random subset of 819k inputs
+        3. Assign each input vector a prob of being picked that is proportional to the sqrt(autoencoder loss on this input)
+        4. For each dead neuron, sample an input according to these probabilities
+            - Renormalize the input vector to have unit L2 norm and set this to be the dictionary vector for the dead autoencoder neuron
+        5. For the corresponding encoder vector, renormalize the input vector to equal the avg norm of the encoder wieghts for alive neurons * 0.2. Set the corresponding encoder bias element to zero
+        6. Reset the Adam optimizer params for every modified weight and bias term

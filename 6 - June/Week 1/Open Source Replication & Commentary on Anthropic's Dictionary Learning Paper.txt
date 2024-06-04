@@ -1,0 +1,57 @@
+Open Source Replication & Commentary on Anthropic's Dictionary Learning Paper
+
+23 Oct 2023
+
+Features
+Exploring Neuron Sparsity
+    - Big mystery in mech interp is what are non-linearities in MLP layers actually doing?
+    - I can reason about monosemantic GELU neurons fairly easily (French neuron) -- a soft ReLU that collects pieces of evidence for the precense of a feature
+
+    - Look into how dense vs sparse each non-ultra-low frequency feature was
+    - Conceptually, I expected many to be fairly neuron-sparse -- both because I expected interpretable features to tend to be neuron sparse in general, and because of the AE setup
+        - On any given input a sparse set of neurons fire.
+        - It seems learning specific neurons / clusters of neurons is a useful dictionary feature
+
+    - A significant majority of features seem to be fairly dense in the neuron basis!
+    - A crude metric: for each dictionary feature, take the sum squared decoder weights, and look at the fraction explained by the top neuron (to look for 1-sparse features), and by the next 9 neurons (to look for 10-ish sparse features)
+        - Decoder rather than encoder, as decoder is closer to the "true" feature direction
+        - Encoder is the subtly different "optimal projection to detect the feature" which must account for interference
+    - In the scatter plot below, we see 2-3 rough clusters -- dense features near the origin
+        - We find ~92.1% of features are dense, 3.9% 1-sparse, 4% are 10-ish sparse
+
+    - Neuron-kurtosis, ie taking the decoder weights for each feature in the MLP neuron basis, and taking the kurtosis
+        - Measures how "privileged" the neuron basis is, and is another way to detect unusually neuron-sparse features
+
+
+Ultra Low Frequency Features are all the same Feature
+Existence of the ultra-low frequency cluster:
+    - I was able to replicate the paper's finding of an ultra-low frequency cluster, but no truly dead neurons
+    - Encoder weights for these are all the same direction
+    - Decoder weights are NOT all the same direction
+    - Enc direction is consistent across random seeds (!!)
+    - Ultra-low frequency features are consuming ~60% of the AE
+    - Phase transition in training for feature sparsity
+        - Around 1.6B tokens, there was a seeming phase transition where ultra low density features started becoming more common
+        - Reinit weights every 120M tokens for features of freq less than 1e-5, but around 1.6B they started to drift upwards in frequency
+
+
+Implementation Details
+    - Transformer Model: Gelu-1l with 1 layer, d_model=512, 2048 neurons and GELU activations
+        - Trained on 22B tokens of web text & Python code
+    - Autoencoders: Trained in 12 hours on A6000 on 2B tokens
+        - 16384 features with L1 regularisation of 3e-3
+        - Reconstruction loss continued to imrpove and got to 92%
+    - Getting it working:
+        - First few AE failed as L1 reg was too high
+            - Almost all features were dead
+        - When prototyping and training, found it useful to regularly compute the following metrics:
+            1. AE loss (when reconstructing the MLP acts)
+            2. Reconstruction loss (when replacing MLP acts with the reconstrcuted acts, and looking at damage to next token prediction loss)
+            3. Feature frequency (including fraction of dead neurons), both plotting histograms and crude measures
+        - Implemented neuron resampling, with two variations:
+            - Resampled any feature w/freq < 1e-5
+            - Took lazy route of re-init the weights
+        - Lacked storage space to easily precompute, shuffle and store neuron activations for all 2B tokens
+            - Maintained a buffer of acts from 1.5M prompts of 128 tokens each, shuffled these, and took AE training batches from it (batch size 4096)
+            - When buffer was half empty, refilled it with new prompts and reshuffled
+            - It was important to minimize AE batches having tokens from the same prompt
