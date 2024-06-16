@@ -1,0 +1,22 @@
+TSPDiffuser: Diffusion Models as Learned Samplers
+for Traveling Salesperson Path Planning Problems
+
+Solving TSPPPs w/ TSPDiffuser:
+    - Problem instance
+    - Generate multiple paths via learned diffusion model
+    - Connect paths to construct a roadmap
+    - Perform path planning and solving TSP on the roadmap
+
+Model Architecture:
+    - We represent a TSPPP instance w/binary and distance images of obstacles and destinations
+        - Stacked and encoded into a unified feature map
+    - Noisy position data, concatenated with denoising timestep information and the feature vector extracted from the feature map, are fed into a diffusion model to reconstruct the original clean path
+    - Learned DDPMs can generate clean data from complete noise N(0,I) by repeatedly applying the denoising kernel
+    - For trajectory generation, reward (value)-guided sampling encourages generated samples to meet objective
+
+
+TSPDiffuser:
+Constructing Roadmaps w/ Learned Diffusion Models
+    - Despite high generation capability, we observe two limitations:
+        1. Sample generation is computationally intensive
+        2. Even w/reward-guided sampling, there is no guarantee generated paths satisfy constraints imposed w/ TSPPPs

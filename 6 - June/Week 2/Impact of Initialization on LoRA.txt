@@ -1,0 +1,30 @@
+The Impact of Initialization
+on LoRA Finetuning Dynamics
+
+12 Jun 2024
+
+Abstract
+    - To start from pretrained model as init for finetuning, one can either initialize B to zero and A to random (default init in PEFT), or vice-versa
+    - In both cases, the product BA is equal to zero at initialization
+        - Finetuning starts from the pretrained model
+    - In principle these should both yield the same performance and share the same optimal learning rate
+    - We demonstrate this is an incorrect intuition and the first scheme (B to zero, A to random) is better than the other scheme
+    - Theory: The first initialization allows the use of larger learning rates
+
+
+Finetuning Dynamics: 
+    - Init(A), B=0 -> More efficient feature learning with some instability
+    - A = 0, Init(B) -> Stability with suboptimal feature learning
+
+
+LoRA Finetuning Dynamics in the Large Width Limit
+    - Fix LoRA rank r and examine the finetuning dynamics in the limit of large width
+    - This setup aligns well with practical scenarios where rank << width
+    - For Llama, rank r is generally of order 2^k for k in {2,...,6}
+    - The layer of the network to which LoRA is applied as a LoRA layer
+Simplified Setting
+    - Given a LoRA layer, lora feature updates are not only driven by change in A,B weights, but also changes in Z
+Introduction to the lambda-operator
+    - In the theory of scaling, one usually tracks the asymptotic behaviour of key quantities as we scale some model ingredient
+    - If we scale the width n of a NN, we are interested in quantifying how certain quantities behave as n grows
+    - Zero: when v=0, we write

@@ -1,0 +1,50 @@
+INT4 Decoding GQA CUDA Optimizations for LLM Inference
+
+6 Jun 2024
+
+Introduction
+    - Long context lengths are compute / memory intensive
+    - Mainly due to:
+        - Computational complexity of attn layers increases proportionally with the context length
+            - Attn layers can be a bottleneck
+        - KV cache sie grows linearly with context length, putting higher pressure on meory requirement
+    - INT4 quantization comparable results, but no latency improvement despite 4x lesser data
+        - This implies Int4 attn is 4x less efficient at utilizing HBM bandwidth than BF16
+    - We discuss CUDA optimization that we applied to INT4 GQA to improve performance by up to 1.8x on the A100 GPU, 1.9x on H100
+
+
+Background
+    - GQA, each KV cache head is shared across a group of query heads
+
+On A100
+
+Time (us)	BF16 GQA	INT4 GQA
+Batch size	FD	FA	CU	FD	FA	CU
+32	139	133	183	137	-	143
+64	245	229	335	234	-	257
+128	433	555	596	432	-	455
+256	826	977	1127	815	-	866
+512	1607	1670	2194	1581	-	1659
+Effective Bandwidth (GB/s)	BF16 GQA	INT4 GQA
+Batch size	FD	FA	CU	FD	FA	CU
+32	965	1012	736	262	-	250
+64	1097	1175	802	305	-	278
+128	1240	968	901	331	-	314
+256	1301	1100	954	351	-	331
+512	1338	1287	980	362	-	345
+On H100
+
+Time (us)	BF16 GQA	INT4 GQA
+Batch size	FD	FA	CU	FD	FA	CU
+32	91	90	114	70	-	96
+64	148	146	200	113	-	162
+128	271	298	361	205	-	294
+256	515	499	658	389	-	558
+512	1000	1011	1260	756	-	1066
+Effective Bandwidth (GB/s)	BF16 GQA	INT4 GQA
+Batch size	FD	FA	CU	FD	FA	CU
+32	1481	1496	1178	511	-	371
+64	1815	1840	1345	631	-	443
+128	1982	1802	1487	699	-	487
+256	2087	2156	1634	736	-	513
+512	2150	2127	1706	757	-	537

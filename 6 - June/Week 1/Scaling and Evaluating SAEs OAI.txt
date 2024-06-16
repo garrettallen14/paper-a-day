@@ -1,0 +1,200 @@
+Scaling and evaluating sparse autoencoders
+
+6 Jun 2024
+
+Abstract
+    - Studying the properties of autoencoder scaling is difficult due to the need to balance reconstruction, sparsity objectives, and the presence of dead latents
+    - We propose using k-sparse autoencoders to directly control sparsity, simplifying tuning and improving the reconstruction-sparsity frontier.
+    - Additionally, we find modifications that result in few dead latents, even at the largest scales we tried.
+    - We find clean scaling laws wrt autoencoder size and sparsity
+    - We also introduce several new metrics for evaluating feature quality:
+        - Recovery of hypothesized features
+        - Explanability of activation patterns
+        - Sparsity of downstream effects
+    - All metrics generally improve with autoencoder size
+    - We train a 16 million latent autoencoder on GPT-4 activations for 40 billion tokens
+
+
+Introduction
+    - Improving reconstruction and sparsity is not the ultimate objective of SAEs, we explore better methods for quantifying autoencoder quality
+    - We study quantities corresponding to whether certain hypothesized features were recovered, whether downstream effects are sparse, and whether features can be explained with both high precision and recall
+    - Contributions:
+        - SoTA recipe for training SAEs
+        - Demonstrate clean scaling laws and scale to large number of latents
+        - Introduce metrics of latent quality and find larger SAEs are generally better
+
+
+Methods
+Setup
+    - Inputs: train autoencoders on the residual streams of GPT-2 small and models increasing to GPT-4
+        - Choose a layer near the end of the network, which should contain many features without being specialized for next-token predictions (!!!)
+            - We use a layer 5/6 of the way into the network for GPT-4 series models, and we use layer 8 (3/4 of the way) for GPT-2 small
+        - We use a context length of 64 tokens for all experiments
+        - We subtract the mean over the d_model dimension and normalize to all inputs to unit norm, prior to passing to the autoencoder (or computing reconstruction errors)
+    - Evaluation: After training, we evaluate autoencoders on sparsity L0, and reconstruction MSE
+        - We report a normalized version of all MSE numbers, where we divide by a baseline reconstruction error of always predicting the mean activations
+    - Hyperparameters: To simplify analysis, no lr warmup / decay.
+        - We sweep lr at small scales and extrapolate the trend of optimal learning rates for large scale
+Baseline: ReLU autoencoders
+    - For input vector x from the residual stream, n latent dimensions, we use baseline ReLU autoencoders z = ReLU(Wenc(x - bpre) + benc); x = Wdec*z + bpre
+TopK activation function
+    - We use a k-sparse autoencoder, which directly controls the number of active latents by using an activation function (TopK)
+    - Keeps only the k largest latents, zeroing the rest
+    - Encoder is thus defined:
+        z = TopK(Wenc(x-bpre))
+    - Training loss is now simply MSE
+    - k-sparse autoencoders have the following benefits:
+        - Remove need for L1 penalty
+            - L0 minimize # of non-zero parameters in a model
+                - Non-differentiable and computationally challenging to optimize
+            - L1 uses sum of abs values to enforce sparsity
+            - L1 is imperfect approximation of L0, and introduces a bias of shrinking all positive activations toward zero
+            - This enables setting the L0 directly, as opposed to tuning an L1 coefficient lambda, enabling simpler model comparison and rapid iteration
+            - Empirically outperforms baseline ReLU autoencoders on the sparsity-reconstruction frontier, gap increases with scale
+            - Increases monosem of random activating examples by effectively clamping small activations to zero
+Preventing dead latents
+    - In larger autoencoders, an increasingly large portion of latents stop activating entirely at some point in training
+    - Ex: Templeton train a 34M latent autoenc w/only 12 million alive latents
+        - 90% when no mitigations are applied
+    - Results in bad MSE and makes training computationally wasteful
+    - Two important ingredients for preventing dead latents:
+        1. Initialize the encoder to the transpose of the decoder
+        2. Use an auxiliary loss that models reconstruction error using the top-kaux dead latents
+    - With these techniques, even in our largest (16 million latent) autoencoder, only 7% of latents are dead
+
+
+Scaling Laws
+Num of latents
+    - Faithfully representing model state will require large numbers of sparse features
+    - We consider two primary approaches to choose autoencoder size and token budget
+Training to compute-MSE frontier (L(C))
+    - Firstly, following Lindsey et al. [2024], we train autoencoders to the optimal MSE given the available computer, disregarding convergence
+    - We find MSE follows a power law L(C) of compute, though the smallest models are off trend
+    - Latents are the important artifact of training, whereas for LMs we typically care only about token predictions
+    - Comparing MSE across different n is thus not a fair comparison -- latents have a looser info bottleneck w/larger n, so lower MSE is easily achieved
+Training to convergence (L(N))
+    - We look at training autoencoders to convergence (within some eps)
+    - This gives a bound on the best possible reconstruction achievable by our training method if we disregard compute efficiency
+    - In practice, we would ideally train to some intermediate token budget between L(N) and L(C)
+    - Largest learning rate that converges: Scales with 1/sqrt(n)
+    - Optimal learning rate for L(N): 4x smaller than optimal learning rate for L(C)
+    - Num tokens to convergence: increases as approximately theta(n^0.6) for GPT-2 small and theta(n^0.65) for GPT-4
+Irreducible loss
+    - Scaling laws sometimes include an irreducible loss term e, st y = ax^b+e
+    - We find that including an irreducible loss term substantially improves quality of our fits for both L(C) and L(N)
+    - It was initially unclear to us that there should be a nonzero irreducible loss
+    - One possibility is that there are other kinds of structures in the activations
+    - In the extreme case, unstructured noise in the activations is substantially harder to model & would have an exponent close to zero
+Jointly fitting sparsity (L(N,K))
+    - We find that MSE follows a joint scaling law along with num of latents n and the sparsity level k
+    - Because reconstruction becomes trivial as k approaches dmodel, this scaling law only holds for the small k regime
+    - Our joint scaling law fit on GPT-4 autoencoders is:
+        L(n,k) = exp(a, bklog(k) + bnlog(n) + lambdalog(k)log(n)) + exp(sig + mulog(k))
+    - The scaling law L(N) gets steeper as k increases
+    - Irreducible loss decreases with k
+Subject model size Ls(N)
+    - Would like to understand how SAEs scale as the subject models get larger
+    - We find that if we hold k constant, larger subject models require larger autoencoders to achieve the same MSE, and the exponent is worse
+
+
+Evaluation
+    - Our larger autoencoders scale well in terms of MSE and sparsity
+    - The end goal of autoencoders is not to improve the sparsity-reconstruction frontier (which degenerates at the limit), but rather to find features useful for mech interp
+    - We measure autoencoder quality with the following metrics:
+        1. Downstream loss: How good is the LM loss if the residual stream latent is replaced with autoencoder reconstruction of that latent?
+        2. Probe loss: Do autoencoders recover features that we believe they might have?
+        3. Explanability: Are there simple explanations that are both necessary and sufficient for the activation of the autoencoder latent?
+        4. Ablation sparsity: Does ablating individual latents have a sparse effect on downstream logits?
+    - Autoencoders generally get better when the number of total latents increases (!!!)
+    - The impact of the number of active latents L0 is more complicated
+        - Increasing L0 makes explanations based on token patterns worse, but makes probe loss and ablation sparsity better
+    - All trends also break when L0 gets close to d_model, a regime in which latents also become quite dense
+Downstream loss
+    - An autoencoder with non-zero reconstruction error may not succeed at modeling the features most relevant for behavior.
+    - To measure whether we model features relevant to language modeling, we follow prior work and consider downstream Kullback-Leibler (KL) divergence and cross-entropy loss
+    - In both cases, we test an autoencoder by replacing the residual stream by the reconstructed value during the fwd pass
+    - k-sparse encoders improve more on downstream loss than on MSE over prior methods
+    - MSE has a clean power law relationship with both KL divergence and difference of cross entropy loss, while keeping sparsity L0 fixed and only varying autoencoder size
+Recovering known features with 1d probes
+    - If we expect a feature should be discovered by a high quality autoencoder, then one metric of autoencoder quality is to check whether these features are present
+    - We curate a set of 61 binary classification datasets
+    - For each task, we train a 1d logistic probe on each latent using the Newton-Raphson method to predict the task, and record the best cross entropy loss
+        - Probe score increases and then decreases as k increases
+        - TopK generally achieves better probe scores
+        - Computationally cheap
+    - Finding simple explanations for features
+        - Can create an "illusion" of interpretability
+        - Propose an automated interpretability score which disproportionately depends on recall
+            - "can't stop" and "won't stop" both fall under stop, but can mean different things ... (?)
+    
+    - We focus on an improved version of Neuron to Graph (N2G), a substantially less expressive but much cheaper method that outputs explanations in the form of collections of n-grams with wildcards
+        - In the future, we would like to explore ways to make it more tractable to approximate precision for arbitrary English explanations
+    - To construct a N2G explanation, we start w/some sequences that activate the latent
+Explanation reconstruction
+    - When our goal is for a model's activations to be interpretable, one question: how much performance do we sacrifice if we use only the parts of the model we can interpret?
+Sparsity of ablation effects
+    - If the underlying computations learned by a language model are sparse, one hypothesis is that natural features are not only sparse in activations, but also in terms of downstream effects
+    - We observed that ablation effects often are interpretable
+    - We developed a metric to measure the sparsity of downstream effects on the output logits
+
+    - At a particular token index, we obtain the latents at the residual stream, and proceed to ablate each autoencoder latent one by one, and compare the resulting logits before and after ablation
+        - Leads to V logit differences per ablation and affected token, where V is the size of the token vocabularly
+    - Because a constant difference at every logit does not affect the post-softmax probabilities, we subtract at each token the median logit difference value
+    - We concatenate these vectors together across some set of T future tokens\\\
+
+
+Understanding the TopK activation function
+TopK prevents activation shrinkage
+    - Major drawback of L1: shrinks all activations toward zero
+    - TopK removes need for L1
+    - To measure the magnitude of activation shrinkage, we consider whether different (potentially larger) activations would result in better reconstruction given a fixed decoder
+        - We first run the encoder to obtain a set of activated latents
+        - We save the sparsity mask, and optimize only the nonzero values to minimize MSE
+    - We solve for optimal activations with a positivity constraint using projected gradient descent
+
+    - This refinement procedure tends to increase activations in ReLU models on avg, but not in TopK models... this indicates TopK is not impacted by activation shrinkage
+    - The magnitude of refinement is also smaller for TopK models than for ReLU models
+    - In both ReLU and TopK, refinement noticable improves reconstruction MSE, and downstream next-token prediction
+
+
+Limitations and Future Directions
+    - TopK forces every token to use exactly k latents, which is likely suboptimal. Ideally we would constrain E(L0) rather than L0
+    - Optimization could be greatly improved, lr scheduling, better optimizers, better aux losses for preventing dead latents
+    - Much more could be done to understand what metrics best track relevance to downstream applications, and to study those applications themselves
+        - Steering vectors
+        - Anomaly detection
+        - Identifying circuits
+    - Excited about work in the direction of combining MoE and autoencoders, which would substantially improve the asymptotic cost of autoencoder training, and enable much larger autoencoders
+    - A large fraction of random activation features we find are not yet adequately monosemantic
+        - Believe improved techniques and greater scale and this is potentially surmountable
+    - Our probe based metric is quite noisy, which could be improved by having a greater breadth of tasks / higher quality tasks
+    - A context length of 64 tokens is potentially too few tokens to exhibit the most interesting behaviors of GPT-4
+
+
+APPENDIX
+Optimization
+Initialization
+    - We initialize our autoencoders as follows:
+        1. Bias b_pre: the geometric median of a sample set of datapoints (?)
+        2. Encoder directions: parallel to respective decoder directions
+            - The corresponding latent read/write directions are the same
+            - This is done only at initialization; we do not tie the parameters as in Cunningham et al. [2023]. This strategy is also presented in concurrent work [Conerly et al., 2024]
+            - Intuition:
+                - Encoder maps the input to a latent representation, while the decoder reconstructs the input from the latent representation.
+                - If the encoder and the decoder are initialized randomly / independently, there's no guarantee that the latent dimensions learned by the encoder will be useful for reconstruction by the decoder
+                    - "Dead" neurons
+                - Consider a simple linear autoencoder with W_enc and W_dec
+                    - Assume we init at W_enc = W_dec^T
+                    - x_reconstructed = W_dec * (W_dec^T * x)
+                    - x is projected into the row space of W_dec, which is then mapped back to the original space
+                    - This means that the autoencoder is trying to reconstruct x using the basis vectors defined by the rows of W_dec
+                - By using W_enc = W_dec^T, we ensure the encoder projects the input onto the same subspace as the W_dec
+                    - Forces the encoder to encode the input in terms of the basis vectors that the decoder is using for reconstruction
+                - Encourages the encoder to learn latent representations that are useful for reconstruction by the decoder
+                - Provides a good starting point for optimization process (gradients properly affect both enc and dec)
+
+Auxiliary loss
+    - We define an auxiliary loss (AuxK) similar to "ghost grads" that models the reconstruction error using top-kaux dead latents (typically kaux=512)
+    - Latents are flagged as dead during training if they have not activated for some predetermined num of tokens (10 million)
+    - Given the reconstruction error of the main model e = x-`x, we define auxiliary loss Laux = ||e-`e||22, where `e = W_dec*z is the reconstruction using the top-kaux dead latents
+    - 131,072 tokens is crazy

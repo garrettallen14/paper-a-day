@@ -1,0 +1,23 @@
+DEEP INFORMATION PROPAGATION
+
+4 Apr 2017
+
+Abstract
+    - We study the behavior of untrained NNs whose weights/biases are randomly distributed using mean field theory
+    - We show the existence of depth scales that naturally limit the maximum depth of signal propagation
+    - Main practical result:
+        - Random networks may be trained precisely when information can travel through them
+    - Thus, the depth scales that we identify provide bounds on how deep a network may be trained for a specific choice of hyperparameters
+    
+    - We argue that in networks at the edge of chaos, one of these depth scales diverges
+    - Arbitrarily deep networks may be trained only sufficiently close to criticality
+    - The presence of dropout destroys the order-to-chaos critical point and therefore limits maximum trainable depth for random networks
+    - We develop a mean field theory for backprop and we show that the ordered and chaotic phases correspond to regions of vanishing / exploding gradient respectively
+
+
+Introduction
+    - Random NNs are exponentially expressive in their depth
+    - Mean field networks exhibit an order-to-chaos transition as a function of the weight and bias variances
+    - We demonstrate the existence of several "depth" scales that emerge naturally and control signal propagation
+    - We then show that one of these depth scales diverges at the boundary between order and chaos
+    - These results bound the depth to which signal may propagate thru random NNs

@@ -1,0 +1,28 @@
+A Hugging Face Accelerate Story ofMultiple Backends: FSDP and DeepSpeed
+
+13 Jun 2024
+
+Are FSDP and DeepSpeed Interchangable?
+    - We try running a training pipeline w DeepSpeed and PyTorch FSDP
+    - DeepSpeed loss converged well, FSDP loss was not decreasing
+        - Learning rate may need scaling by number of GPUs, and increased lr by 4x since using 4 GPUs
+
+
+Precision Matters
+    - Inside the DeepSpeed codebase, the trainable_param_groups pass through an internal _setup_for_real_optimizer function call, which calls another function called _create_fp32_partitions
+        - DeepSpeed was performing upcasting internally, and always keeps its master weights in fp32 by design
+    - This upcasting means that the optimizer can converge at learning rates that it would not converge in lower precision
+    - In FSDP, before the model and optimizer params are distributed across GPUs, they are "Flattened" to a 1d tensor
+    - FSDP and DeepSpeed use different dtypes for these "flattened" parameters which has ramifications for PyTorch optimizers
+    
+    - Takeaway points:
+        - A rule of thumb when performing mixed precision training is keep trainable params in fp32
+        - Upcasting may have negligible effect on memory when sharding over large num of GPUs, but when using DeepSpeed on a small num of GPUs, the 2x increase can be significant
+        - Torch-native implementation of FSDP does not force upcasting
+
+Harmonizing DeepSpeed and FSDP in Accelerate
+    - To better align DeepSpeed and FSDP, we can perform upcasting automatically for FSDP when mixed precision is enabled
+    - Allows FSDP to operate in two modes:
+        1. "Mixed-precision" like DeepSpeed
+        2. Low precision mode for memory constrained scenarios
+        

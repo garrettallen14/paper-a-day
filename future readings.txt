@@ -1,0 +1,10 @@
+https://www.bitsofwonder.co/p/a-revolution-in-biology
+https://colah.github.io/posts/2014-03-NN-Manifolds-Topology/
+https://arxiv.org/abs/2406.07550
+S. Hayou, A. Doucet, and J. Rousseau. “On the Impact of the Activation function on Deep Neural Networks Training”. In: Proceedings of the 36th International Conference on Machine Learning. Ed. by K. Chaudhuri and R. Salakhutdinov. Vol. 97. Proceed- ings of Machine Learning Research. PMLR, Sept. 2019, pp. 2672–2680.
+G. Yang, D. Yu, C. Zhu, and S. Hayou. “Tensor Programs VI: Feature Learning in Infinite-Depth Neural Networks”. In: arXiv preprint arXiv:2310.02244 (2023)
+Mohammad Shoeybi, Mostofa Patwary, Raul Puri, Patrick LeGresley, Jared Casper, and Bryan Catan-
+zaro. Megatron-LM: Training Multi-Billion Parameter Language Models using Model Parallelism. arXiv
+preprint arXiv:1909.08053, 2019.
+12-way pipeline parallelism with interleaving (Narayanan et al., 2021) 
+SwiGLU vs ReLU**2 vs ReLU

@@ -1,0 +1,43 @@
+Nemotron-4 340B Technical Report
+
+Abstract
+    - Release Base, Instruct, Reward
+    - Sized to fit on 8xH100s in FP8 precision
+    - Over 98% of data for model alignment is synthetically generated
+    - Open-sourcing the synthetic generation pipeline used in model alignment process
+
+Pretraining
+Data
+    - English (70%)
+    - NL (15%)
+    - Source code (15%)
+    - 9T training. 8T formal, 1T continued pretraining
+Architectural Details
+    - Std decoder-only
+    - Causal attn masks, Rotary Position Embeddings (RoPE), SentencePiece tokenizer, squared ReLU in MLP layers
+    - No bias, dropout of zero, untied in-out embeddings
+    - Grouped Query Attn
+    - 96 transformer layers
+    - 18432 hidden dim
+    - 96 num heads
+    - 8 KV heads
+    - 4096 context window
+    - 256000 vocab size
+Training Details
+    - 768 DGX H100 nodes
+        - Each node 8xH100
+    - Combination of 8-way tensor parallelism, 12-way pipeline parallelism with interleaving
+    - Data parallelism
+    - Distributed optimizer to shard the optimizer state over the data-parallel replicas and reduce memory footprint
+    - Degree of data parallelism scaled from 16 to 64 as batch size ramped up
+Continued Training
+    - Switching data dist. and lr decay schedule at end of training significantly improves model quality
+    - After having pretrained for 8T tokens, we use same loss obj and perform continued training on 1T tokens
+    - Data distribution changes, and lr schedule that prioritizes a steeper slope of decay over the magnitude of learning rate
+    - Such an ordering and style of data distributions allows for model to gently transition from pre-training dataset and better learn from the data introduced
+
+Alignment Data
+    - Existing permissive datasets are increasingly inadequate for training the most well-aligned models
+    - Explore indepth Synthetic Data Generation
+    - Use lots of prompts
+    - Real world LMSYS prompts
