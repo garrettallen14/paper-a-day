@@ -1,0 +1,29 @@
+On the Impact of the Activation Function on Deep Neural Networks Training
+
+26 May 2019
+
+Abstract
+    - Weight init and activation function of DNNs have crucial impact on performance
+    - Inappropriate selections can lead to loss of information of the input during fwd prop and exponential vanishing/exploding of gradients during back-prop
+
+    - Understanding theoretical properties of untrained random networks is key to identifying which DNNs may be trained successfully
+        - For DNNs only a specific choice of hyperparameters "the edge of chaos" can lead to good performance
+    - We focus on training acceleration and overall performance
+    - We give a comprehensive theoretical analysis of the Edge of Chaos and show that we can indeed tune the initialization parameters and activation function in order to accelerate the training and improve performance
+
+
+Intro
+    - The training of DNNs is a non-convex optimization problem
+    - The weight init and activation function will determine the functional subspace that the optimization problem will explore
+
+
+Edge of Chaos
+    - For DNNs, only an initialization on the EOC could make training possible
+    - Smooth activation functinos perform better than ReLU-like activation, especially for very deep networks
+    - Choosing the right point on the EOC further accelerates training
+
+
+Experiments
+    - We demonstrate empirically our results on MNIST and CIFAR100 for depths 10<=L<=200 and width 300
+    - We perform grid search between 10^-6 and 10^-2 w/exponential step of size 10 to find optimal learning rate
+    - For SGD, a lr of ~10^-3 is optimal for L<=150, and for L>150 the best lr is ~10^-4

@@ -1,0 +1,26 @@
+Getting 50% (SoTA) on ARC-AGI with GPT-4o
+
+17 Jun 2024
+
+Intro
+    - Achieve 50% acc w/GPT-4o generating 8,000 implementations of transformation rules and selecting the best one
+    - Use few-shot prompts w/step-by-step reasoning patterns
+    - Perform revisions on some implementations after seeing what they actually output
+    - Feature engineering to provide model w/better grid representations
+    - Few-shot prompts for two main buckets of ARC-AGI problems (grid-size changes vs doesn't change)
+
+
+Method
+    - GPT4o generate 8k Python solution programs
+    - Format problem as images and in various ascii representations
+    - Similar to approach in AlphaCode, which generates millions of completions attempting to solve a programming problem, then aggregates over them to determine final submission
+
+    - Provide image and also text representations showing which cells are occupied by different connected components of colors and showing diffs between input / output
+    - Let 4o reason before all steps
+    - 30k token prompt of step-by-step reasoning
+    - Sample solutions
+    - Select 3 submissions to make based on a majority vote over programs which get the examples correct
+
+
+More sampling
+    - Clean scaling law to scaling for accuracy

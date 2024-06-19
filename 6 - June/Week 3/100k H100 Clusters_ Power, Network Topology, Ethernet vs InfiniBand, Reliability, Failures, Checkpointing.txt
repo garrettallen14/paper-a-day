@@ -1,0 +1,97 @@
+100k H100 Clusters_ Power, Network Topology, Ethernet vs InfiniBand, Reliability, Failures, Checkpointing
+
+17 Jun 2024
+
+Intro
+    - Every model recently released is roughly GPT-4 level (~2e25 FLOP of training compute)
+    - OpenAI has more compute, but have directed it at smaller, overtrained, cheaper to inference models
+    - Many labs are racing to 100k GPUs
+        - Individual training clusters costing in excess of $4b of server capital expenditures alone
+        - Often heavily limited by lack of datacenter capacity and power as GPUs need to be co-located for high-speed chip to chip networking
+        - A 100k GPU cluster will require >150MW in datacenter capacity and guzzle 1.59 Terawatt hours in a single year
+    - 100k H100 GPU Cluster:
+        - Tariff (USD/kWh) USA Avg -> $0.083... $131.90 annual cost
+
+    - Achieving high utilization w/AI clusters is more difficult due to high failure rates of various components, especially networking
+    - Power challenges, reliability, checkpointing, network topology options, parallelism schemes, rack layouts, and total bill of materials will be discussed
+
+    - OAI trained GPT-4 in BF16 with ~2.15e25 FLOPs
+        - ~20k A100s for 90-100 days
+        - Cluster had 6.28 BF16 ExaFLOP/s peak throughput
+    
+    - On 100k H100 cluster, this number soars to 198/99 FP8/FP16 ExaFLOP/s
+        - This is a 31.5x increase in peak theoretical AI training FLOPs compared to the 20k A100 cluster
+
+    - Total Cluster ExaFLOPs
+        - Data Type: 100k H100 vs 20k A100
+            - INT8: 198 vs 12.6
+            - FP8: 198 vs 6.3
+            - BF16/FP16: 99 vs 6.3
+            - TF32: 50 vs 3
+
+    - On H100s, labs achieve FP8 Model FLOPs Utilization as high as 35% and FP16 MFU of 40% on trillion parameter training runs.
+        - Model Flop Utilization: a measure of the effective throughput and utilization of the peak potential FLOPs after taking into account overhead and various bottlenecks (power llimits, communication flakiness, recomputation, stragglers, inefficient kernels)
+    - An 100k H100 cluster would take 4 days to train in FP8
+    - On 100k H100 cluster training run for 100 days, can achieve an effective FP8 Model FLOP of ~6e26
+        - Poor reliability of hardware reduces MFU significantly
+
+
+Power Challenges
+    - The critical IT power required for 100k H100 cluster is ~150 MW
+    - GPU is 700W, but server requires CPUs, Network Interface Cards, PSUs, for ~ +575W per GPU
+    - AI Cluster requires a collection of storage servers, networking switches, CPU nodes, optical transceivers, for another ~10% in IT power
+    - Largest Govt supercomputer is ~30MW of critical IT power
+
+    - People want GPU clusters on a single campus
+        - Networked with optical transceivers, which come on a sliding scale of cost vs reach
+        - Longer range "single mode" DR and FR transceivers can reliably transmit signals ~500 meters to ~2km but can cost 2.5x as much as multi-mode ST and AOC transceivers which only support up to ~50 meters each
+        
+        - Campus level coherent 800G transceivers with over 2km of range also exist albeit at 10x higher pricing
+        
+    - Small clusters of H100s connect every GPU at 400G to every other GPU with only multi-node transceivers through jsut a layer or two of switches
+    - Optics can become exorbanantly expensive
+    - Network topology will differ broadly based on preferred vendor, current/future workloads, and capex
+    
+    - Each building will generally contain a pod/multiple pods of compute connected with cheaper copper cables or multi-mode transceivers
+    - They will use longer range transceivers to interconnect between "islands" of compute
+
+
+Parallelism Refresher
+    - 3 types of parallelism in trillion param training:
+        1. Data Parallelism
+            - Each GPU holds an entire copy of the model weights and each GPU (rank) receives a different subset of the data
+            - Lowest level of communication, as simple gradient summation between GPU
+        2. Tensor Parallelism
+            - Every layer has its work and model weights distributed across multiple GPUs across the hidden dimension
+            - Intermediate work is exchaged via all-reductions across devices multiple times across SA, FFW network, layer norms for each layer
+            - Requires high bandwidth and very low latency
+            - Every GPU in the domain works with every layer w/every other GPU as if it was all one giant GPU
+        3. Pipeline Parallelism
+            - Each GPU has only a subset of the layers and only does the computation for that layer and passes the output to the next GPU
+            - This technqiue reduces the amt of memory needed by the num of pipeline parallelism ranks
+            - Heavy communication volume requirements, but not as heavy as Tensor Parallelism
+        
+    - To maximize Model FLOP Utilization (MFU), companies generally combine all three forms of parallelism to form 3D Parallelism
+    - Apply Tensor Parallelism to GPUs within the H100 server, and use Pipeline Parallelism between nodes within the same Island
+    - Since Data Parallelism has the lowest communication volume and the networking between islands is slower, data parallelism is used between islands
+
+
+Network Design Considerations
+    - Networks are designed with parallelism schemes in mind
+    - Rely on making islands of compute that have full fat tree architectures alongside lesser bandwidth between these islands
+    - Most firms are choosing to "oversubscribe" the top layer of networking
+    - Meta's last generation architecture for GPU clusters up to 32k
+    - There are 8 total islands w/full fat bandwidth between them, then another layer of switching on top that has 7:1 oversubscription
+    - Networking between islands is 7x slower than networking within the island
+
+
+Reliability and Recovery
+    - Common problems:
+        - GPU HBM ECC error
+        - GPU Drivers stuck
+        - Optical transceivers failing
+        - NICs overheating
+    - To keep mean time for fault recovery low, training continuing, datacenters keep hot spare nodes / cold spare components on site
+    - Can take days before a broken node is brought back into a training run
+    
+    - Frequent checkpointing happens

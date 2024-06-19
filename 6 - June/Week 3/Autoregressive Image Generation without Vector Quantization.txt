@@ -1,0 +1,32 @@
+Autoregressive Image Generation without Vector Quantization
+
+17 Jun 2024
+
+Abstract
+    - Conventional wisdom holds that autoregressive models for image gen are accompanied by vector-quantized tokens
+    - We observe that while a discrete-valued space can facilitate representing a categorical distribution, it is not a necessity for autoregressive modeling
+    - We propose to model the per-token prob dist using a diffusion procedure
+    - Allows us to apply autoregressive models in a cts-valued space
+    - We define a Diffusion Loss function to model per-token prob.
+    - Eliminate need for discrete-valued tokenizers
+
+
+Implementation
+Diffusion Loss
+    - Noise schedule: 
+        - Cosine shape w/1000 steps at training time
+        - At inference 100 steps
+    - Use a small MLP for denoising
+Autoregressive and Masked Autoregressive Image Generation
+    - ViT implementation:
+        - 32 blocks, 1024 width, ~400M params
+
+
+Appendix
+Training
+    - AdamW optimizer for 400 epochs
+    - Weight decay 0.02
+    - Batch size 2048
+    - lr 8e-4
+    - Diffusion models: 100-epoch linear lr warmup followed by constant lr schedule
+    - Cross-entropy: cosine lr schedule

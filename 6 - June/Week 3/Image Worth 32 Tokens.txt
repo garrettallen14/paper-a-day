@@ -1,0 +1,36 @@
+An Image is Worth 32 Tokens for Reconstruction and Generation
+
+11 Jun 2024
+
+Abstract
+    - Tokenization reduces computational demands
+    - VQGAN typically utilize 2D latent grids w/fixed downsampling factors
+    - 2D tokenizations face challenges in managing the inherent redundancies present in images
+    - Transformer-based 1-D Tokenizer: Tokenizes images into 1D latent sequences
+        - Provides a more compact latent representation, yielding more efficient/effective representations than conventional techniques
+        - 3x256x256 can be reduced to just 32 discrete tokens
+        - Generates high-quality samples 74x faster
+
+
+Method
+TiTok from 2D to 1D Tokenization
+    - Latent representation Z2D is envisioned as a static 2D grid
+    - Inherently assumes a strict 1-1 mapping between the latent grids and the original image patches
+        - Limits model ability to fully exploit the redundancies present in images
+        - Constrains flexibility in latent size selection
+    - Image Reconstruction w/TiTok
+        - Leverage ViT to tokenize images into 1D latent tokens and subsequently reconstruct the original images from these 1D latents
+
+
+Experiment
+    - We train all models w images of resolution H=256 and W=256
+    - Patch size for tokenizer and detokenizer is f=16
+    - Codebook C has N=1024 entries
+
+
+Appendix
+Training and Testing Protocols
+    - Augmentation => cropping / flipping
+    - Short schedule
+        - Batch size of 256 over 500k training iterations
+    - AdamW optimizer with 1e-4 lr, 1e-4 weight decay
