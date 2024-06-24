@@ -1,0 +1,122 @@
+Why Warmup the Learning Rate?
+Underlying Mechanisms and Improvements
+
+13 Jun 2024
+
+Abstract
+    - Common to warmup lr, often by linear schedule between n_init=0 and n_target
+    - We show w/SGD and Adam that the benefit of warmup arises from allowing the netwok to tolerate larger n_target by forcing the network to more well-conditioned areas of the loss landscape
+    - The ability to handle larger n_target makes hyperparameter tuning more robust while improving the final performance
+    - We uncover different regimes of operation during the warmup period, depending on whether training starts off in a progressive sharpening or sharpness reduction phase, which in turn depends on the initialization / parameterization
+    - W/these insights, we show how n_init can be properly chosen by utilizing the loss catapult mechanism, which saves on num warmup steps, in some cases completely eliminating the need for warmup
+    - We suggest an initialization for the variance in Adam which provides benefits similar to warmup
+
+
+Introduction
+    - n := learning rate
+    - If n chosen too small, learning too small, or training stuck in unfavorable regions
+    - n too large, training diverges
+    - Common to pick a dynamic lr schedule
+    - Suggestions for warmup helpfulness:
+        - Limits magnitude of weight updates in deeper layers from random initialization
+        - Reduces variance for optimizers
+
+    - We demonstrate:
+        - Primary benefit of lr warmup is to allow the network to tolerate larger learning rates than it otherwise would have
+    - For SGD, the maximum allowable lr is determined by the sharpness (top eigenvalue of the Hessian of the loss)
+    - We find there are several qualitatively distinct regimes and mechanisms at play
+        - These depend on whether the network starts off in a sharpness reduction, or progressive sharpening phase... this depends on init and parameterization
+    - Performance of the network is largely determined by the target learning rate
+        - For a fixed target learning rate, increasing the warmup time provides only marginal benefit, which arises by keeping the network further away from the divergence (failure) boundary
+        - The ability of the network to withstand a larger target lr makes hyperparam tuning more robust
+    
+    - We then investigate Adam in detail, and show the underlying mechanisms of warmup are similar to the SGD case, but with sharpness replaced by a preconditioned sharpness
+        - Pre-conditioned sharpness sttarts off at high values, causing considerable instabilities at high learning rates
+        - Such instabilities, which may be retained in Adam's memory, can result in performance degradation and even training failures
+        - Warmup mitigates such instabilites by gradually pushing down the preconditioned sharpness, enhancing performance, and preventing training failures
+    - We propose a simple alternative initialization for Adam, which we refer to as GI-Adam, which provides benefits similar to warmup and consistently improves over standard Adam by inducing lower preconditioned sharpness at initialization
+    
+    - Our analysis shows how much of the time spent during the warmup period is wasted. We show that this wasted time can be saved by making useof the catapult mechanism to effectively estimate the initial sharpness scale by line search, providing a more principled choice of n_init
+    - Our experiments show that, depending on the target learning rate and initial sharpness, one can dramatically reduce the warmup time, and in some cases remove it altogether
+
+
+Notations and Preliminaries
+    - Sharpness: The maximum eigenvalue of the Hessian of the loss at training step t...
+    - SGD(-M): Given gradients gt at step t, Stochastic Gradient Descent with momentum updates the parameters theta_t using learning rate n_t and momentum m_t with coefficient B.
+    - Adam: Given gradients gt at step t, Adam updates the parameters theta_t with lr n_t and the first two moments of the gradient m_t and v_t w/their coeff B1,B2
+
+
+Overview of Training Instabilities and Self-Stabilization Mechanism
+    - The underlying mechanism of warmup is tied to training instabilities
+        - Instabilities := "Catapults"
+        - Arise when lr exceeds a critical threshold
+        - Two cases arise:
+            i. If lr higher than instab threshold, but lower than a max stable lr, then training stabilizes through a self-stab process and training continues
+            ii. If lr exeeds max stable lr too, training experiences severe instabilities
+                - For SGD, can result in training divergence characterized by loss to inf
+                - For Adam, training may cease, resulting in a training failure where loss fails to improve over its initial value
+    - The four steps of the self-stab mechanism:
+        1. Approaching instability: 
+            - Due to increasing lr and/or progressive sharpening, training approaches the instability threshold n=n_c
+            - In fig1, this occurs within the first 10 steps after increasing LR
+        2. Loss increases:
+            - Loss begins to rise when the instability threshold is exceeded (n > n_c)
+        3. Sharpness reduction:
+            - For small enough learning rates, the increasing loss causes an abrupt decrease in sharpness
+            - If sharpness fails to decrease over extended steps, it may result in training divergence
+        4. Return to stability
+            - The reduction in sharpness causes n_c = 2/(lambda^H) to increase, restoring stability and allowing for an eventual loss deccrease
+    - While the self-stabilization process for more complex optimizers, such as SGD w/momentum or Adam remains poorly understood, a qualitatively similar mechanism is observed in practice, as we will see in the later sections
+    - The critical learning rate n_c is influenced by a variety of factors, including the choice optimizer, mini-batch size, and model properties such as depth, width, parameterization, and initialization
+    - Appendix B for overview of instab thresholds
+
+
+Warmup Mechanisms of Gradient and Adaptive Methods
+    - Analyze underlying mechanism of warmup thru the lens of training instability
+    - Key finding: a dichotomy between cooperative vs. competitive dynamics based on how the natural evolution of the sharpness interplays w/the training instability
+Stochastic Gradient Descent
+    - LR Warmup is intrinsically tied to sharpness dynamics, as sharpness determines the instability threshold n_c
+    - As the learning rate is increased during warmup, training instabilities can be triggered.
+    - Assuming warmup rate is not too high, these instabilities induce temporary increases in the loss and a decrease in the sharpness to restore stability through self-stab mechanism
+    - This allows the model to adapt to the increased LR
+    - The primary goal of warmup is to gradually reduce sharpness, guiding training towards flatter regions that can accommodate training at higher LRs
+
+    - We find that training has a 'natural' preference for sharpness evolution through the training course
+        - Before exceeding the instability threshold, training naturally experiences either a progressive increase or decrease in sharpness, unrelated to warmup
+(C1) Natural Progressive Sharpening
+    - The combined effect of the network naturally increasing sharpness while the learning rate is also increased results in a "head-on collision" at which the network reaches the instability threshold n_c
+    - This causes the loss to increase, leading to a decrease in sharpness and facilitating a return to stability
+    - As training proceeds, both sharpness and LR continue to increase, again surpassing the instability threshold
+    - This results in a persistent catapult cycle for the remainder of the warmup period
+(C2) Natural Sharpness Reduction
+    - The network is naturally already reducing sharpness during early training
+    - If the learning rate is increased sufficiently fast, eventually the instability threshold will be reached ("read-end collision"), causing loss to increase
+    - For small enough LRs, the increased loss induces a dramatically more pronounced decrease in sharpness than would naturally occur, ultimately restoring stability
+    - To exceed the instability threshold again, the LR must significantly increase
+    - So, training experiences one or more separated catapults during the warmup phase
+        - This contrasts with the progressive sharpening case, where training enters a continuous catapult cycle after the first time
+    - Training may eventually reach a very flat region of the landscape during warmup, with gradients pointing towards increasing sharpness
+        - The dynamics of this region align w/the natural progressive sharpening scenario
+
+    - These two scenarios can be interpreted as cooperative or competitive dynamics between warmup and the natural evolution of sharpness
+    - When training inherently undergoes sharpness reduction, it cooperates with warmup in decreasing sharpness
+    - Uf the natural trajectory of training is towards increasing sharpness, it opposes the warmup's effort, leading to a persistent cycle of catapults
+(C3) Constant Sharpness
+    - Sharpness may also prefer to remain constant throughout the training process
+    - In such scenarios, sharpness decrease is predominantly driven by the increasing LR, without intrinsic dynamics of its own
+The Effect of Warmup Duration
+    - Given a fixed target learning rate n_target, increasing the warmup duration T_wrm delays the point at which training exceeds the instability threshold n_c, allowing the sharpness to evolve freely before reaching this point
+    - In the sharpness reduction case, sharpness can significantly decrease by the time this threshold is reached, lowering the need for warmup to decrease sharpness actively
+
+    - Consequently, increasing T_wrm results in catapults that are both delayed and smaller in magnitude
+    - As the catapults become less intense when increasing warmup duration, the model can train at higher learning rates without diverging (pushing the divergence boundary)
+
+    - For extended warmup durations, warmup may not actively reduce sharpness in these sharpness reduction cases, and instead "piggy-backs" on the inherent sharpness decrease
+
+    - In the progressive sharpening case, increasing T_wrm allows the sharpness to naturally increase
+    - As a result, training exceeds the instability threshold for the first time at a relatively lower learning rate compared to the constant lr case
+    - Although warmup has to now undertake more work in decreasing sharpness, it does so in a more gradual manner since increasing the warmup duration amounts to a lower warmup rate (n_target / T_wrm)
+    - As a result, the fluctuations observed on exceeding the instability threshold are much smaller in magnitude
+Small vs. Large Initializations
+    - We have outlined different warmup mechanisms without describing specific conditions that typically exhibit them
+    - Small initializations, such as those using maximal update parameterization, or approximately using normalizing layers, are characterized by a small initial network output

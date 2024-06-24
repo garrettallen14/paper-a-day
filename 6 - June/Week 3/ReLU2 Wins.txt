@@ -1,0 +1,33 @@
+ReLU^2 Wins: Discovering Efficient Activation Functions for Sparse LLMs
+
+6 Feb 2024
+
+Abstract
+    - Sparse computation offers a compelling soln for inference of LLMs in low-resource secenrios
+    - Dynamically skips the computation of inactive neurons
+    - We broaden the scope of sparse LLMs beyond zero activation values
+    - We introduce a general method that defines neuron activation thru neuron output magnitudes and tailored magnitude threshold
+
+    - Models employing ReLU^2 excel across all three eval aspects
+
+
+Is Non-ReLU LLM Sparsely Activated?
+    - Different LLMs use quite different activations
+        - LLaMA uses SiLU, Falcon uses GELU
+
+
+Key Factors for Sparse LLM Deployment
+    1. Sparsity
+        - Sparsity ratio forms the basis for efficiency improvement
+        - Num neurons (magnitude < threshold) / total num neurons
+    2. Predictivity
+        - Ability to predict the activation behaviors of neurons for a given input before the FFN computation
+        - If the inactive neurons can be identified before FFN, we can skip these (??? sounds dumb)
+
+
+Appendix
+    - 8xA100 for 7B pretrain
+    - 16xA100 for 13B
+    - 40xA100 for 70B ........
+    - 100B tokens for pretraining
+    - 3e-5 constant lr
