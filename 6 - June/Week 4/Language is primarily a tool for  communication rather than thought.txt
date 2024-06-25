@@ -1,0 +1,55 @@
+Language is primarily a tool for communication rather than thought
+
+19 Jun 2024
+
+Abstract
+    - Language is a defining characteristic of our species
+    - The functions it serves have been debated for centuries
+    - In modern humans, language is a tool for communication, contrary to a prominent view that we use language for thinking
+    - We introduce the brain network that supports linguistic ability in humans
+    - We then review evidence for a double dissociation between language and thought
+    - Language is optimized for communication
+    - We conclude that although the emergence of language has transformed human culture, language does not appear to be a prerequisite for complex thought
+    - Language is a powerful tool for the transmission of knowledge
+
+Introduction
+    - Language emerged between 100k-1m years ago
+    - Broad hypothesis of language function:
+        1. Language primarily serves a communicative function -- sharing knowledge, thoughts & feelings
+        2. Language mediates thinking and cognition
+            - Range from:
+                - Necessary in all forms of thought
+                - May be only critical for certain aspects
+                - Helps to scaffold certain kinds of learning during development
+    - Language may provide adaptive advantages
+    - An ability to transmit info would facilitate cooperative behaviors
+    - Improved reasoning capacity would enable sophisticated planning / decision making
+    - Hypotheses about the evolutionary origins of cognitive traits are notoriously challenging to evaluate
+    - We do not aspire to make strong claims about the evolutionary origins of language
+    - We make an argument about the function of language in modern humans and discuss optimization pressures that have shaped language
+
+    - Some variations of both the language-for-thought and language-for-communication proposals make testable predictions about human cognitive and neural architecture and the properties of human languages
+
+    - Do any forms of thought require language ?
+
+    - If some forms of thought require language, then linguistic mechanisms should be obligatorily engaged for at least those types of thinking and reasning, and those types of thoguht should not be possible without language
+    - If language is a tool for communication, then language should show hallmakrs of efficient information transfer
+
+
+Many flavours of the language-for-thought hypothesis
+    - We emphasize the diversity of perspectives on this issue and complexity
+    - Proposals vary along four dimensions
+        1. Scope of effects of language on thought:
+            - All thought requires linguistic representations
+            - Only certain kinds of thought require language
+        2. Degree of importance:
+            - Necessary for thinking
+            - Augment or facilitate thinking (faster, more accurate performance)
+        3. Nature of linguistic representations:
+            - Some features are common to all natural languages
+        4. Timing of the effects of language on thought:
+            - Linguistic representations are necessary or helpful for the development of thinking abilities
+
+
+The language network in the human brain
+    - 
