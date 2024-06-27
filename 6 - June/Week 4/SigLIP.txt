@@ -1,0 +1,24 @@
+Sigmoid Loss for Language Image Pre-Training
+
+27 Sep 2023
+
+Abstract
+    - Simple pairwise Sigmoid loss for Language-Image Pre-training (SigLIP)
+    - Unlike standard contrastive learning w/softmax norm, the sigmoid loss operates solely on image-text pairs and does not require a global view of the pairwise similarities for normalization
+    - The sigmoid loss simultaneously allows further scaling of batch size and performing better at smaller batch sizes
+
+
+Introduction
+    - Contrastive pretraining w/ weak supervision from image-text pairs is go-to method for generic computer vision backbones
+    - High-level idea is to simultaneously learn an aligned representation space for images and tets using paired data
+    - CLIP and ALIGN established the viability of this approach at scale and many large image-text datasets became available privately and publicly
+    - The std recipe to pre-train such models leverages the image-text contrastive objective
+    - It aligns the image and text embeddings for matching positive image-text pairs while making sure that unrelated negative image-text pairs are dissimilar in the embedding space
+    
+    - We propose sigmoid loss, not requiring any operation across the full batch and hence greatly simplifies the distributed loss implementation and boosts efficiency
+    - It conceptually decouples the batch size from the definition of the task
+
+
+Method
+Softmax loss for language image pre-training
+    - With softmax loss, image model and text model are trained to minimize a combined softmax objective

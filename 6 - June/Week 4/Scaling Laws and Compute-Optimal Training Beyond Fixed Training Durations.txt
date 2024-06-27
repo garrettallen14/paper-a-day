@@ -1,0 +1,92 @@
+Scaling Laws and Compute-Optimal Training Beyond Fixed Training Durations
+
+29 May 2024
+
+Abstract
+    - Scale is a main ingredient in obtaining strong machine learning models
+    - Understanding a model's scaling properties is key to effectively designing both training setup and future generations of architectures
+    - We argue that scale and training research is needlessly complex due to the reliance on the cosine schedule
+    - We investigate the training behavior of a direct alternative -- constant learning rate and cooldowns -- and find that it scales predictably and reliably similar to cosine
+
+    - We show that stochastic weight averaging yields improved performance along the training trajectory, without additional training costs, across different scales
+    - We demonstrate that scaling experiments can be performed with significantly reduced compute and GPU hours by utilizing fewer but reusable training runs
+
+
+Introduction
+    - Is cosine lr schedule necessary?
+    - We demonstrate how a simple alternative of performing a cooldown after a constant lr matches performance of cosine
+
+    - We investigate stochastic weight averaging and a schedule-free optimizer, which give strong (not optimal) performance at any point during training and can act as a replacement for the lr decay
+
+    - These findings suggest that research on training recipes and scaling laws has been needlessly complex due to the need to retrain models from scratch
+    - We demonstrate this empirically by performing a small-scale experiment of scaling laws which only uses a fraction of the compute and GPU hours that were previously needed
+    - Following, we discuss that this makes scaling research more accessible and enables more frequent computation of laws for data mixtures or novel architectures
+
+
+Background
+Revisiting the optimality of cosine schedule
+    - We start by revisiting the use of the cosine schedule in training LLM
+    - LR and schedule are crucial choices for training
+    - Slow annealing of the lr is essential to find good minima
+    - The most commonly used cosine strat presents a trade-off by which LR reaches its max early after the warm-up stage and then gradually decreases, typically to 10% the max LR
+Experimental visualization
+    - Our first goal is to understand the importance of the length of the schedule for performance of the model
+    - We implement the common decoder-only transformer identical to LLaMa
+    - We use AdamW optimizer w/weight-decay
+Pitfalls of cosine
+    - The key parameter for the cosine schedule is length of training: At specific step counts, the best perplexity is always achieved by the cosine schedule that matches the length
+    - In order to achieve the best model for a specific token count, the training duration must be known in advance and match the cosine length
+    - Cosine is suboptimal during training & underestimates the model's performance
+    - Strongly complicates continuation of training
+
+
+A different route: Constant LR w/Cooldown
+    - Why does the cosine schedule with a single cycle work well for LLM training?
+        - It provides a good trade-off between high lr and cooling down model sufficiently, expanded proportionally to the training steps
+Alternative: Constant + Cooldown
+    - Different schedule: here the lr is kept constant for majority of training and only decreases in a short final phase, the cooldown
+    - The cooldown phase typically has the LR go to zero linearly, mirroring the warmup phase, which gives rise to an overall trapezoidal shape
+        - mu(n) = 
+            - n/Nwarmup * muMax if n < Nwarmup
+            - muMax if Nwarmup < n < N - Ndecay
+            - f(n,N,Ndecay) * muMax if n > N - Ndecay
+Conceptual advantages
+    - Specifiying num training steps in advance is not required
+Experimental comparison
+    - We train a 210M param model on 8B SlimPajama dataset
+Different cooldown schedules
+    - We investigate various functions describing the cooldown shape
+Takeaway 1: Constant LR + cooldown schedule offers significant convenience by not requiring num training steps to be specified in advance
+Takeaway 2: We introduce a cooldown form (1-sqrt) that consistently outperforms the linear decay
+How long to cooldown?
+    - Must determine optimal num of decay steps
+    - Our study reveals the benefits of extended cooldown periods plateau at around 20%
+    - Longer cooldown => Lower loss
+    - Long training run => small num of cooldown steps can match cosine for long training
+    - The smooth drop in loss also occurs when moving linearly in weight space between checkpoints and after the cooldown
+        - In the cooldown phase, the model directly moves within a connected basin in the loss landscape
+Takeaway 3: Constant LR w/short cooldown (<20% of total training) achieves same final loss as a well-tuned cosine schedule
+What happens during the cooldown?
+    - First-order directional derivative diminishes with each step, whereas the curvature of the loss function increases; they attribute this to proximity to a local optimum
+    - We expand upon these results and aim to understand the optimization landscape around the trajectory of the cooldown
+    - We evaluate the loss along the straight line trajectory when moving between a checkpoint before and after cooldown
+    - We find that the smooth drop in loss also occurs for this interpolation
+    - Upon decaying the learning rate, the model immediately descends into a connected minimum of the loss
+Takeaway 4: The cooldown phase is a smooth transition to a basin in the loss landscape
+
+
+Do we even need to cooldown?
+    - A constant LR with a short cooldown phase can replace the cosine decay
+    - We explore weight averaging and schedule-free optimizer
+Stochastic Weight Averaging (SWA)
+    - Motivation: While slow annealing of LR can be essential to find good minima, there is theoretical equivalence between stochastic weight averaging (SWA) and cooldown schedules in training vision models
+    - Averaging intuitively and naturally reduces noise and thereby improves generalization
+    - We aim to answer the same question in LLM training: Can weight averaging replace the cooldown phase?
+    - Method: We opt for a form of SWA that splits the training in fixed windows and averages within a window, which allows to keep the average 
+Takeaway 5: SWA improves performance along the training trajectory and provides better models during training. It does not match the cooldown, but reduces the gap without the need for a separate decay phase
+Schedule-Free Optimizer (SFO)
+    - Cooldown schedule outperforms SFO even when tuning momentum parameters
+
+
+Implications for Scaling Law Research
+Takeaway 6: Scaling experiments can be done with significantly reduced compute and GPU hours by utilizing fewer but reusable training runs with constant learning rate and ad-hoc cooldowns
