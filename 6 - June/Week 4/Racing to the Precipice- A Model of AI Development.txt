@@ -1,0 +1,28 @@
+Racing to the Precipice- A Model of AI Development
+
+Oct 2013
+
+Abstract
+    - This paper presents a simple model of an AI arms race, where several development teams race to build the first AI
+    - Each team is incentivised to finish first -- skimping on safety precautions if need be
+    - We present the Nash equilibrium of this process, where each team takes the correct amount of safety precautions in the arms race
+    - Having extra development teams & enmity between teams can increase the danger of an AI-disaster, especially if risk takiong is more important than skill in developing the AI
+    - Information also increases the risks: the more teams know about each others' capabilities, the more the danger increases
+
+
+Introduction
+    - Simplified model for analysing tech races
+    - Model was designed initially for races to construct AIs
+    - Present a model of an 'arms race' between AI dev teams, and analyse what factors increase and decrease the probability of such an AI-disaster
+    - Several factors contribute to increasing the danger:
+        - If building AI depends more on risk-taking than on skill
+        - Reducing the enmity between AI dev teams helps
+        - Reducing the num of teams helps
+    - Extra information can exacerbate the danger
+    - Danger is minimized when each team is ignorant of the AI-building capabilities of every team -- including their own capabilities
+
+
+The Model
+    - There are n different teams, competing to build the first AI
+    - Each team has a certain level of AI-building capability c, and can choose to take a certain level of safety precautions s, varying between s = 1 (total safety) and s=0 (complete lack of precautions)
+    - 

@@ -1,0 +1,50 @@
+Propositions Concerning Digital Minds and Society
+
+Abstract
+    - What does a future society look like where humans share the world with digital minds
+
+
+Consciousness and Metaphysics
+    - Substrate-Independence thesis:
+        - Mental states can supervene on any of a broad class of physical substrates
+    - If true, sufficiently high-fidelity brain emulations would be conscious
+        - Some AIs with architectures quite different from biological brains could also be conscious
+    - Quantity of conscious experience is a matter of degree:
+        - Num of individuals / copies
+        - Repetitions
+        - Duration (wall-clock time * speed)
+        - Robustness of implementation
+    - The quality of conscious experience can also vary along dimensions:
+        - Scope
+        - Hedonic valence
+        - Intensity of desires, moods, emotions
+    - Performing two runs of same program results in 2x the conscious experience as one run
+    - Subjective time is proportional to speed of computation (you can speed up the speed of the mind but same conscious experience)
+    - Literal interpretations of existing theories of consciousness suggest that exceedingly simple physical / software systems could be conscious at least to some degree
+    - Significant degrees of consciousness require significant computation and complexity
+    - Human brain emulations can be conscious and constitute survival for an emulated human
+    - "Teleportation" from one computer to another (or from different segments of the same computer) can satisfy prudential interests in survival and, if consensual, need not be morally objectionable
+
+
+Respecting AI Interests
+    - Avoid outcomes analogous to factory farming
+    - AI could have the capability to bring conscious / otherwise morally significant entities into beign within its own mind and potentially abuse them. Thoughts must be monitored
+    - Multiple related AI instanceds may have shared collective rights / responsibilities
+    - If an AI is capable of informed consent, then it should not be used to perform work w/ its informed consent
+    - We should prefer to create minds whose aggregate preferences are not strongly in conflict with the existing population of other minds that come to exist
+
+
+Security and Stability
+    - Default outcomes from unregulated evolutionary dynamics may not be good
+        - Values of existing govts and electorates will be overridden by wahtever is most reproductively fir in the very short run
+    - Adv AI dramatically accelerates
+        - Means of global destruction would become widely available
+    - Institutions capable of regulating dangerous AI innovations may need to be put in place early in the AI transition
+    - Human security requires the establishment of ultra-stable peace and socioeconomic protections
+    - Important social values and norms may well be fragile in the face of amoral forces such as AI-shaped cultural/memetic dynamics and political propaganda
+    - Some potential outcomes:
+        - When we can mass produce many minds to support any cause, we must modify one-person-one-vote democracy
+        - A universal social safety net would require regulations on reproduction in the short run rather than very long run
+        - Given that normal parental instincts / sympathies may not be present, AI reproduction must be regulated to prevent the creation of minds that would not have adequately good lives
+    - Cyberattacks
+    - AI Minds may claim outer space
