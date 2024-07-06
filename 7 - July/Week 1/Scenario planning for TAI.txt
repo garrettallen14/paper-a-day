@@ -1,0 +1,82 @@
+Scenario planning for AI x-risk
+
+10 Feb 2024
+
+The Problem with Forecasting
+    - Experts and forecasters fail to reliably predict AI developments
+    - Aggregate answers to any particular question should not be seen as a reliable guide to objective truth
+    
+    - In light of limitations of forecasting, AI governance researchers and strategists should explore an alternative and complementary approach: scenario planning
+    - This is a core feature of the AI Clarity program's approach at Convergence Analysis
+    - Scenario planning is a group of methods for evaluating strategies in domains defined by uncertainty
+
+
+Strategic Parameters & Methods
+    - Timelines to TAI, takeoff trajectories, difficulty of technical alignment, etc.
+
+
+Generating Scenarios
+    - Hua and Belfield: "Effective Enforceability of EU Competition Law Under AI Development Scenarios"
+        - Technical variables:
+            - Distribution of importance among the input driving AI capabilities development
+            - Speed of development
+            - Capability
+        - Non technical variables:
+            - Number of actors
+            - Nature and relationship
+        - Analyzing parameters together has better effects
+    - Kilian et al: “Examining the Differential Risk from High-level Artificial Intelligence and the Question of Control”
+        - Variable parameters studied:
+            - Capability & Generality
+            - Diffusion
+            - Technological transition (rate)
+            - Paradigm (architecture)
+            - Accelerants 
+            - Timeline
+            - Geopolitical Race Dynamics
+            - Primary risk class (highest impact risks)
+            - Technical safety risk
+            - International Governance
+            - Corporate Govenernance
+            - Actors (region)
+        - Survey experts on their forecasts of each dimension, then use GMA to identify four scenarios that best capture clusters of those forecasts
+            - "Balancing act"
+            - "Accelerating change"
+            - "Shadow intelligent networks"
+            - "Emergence"
+    - Clarke et al: Modeling Transformative AI Risks
+        - 26 parameters than influence the probability of an existential catastrophe
+        - Each is itself modeled with a set of sub-parameters
+
+
+Threat Models
+    - Descriptions of the proximal pathways to existential catastrophes
+    - Hendrycks:
+        - Examples:
+            - "Malicious use"
+            - "AI race"
+            - "Org risks"
+            - "Rogue AIs"
+        - Categorized as
+            - Intentional
+            - Environmental / structural
+            - Accidental
+            - Internal
+
+
+Theories of Victory
+    - Hobbhahn:
+        - Alignment is easier than expected
+        - Combo of many technical and gov strats works
+        - Accident and regulation
+        - Alignment by chance
+        - US-China driven global cooperation
+        - Apollo Project for AI
+            - A clear lead eliminates an arms race dynamic, and the leading nation is able to sufficiently invest in technical safety, or coordinate with other nations to end TAI development
+    - Rauker and Aird
+        - Multilateral intl monitoring and enforcement regime emerges and prevents unsafe AI dev / deployment
+        - The US uses geopolitical influence to prevent unsafe AI dev / deployment
+        - Leading corporate labs come to prioritize safety more, coordinate among themselves, and implement and advocate for various risk-reducing actions
+        - A single lab develops "minimal aligned AGI" and uses it to end the acute risk period
+        - Humanity pursues a diverse range of risk-reduction methods, ensures key institutions and norms are adaptable and competent and 'muddles through'
+        

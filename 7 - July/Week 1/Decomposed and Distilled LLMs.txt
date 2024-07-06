@@ -1,0 +1,122 @@
+D2LLM: Decomposed and Distilled Large Language Models for Semantic Search
+
+25 Jun 2024
+
+Abstract
+    - Key challenge in semantic search is to create models that are both accurate and efficient in pinpointing relevant sentences for queries
+    - BERT-style bi-encoders excel in efficiency w/pre-computed embeddings, they miss subtle nuances in search tasks
+    - GPT-style LLMs with cross-encoder designs capture these nuances but are computationally intensive, hindering real-time applications
+    - We present D2LLMs, that combines the best of both worlds
+    - We decompose a cross-encoder into an efficient bi-encoder integrated with Pooling by Multihead Attention and Interaction Emulation Module, achieving nuanced understanding and pre-computability
+    - Knowledge from the LLM is distilled into this model using contrastive, rank, and feature imitation techniques
+    - Our experiments show that D2LLM surpasses five leading baselines in terms of all metrics across three tasks, particularly improving NLI task performance by at least 6.45%
+
+
+Introduction
+    - Semantic search has become integral part of NLP
+        - Sifting through extensive texts to find passages that match a user's query based on underlying semantic links
+    - Transcends non-semantic techniques, by resolving lexical mismatches and enabling more precise text matching
+    - Current BERT-style bi-encoders / dual encoders independently convert queries and passages into vectors and judge their relevance through measures such as cosine similarity
+        - Efficient
+        - Accuracy cost
+    - Within the rigidity of the bi-encoder's similarity space, subtle but critical nuances may be lost, such as when differentiating:
+        - Symmetric search tasks: "What are the symptoms of the flu?"
+        - Asymmetric search tasks: matching that same query to a comprehensive answer detailing symptoms
+    - Bi-encoders' constrained interaction mode limits their comprehension of the distinct informational roles that queries / passages play
+    - Bi-encoders are bound to a laborious and multi-stage training process, starting w/pre-training on massive datasets of weakly-supervised text pairs and ending with finetuning on diverse / extensive labeled datasets
+        - Data intensive and limited by the variety of data available
+    - The small size of bi-encoders mean they excel within their training domain, but fall short when generalizing
+
+    - GPT LLMs w/ cross-encoder designs overcome these limitations by jointly processing queries and passages, thereby forming a single interactive input
+    - This method enables a granular understanding of textual relationships, as it involves concatenating the query and passage, with directive prompts, guiding the model through symmetric and asymmetric search tasks
+    - Updated LLMs arrive pre-loaded with a broad spectrum of world knowledge, eliminating the need for domain-specific pretraining and facilitating rapid adaptation
+
+    - Accuracy of LLMs / cross-encoders => toll on efficiency
+    - Precludes the caching of passage vectors and necessitates fresh inference for each new query-passage pairing
+    
+    - Decomposed and Distilled LLMs: D2LLMs
+        - Decompose an LLM-based cross-encoder into a bi-encoder coupled with an Interaction Emulation Module (IEM)
+        - The bi-encoder, equipped with Pooling by Multihead Attention (PMA) of token embeddings resulting from a pretrained LLM, efficiently generates separate embeddings for queries and passages
+        - Allows passage vectors to be pre-stored while ensuring the model's adaptability
+        
+        - IEM goes further, intricately mapping the relationships between queries and passages
+            - Dedicated branches for handling symmetric and asymmetric search tasks
+        - We then distill the high-level knowledge from the original LLMbased cross-encoder (the teacher) into our decomposed model (the student) through a series of teacher-guided methodologies, including contrastic imitation, rank imitation, and feature imitation
+        - Contributions:
+            1. Introduce D2LLM, a new semantic search solution that combines bi-enc w/accuract of LLM-based cross-encoders
+                - Break down complex cross-encoder into a more manageable student model comprising a bi-encoder, a PMA and an IEM
+            2. We transfer the teacher's linguistic expertise to the student through a comprehensive knowledge distillation strategy, encompassing contrastive imitation, rank imitation, and feature imitation techniques
+            3. Empirical results reveal that D2LLM outperforms 5 leading models in three benchmark tasks, with a notable 14.39% improvement over LLaRA.
+
+
+D2LLM
+    - The architecture of D2LLM:
+        - Teacher model operates as an LLM-based cross-encoder
+            - Handles joint query-passage inputs to leverage the LLM's robust semantic comprehension for more accurate outcomes
+        - Student model features a bi-encoder for pre-computing passage vectors to ensure operational efficiency, complemented by an Interaction Emulation Module that considers the complex query-passage interplay
+    - Through an elaborate knowledge distillation procedure, we aim to cultivate a student model that emulates the teacher's accuracy while retaining efficiency
+    - We detail the process of decomposing the teacher model to assemble the student model and elucidate the knowledge distillation methodology
+Decomposition
+    - LLM Playing the role of the teacher
+Teacher Model T
+    - Teacher model aims to accurately determine whether a query Xi and passage Xj are compatible matches
+    - We utilize a cross-encoder architecture for this purpose
+    - To tap into the LLM's zero-shot learning capabilities, we use prompt engineering to guide the LLM in analyzing the query-passage pairs
+    - We desing prompts Psym and Pasym
+    - The chosen prompt P is then concatenated with the query-passage pair (Xi,Xj), prompting the LLM to generate a "yes" or "no" response
+
+    - Through this, the LLM generates an embedding for the response
+        - The embedding functions as a classification token that labels the query-passage pair as related or not.
+    - We extract the output layer of the LLM, compute the logits, and apply a softmax function to calculate the probability of "yes"
+    - In practice, it is more convenient to compute the logits for all tokens within the LLM and subsequently extract the probabilities for "yes" and "no" by inputting the relevant logits into the soft-max function
+    - Beyond prompt engineering, the teacher model can also be finetuned for improved performance
+Student Model S
+    - The teacher model can be decomposed into three components when processing the input:
+        1. The query
+        2. The passage
+        3. The prompt
+            - Also integrates and examines the interactions between the query and passage, as well as their collectie interplay with the prompt, to ultimately determine their match
+    - Mirroring the teacher, the student model retains the same structure for handling
+        1. The query
+        2. The passage
+        3. Assimilates the prompt informatino and query-passage-prompt interactions via the Pooling by Multihead Attention (PMA) and the Interaction Emulation Module (IEM)
+    - PMA:
+        - Synthesizes information from tokens within the query Xi and passage Xj, producing a distinct embedding vector for each
+        - For a query of length L, represented as Xi = [xi(1),...,xi(L)] tokens
+            - Yi = [yi1,...,yiL] hidden states from LLM's last layer
+        - PMA aggregates token information as:
+            - yi_agg = PMAq(Yi) = LN(h + FFN(h)),
+            - h = LN(MHA(q,Yi,Yi) + q)
+        - Where PMA's query q is a learnable vector that functions as an anchor, extracting information from the L tokens based on their similarity to the query q for semantic search
+        - This attention-based pooling offers greater flexibility than traditional mean/min/max pooling by allowing dynaic weight adjustments, as opposed to fixed weights for all instances of Xi, Xj
+    - IEM:
+        - After the PMA generates individual vectors for the query and passage, the IEM implicitly encodes the prompt and captures the query-passage interaction
+        - We concatenate the query and passage embeddings and input them into an MLP designed with two branches to handle the respective promtp nuances:
+            - y_i_j_S = f2(f1([y_agg_i, y_agg_j]))
+            - f1 and f2 are both MLPs
+            - f2sym and f2asym are tailored to the two branches
+            - The MLP operates as a flexible similarity metric, enhancing the description of the query-passage relationship beyond the commonly used cosine similarity in bi-encoders
+            - To maintain efficiency, lightweight MLPs are utilized
+Distillation
+    - Knowledge distillation aims to impart the teacher model's capabilities to the student model
+    - We focus on three specific training objectives:
+        - Contrastive
+        - Rank
+        - Feature imitation
+Contrastive Imitation
+    - Given a query Xi, we curate a set of positive examples D+ (relevant passages) and negative samples D- (irrelevant passages)
+    - Negative sample set includes in-batch negatives and hard negatives, the latter sourced from the top-k results using BM25 and bi-encoder evaluations
+        - D = D-I union D-H
+    - Note: a few hard negatives may potentially be latent positives, but our Contrastive Imitation can address this circumstance robustly
+Rank Imitation
+    - Contrastive Imitation Loss effectively handles true positives and easy negatives
+    - Need to address gradations among samples
+    - Rank Imitation distiguishes between positive and hard negative samples, as well as discerning easy from hard negatives, thus enabling the student to replicate the teacher's subtle ranking nuances
+    - To synchronize the student and teacher's ranking of positive and hard negative samples, we aim to maximize the Pearson correlation between their logits
+
+    - Differentiating between hard / easy negatives is critical because hard negatives have some connection to the query, unlike easy negatives
+    - We introduce an additional RI loss for these two groups of samples
+Feature Imitation
+    - CI and RI aim to align student output with that of the teacher, emphasizing output distillation
+    - Working in tandem, feature distillation can also provide substantial benefits by leveraging the rich information encompassed in the teacher LLM
+    - Directly aligning the embeddings of the classification token between the teacher and student models presents challenges due to the distinct arch of the third component

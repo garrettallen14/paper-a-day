@@ -1,0 +1,118 @@
+Diffusion Forcing: Next-token Prediction Meets Full-Sequence Diffusion
+
+2 Jul 2024
+
+Abstract
+    - Diffusion model is trained to denoise a set of tokens with independent per-token noise levels
+    - We apply Diffusion Forcing to sequence generative modeling by training a causal next-token prediction model to generate one or several future tokens without fully diffusing past tokens
+    - Strength of next-token prediction:
+        - Variable-length generation
+    - Strength of full-sequence diffusion models:
+        - Ability to guide sampling to desirable trajectories
+    - Method offers a range of additional capabilities:
+        1. Rolling-out sequences of continuous tokens, such as video, with lengths past the training horizon, where baselines diverge
+        2. New sampling and guiding schemes that uniquely profit from Diffusion Forcing's variable-horizon and causal architecture, and which lead to marked performance gains in decision-making and planning tasks
+    - Our method is proven to optimize a variational lower bound on the likelihoods of all subsequences of tokens drawn from the true joint dist.
+
+
+Introduction
+    - Current next-token prediction models are trained via teacher forcing:
+        - Model predicts the immediate next token based on a ground truth history of previous tokens
+        - Two limitations
+            1. No mechanism by which one can guide the sampling of a sequence to minimize a certain objective
+            2. Current next-token models easily become unstable on continuous data
+            - Ex. auto-regressively generating video past the training horizon, slight errors in frame-to-frame predictions accumulate and the model diverges
+    - Full-sequence diffusion seemingly offers a solution:
+        - Commonly used in video generation and long-horizon planning, one directly models the joint distribution of a fixed number of tokens by diffusing their concatenation, where the noise level is identical across all tokens
+        - They offer diffusion guidance to guide sampling to a desirable sequence, invaluable in decision-making (planning) applications
+        - Further excel at generating continuous signals such as video
+    - Diffusion Forcing: training / sampling paradigm where each token is associated with a random, independent noise level, and where tokens can be denoised according to arbitrary, independent, per-token schedules through a shared next-or-next-few-token prediction model
+    - Approach is motivated by the observation that noising tokens is a form of partial masking -- zero noise means a token is unmasked, and complete noise fully masks out a token
+    - Thus, DF forces the model to learn to "unmask" any collection of variable noised tokens
+    - Simultaneously, by parameterizing predictions as a composition of next-token prediction models, our system can flexibly generate varying length sequences as well as compositionally generalize to new trajectories
+    - We implement DF for sequence generation as Causal Diffusion Forcing (CDF)
+        - Future tokens depend on past ones via a causal architecture
+        - We train the model to denoise all tokens of a sequence at once, with an independent noise level per token
+        - During sampling, CDF gradually denoises a sequence of Gaussian noise frames into clean samples
+
+    - Summary of contributions:
+        1. Diffusion Forcing: prob. sequence model w/flexibility of next-token prediction while being able to perform long-horizon guidance like full-sequence dfiffusion models
+        2. Taking advantage of Diffusion Forcing's unique capabilities, we introduce a novel decision-making framework that allows us to use Diffusion Forcing as simultaneously a policy and as a planner
+        3. We formally prove that optimizing our proposed training objective maximizes a lower bound on the likelihood of the joint dist. of all sub-sequences observed at training time
+        4. We empirically evaluate CDF across diverse domains
+
+
+Diffusion Forcing
+Noising as Partial Masking
+    - Next-token prediction => we mask each token xt at time t, and making predictions from the past x[1:t-1]
+    - We refer to all these practices as masking along the time axis
+    - Full-sequence forward diffusion (gradually adding noise to the data) as a form of partial masking => masking along the noise axis
+    - After K steps of noising, xK[1:T] is approximately pure white noise w/i information about the original data
+    - We establish a unified view along both axes of masking
+    - We denote X[1:T] for sequence of tokens, where the subscript indicates the time axis
+    - As above, xktt denotes xt at noise level kt, under the forward diffusion process
+
+    - (xktt) 1<=t<=T denotes a sequence of noisy observations where each token has a different noise level kt, which can be seen as the degree of partial masking applied to each token through noising
+Diffusion Forcing: Different noise levels for different tokens
+    - Diffusion Forcing: A framework for training / sampling arbitrary sequence lengths of noisy tokens, where critically, the noise level kt of each token can vary by time step
+    - In this paper, we focues on time series data, and thus instantiate Diffusion Forcing with causal architectures
+
+    - We focus on a minimal implementaiton w/ a vanilla RNN
+    - RNN w/weights theta maintains latents zt capturing the influence of past tokens
+    - When an incoming noisy observation xktt is made, the hidden state is updated in a Markovian fashion
+    - An ov
+
+Algorithm 1: Diffusion Forcing Training
+loop
+    Sample trajectory of observations (x1, ..., xT)
+    for t = 1,...,T:
+        Sample independent noise level kt {0,1,...,K}
+        xkt t = ForwardDiffuse(xt, kt)
+        Define e_t = ...
+        Update z_t = ...
+        Set e^_t = ...
+    L = MSELoss([e^_1...e^_n], [e_1...e_n])
+    Backprop with L and update ForwardDiffuse params
+
+Algorithm 2: DF Sampling with Guidance
+input: Model params, scheduling matrix K, initial latent z_0, guidance cost c(.)
+Initialize: x1,...,xT ~ N(0, .)
+for row m = M-1, ..., 0:
+    for t = 1...T:
+        z_t_new ~ p_theta(zt | zt-q, xt, Km+1_t_)
+        k = km,t, w ~ N(0,I)
+        x_t_new = ...
+        Update z_t = z_t_new
+    x[1:H] = AddGuidance(.,.)
+return x1:T
+
+
+Diffusion Forcing Sampling and Resulting Capabilities
+    - Sampling is depicted in Alg 2 and is defined by prescribing a noise schedule on a 2D MxT grid K
+        - Columns correspond to time step t
+        - Rows indexed by m determine noise-level
+    - K_m_t represents the desired noise lvl of the time-step t token for row m
+    - To generate a whole sequence of length T, initialize the tokens x[1:T] to be white noise, corresponding to noise level k=K. We iterate down the grid row-by-row, denoising left-to-right across columns to the noise levels prescribed by K.
+    - By the last row m=0, the tokens are clean, ie their noise level is K0,t := 0
+Stabilizing Auto-Regressive Generation  
+    - For high-dim, continuous sequences such as video, auto-regressive architectures are known to diverge, especially when sampling past the training horizon
+    - In contrast, Diffusion Forcing can stably roll out long sequences even beyond the training sequence length by updating the latents using the previous latent associated with slightly "noisy tokens" for some small noise level 0 < k << k
+Keeping the Future Uncertain
+    - Beginning from a sequence of white noise tokens, we may denoise the first token fully and the second token partially, then finally denoising all tokens fully.
+    - Interpreting the noise level as uncertainty, this "zig-zag" sampling scheme intuitively encodes the immediate future as more certain than the far future
+Long-horizon Guidance
+    - In line 
+
+
+APPENDIX
+B2 Noising and stabilizing long-horizon generations
+    - At each time t, during the denoising, we maintain a latent z_ksmall_t-1 from the previous time step, with 0 < k_small << K corresponding to some small amount of noise
+    - We then do next token diffusion to diffuse the token x_t across noise levels 
+
+    - It is widely appreciated that adding noise to data ameliorates long term compounding error in behavior cloning applications, and even induces robustness to non-sequential adversarial attacks
+
+    - In autoregressive video generation, the noised x_ksmall_t is in distribution for training, because Diffusion Forcing trains from noisy past observation in its training objective
+    - Hence, this method can be interpreted as a special case of the DART algorithm for behavior cloning, where the imitator 
+D1 Architecture
+Video Diffusion
+    - 

@@ -1,0 +1,10 @@
+The Road Less Scheduled
+
+30 May 2024
+
+Abstract
+    - Schedule-Free: no additional hyper-parameters over standard optimizers with momentum
+    - Our method is a direct consequence of a new theory we develop that unifies scheduling and iterate averaging
+    - An open source implementation of our method is available
+
+
