@@ -1,0 +1,147 @@
+Modeling the Human Trajectory
+
+15 Jun 2020
+
+Introduction
+    - The larger the human economy has become, the faster it has grown
+    - Exponential growth: (100% increase per week) is not the same as the super-exponential growth of the human economy
+    - The bigger it has gotten, the faster it has doubled
+    - Global economy churned out $74 trillion in goods and services in 2019, twice as much as in 2000 (!!!)
+    - Any system whose rate of growth rises with its size is inherently unstable
+    - The human future might be one of Explosion:
+        - An economic upwelling that eclipses the industrial revolution as thoroughly as it eclipsed the agricultural revolution
+    - Or implosion:
+        - Environmental thresholds are crossed or the creative process that drives growth runs amok
+    - Our task as humans to lower the odds of bad paths and raise the odds of good ones
+
+
+The human past, coarsely quantified
+    - Humans are better then viruses at multiplying
+        - Ideas spread quickly
+    - When the global economy is larger, it has more capacity to innovate, and potentially to double even faster
+    - To the extent that superexponential growth is a good model for history, it comes with a strange corollary when projected forward: the human system will go infinite in finite time
+    - Doomsday Cyberneticist
+        - Graphed world population since the birth of Jesus, fit a line to the data, projected it, and foretold an Armageddon of infinite population in 2026
+    - Until 1800, most people lived barely above subsistence
+    - Before then the story of GWP growth was the story of population growth, which simplifies the task of estimating GWP through history
+    - We focus on 10k BCE to 2019, focusing on GWP over population
+    - GWP, 10k BCE - 2019 CE
+    - The series looks like a hockey stick. It starts at $1.6b in inflation-adjusted dollars of 1990:
+        - 4 million people * $400/person/year
+    
+    - Human history does not follow exponential growth
+    - The new "power law" line follows the data points remarkably well
+    - The most profound developments since language -- the agricultural and industrial revolutions -- shrink to gentle ripples on a long-term climb
+
+    - Q: Were those economic revolutions major breaks w/the past, or simply statistical noise along a longer-term pattern?
+    - Q: Where does the straight line take us if we follow it forward?
+        - We will tackle the second question first
+        - In 2037, GWP at $500 Trillion
+            - 10x the level of 2007
+        - If you extend to 2047, GWP will grow horrifically:
+            - $30.7 quadrillion at beginning of 2046
+            - $1.9 quintillion 11 mo later
+            - Striving to reach 2047, you will drive GWP to infinity -- Von Foerester's point back in 1960: explosion is an inevitable implication of the straight-line model of history
+        - However, the line fits so well. To grapple with this paradox, we take two main analytical approaches.
+
+
+Capturing the randomness of history
+    - Comet speed: the rate at which the comet's speed is changing is itself always changing
+    - One way to approximate the comet's path is to program a copmuter
+        - Classical calculus ignores randomness
+    - We cannot predict the exact paths, but we can estimate the distribution of possibilities
+    - For ex. the apple might more likely land in the first second than the 100th
+
+    - Developed a stochastic model for "power law" line in the third graph above, the one we followed toward infinity in 2047
+        - Preserves the possibility that growth can rise more than proportionally with the level of GWP, so doublings will tend to come faster and faster
+
+    - Instead of 20 rollouts, I run 10,000
+    - Too many to plot and perceive, I show percentiles
+    - The black curve in the middle shows the median simulated GWP at each moment -- the 50th percentile
+    - The actual GWP series, still in red, meanders between the 40th and 60th percentiles
+
+    - We quantify the probability and timing of escalation to infinity
+    - The probability that a path like those in the first two graphs just above will not eventually explode is a mere 1 in 100 million
+
+    - The median year of explosion is 1527
+    - Applying the same calculations starting from 2019
+        - GWP reached $73.6 trillion 2019
+    - The probability of no eventual explosion falls to 1 in 10^69
+    - The estimate of the median explosion year sharpens to 2047
+    - In the mathematical world of the best-fit model, explosion is all but inevitable by the end of the century
+
+    - Should the agricultural / industrial revolutions be viewed as ruptures in history, or as the routine, modest deviations around a longer-term trend?
+        - Was GWP surprisingly high in 1820?
+        - I fit a model just to the data before 1820, ie through 1700
+            - Then, we generate paths wiggling forward from 1700 to 1820
+
+        - The 1820 GWP value of $741 billion places it in the 95th percentile of these simulated paths:
+            - The model is "surprised", going by previous history, at how big GWP was in 1820
+
+        - Recent global growth has been slower and steadier than the model predicts from previous history
+        - In sum, my stochastic model succeeds in expressing some of the randomness of history, along with the long-term propensity for growth to accelerate
+
+    - It is not accurate or flexible enough to fully accommodate events as large and sudden as the industrial revolution
+
+
+Land, labor, capital, and more
+    - We have represented economic growth as univariate
+    - A single quantity, GWP, determines the rate of its own growth
+    - If with randomness folded in
+
+    - The single-variable "power law" model is mathematically a special case of standard models in economics
+
+    - Reinvestment alone had not generated the economic growth of the industrial era
+    - Yes, there were more workers and factories, but from any given amount of labor and capital, industrial countries extracted more value in 1950 than in 1870
+    - In the 1950s, economist injected technology to their models
+
+    - "That ideas can spread like flames from candle to candle seems to lie at the heart of the long-term speed-up of growth"
+    - And the tendency to speed up, expressed in a short equation, is also what generates the strange, superexponential implication that economic output could spiral to infinity in decades
+
+    - Yet that implication is not conventional within economics, unsurprisingly
+    - “It is one thing to say that a quantity will eventually exceed any bound,” Solow once quipped. “It is quite another to say that it will exceed any stated bound before Christmas.”
+
+    - How do we avoid explosive tendencies, but continue to model so accurately human economic trends ?
+
+    - The economy is conceived as a giant factory with four inputs: labor, capital, human capital, and technology
+    - Solow's model:
+        - Economy is conceived as a giant factory with four inputs:
+            - Labor
+            - Capital
+            - Human capital
+            - Technology
+        - The economy produces things which are immediately consumed
+        - Some of the output is not consumed, and instead invested in factors
+        - Final factor: depreciation
+
+        - Yet in general, when societies become richer, they do invest more in research and development and other kinds of innovation.
+        - Encourage others to make mathematical models of technology more endogenous
+
+    - Under broadly plausible (albeit rigid) assumptions about the rates at which that Production diamond transforms inputs into output and reinvestment, explosion is the norm.
+        - Can even happen when ideas are getting harder to find
+    
+    - The growth rate accelerates, the doubling time drops, and it drops ever more in succeeding generations
+        - It is technology that drives this acceleration
+        - If technology were stagnant, the system could not spiral upward so
+
+
+Interpreting infinity
+    - How are we to make sense of the fact that good models of the past predict an impossible future?
+        - History need not repeat itself
+        - Technology can only progress so far
+        - It is hard to know if any slowdown is permanent or merely a century-scale pause
+
+    - Infinities are a sign not that a model is flatly wrong, but it loses accuracy outside a certain realm of possible states of the world
+        - Beyond that realm, some factor once neglected no longer can be
+
+    - Singularities are always mathematical idealisations of natural phenomena: they are not present in reality but foreshadow an important transition or change of regime. In the present context, they must be interpreted as a kind of ‘critical point’ signaling a fundamental and abrupt change of regime similar to what occurs in phase transitions.
+    - What is the factor once neglected that no longer can be?
+        - Unrealism in calculus-based economic models
+    
+    - AI Minds may dwarf the human population
+    
+    - Neglected factor: the flow of energy from the sun and the earth's interior
+        - Depictions of the economic process like my whiteboard diagrams obscure the role of energy and natural resources in converting capital and labor into output
+        - I add natural resources to the model, rather as the classical economists included land
+
+    - Since sunlight is constantly replenishing the biosphere, natural resources appreciate rather than depreciate

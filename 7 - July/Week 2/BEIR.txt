@@ -1,0 +1,176 @@
+BEIR: A Heterogeneous Benchmark for Zero-shot Evaluation of Information Retrieval Models
+
+21 Oct 2021
+
+Abstract
+    - We introduce Benchmarking-IR (BEIR), a robust and heterogenous evaluation benchmark for IR
+    - Careful selection of 18 publicly available datasets from diverse text retrieval tasks and domains
+    - Evaluate 10 SOTA retrieval systems including lexical, sparse, dense, late-interaction and re-ranking architectures on BEIR benchmark
+        - BM25 is a robust baseline
+        - Re-ranking + late-interaction models on average achieve the best zero-shot performances, but at high computational costs
+
+
+Introduction
+    - Retrieval dominated by lexical approaches like TF-IDF and BM25
+        - Suffer from lexical gap: only able to retrieve documents containing keywords present within the query
+    - Lexical approaches treat queries and documents as bag-of-words by not taking word ordering into consideration
+    - NQ or MS MARCO focus on passage retrieval given a question or short keyword-based query
+    - In most prior work, approaches are afterward evaluated on the same dataset, where significant performance gains over BM25 are demonstrated
+
+    - Creating a large training corpus is often time-consuming and expensive and hence many retrieval systems are applied in a zero-shot setup
+
+    - We present BEIR to introduce measurement of zero-shot OOD capabilities
+        - 18 IR datasets for comparison and evaluation of model generalization
+        - Focus on diversity
+        - 9 different retrieval tasks:
+            - Fact checking
+            - Citation prediction
+            - Duplicate question retrieval
+            - Argument retrieval
+            - News retrieval
+            - QA
+            - Tweet retrieval
+            - Bio-medical IR
+            - Entity retrieval
+        - Evaluate ten diverse retrieval methods from five broad architectures:
+            - Lexical
+            - Sparse
+            - Dense
+            - Late-interaction
+            - Re-ranking
+
+
+Related Work/Background
+Neural Retrieval
+    - IR is process of searching and returning relevant documents for a query from a collection
+    - Document: Text of any length in the given collection
+    - Query: User input
+    - Retriever Based
+        - Lexical gap: absence of a word in a particular language
+    - Re-ranking-based
+        - Neural re-ranking approaches use the output of a first-stage retrieval system, often BM25, and re-ranks the documents to create a better comparison of the retrieved documents
+        - Significant improvement in performance was achieved with cross-attn mechanism of BERT
+
+
+BEIR Benchmark
+    - Provide a one-stop zero-shot eval benchmark for all diverse retrieval tasks
+    - To construct a eval benchmark, the selection methodology is crucial to collect tasks and datasets with desired properties
+    - Methodology is motivated by three factors:
+        i. Diverse tasks: IR is versatile and lengths of queries and indexed docs can differ
+        ii. Diverse domains
+        iii. Task difficulties: Difficulty of a task included has to be sufficient
+        iv. Diverse annotation strategies
+
+    - In total: 18 English zero-shot eval datasets from 9 heterogeneous retrieval tasks
+    - The majority of the evaluated approaches are trained on MS MARCO
+
+    - Dataset statistics:
+        - Majority contain binary relevancy judgements (relevant vs non-relevant)
+        - Few contain fine-grained relevancy judgements
+        - Some datasets contain few relevant documents for a query (< 2)
+        - Others can contain up to 500 relevant documents for a query
+
+        - Only 8 out of the 19 datasets have training data denoting the practical importance for zero-shot retrieval benchmarking (?)
+        - All datasets have short queries (except ArguAna)
+        - Figure 1 shows an overview of the tasks and datasets in the BEIR benchmark
+        
+        - IR is ubiquitous, there are lots of datasets available within each task and further even more tasks with retrieval
+        - It is not feasible to include all datasets within the benchmark for evaluation
+        - We try to cover a balanced mixture of a wide range of tasks / datasets and paid importance to not overweight a specific task like Question-Answering
+        - Future datasets can easily be integrated in BEIR, and existing models can be evaluated on any new dataset quickly
+Dataset and Diversity Analysis
+    - The datasets present in BEIR are selected from diverse domains
+    - We use Jaccard similarity score
+BEIR Software and Framework
+    - pip install beir for model evaluation
+    - Contains extensive wrappers to replicate experiments and evaluate models from well-known repositories (huggingface ?)
+    - Provides IR-based metrics (precision, recall, MAP, MRR, nCDG) for any top-k hits
+
+    - BEIR introduces a standard format (corpus, queries, qrels) and converts existing datasets in this easy universal data format, allowing to evaluate faster on an increasing # of datasets
+Evaluation Metric
+    - Depending on the nature / requirements of real-world applications, retrieval tasks can either be precision or recall focused
+    - To obtain comparable results across models and datasets, we argue it is important to leverage a single eval metric
+    - Decision supports metrics: precision and recall
+        - Rank unaware, unsuitable
+    - Binary rank-aware metrics such as MRR / MAP fail to evaluate tasks w/graded relevance judgements
+    - Normalized Cumulative Discount Gain (nDCG@k) provides a good balance suitable for both tasks involving binary and graded relevance judgements
+    - We compute nDCG@10 for all datasets
+
+
+Experimental Setup
+    - We use only the first 512 word pieces within all documents in our experiments across all models
+    - We group the models based on their architecture:
+        - Lexical, sparese, dense, late-interaction, re-ranking
+Lexical Retrieval:
+    - Matching exact words / tokens between the query and the document.
+    - Documents containing the same words as the query are likely to be relevant.
+    a. BM25 is commonly-used bow retrieval function based on token-matching between two high-dimensional sparse vectors with TF-IDF token weights
+    - We use Anserini w/the default Lucene parameters (k=0.9 and b=0.4)
+    - We index the title (if available) and passage as separate fields for documents
+    - Found Anserini BM25 to perform the best
+Sparse Retrieval:
+    - Still works in a high-dimensional space like lexical methods, but uses more sophisticated techniques to represent documents and queries.
+    - The resulting vectors are still sparse (most elements are zero) but capture more semantic information
+    a. DeepCT uses a bert-base-uncased model trained on MS MARCO to learn the term weight frequencies (tf)
+        - Generates a pseudo-document with keywords multiplied with the learnt term-frequencies
+        - Use the setup in combo w/BM25 Anserini
+    b. SPARTA: computes similarity scores between the non-contextualized query embeddings from BERT with the contextualized document embeddings
+        - These scores can be pre-computed for any document, which results in a 30k dim sparse vector
+        - We fine-tune a DistilBERT model on MS MARCO dataset and use sparse-vectors with 2k non-zero entries
+    c. DocT5query
+        - Popular document expansion technique using a T5 (base) model trained on MS MARCO to generate synthetic queries and append them to the original document for lexical search
+        - We replicate the setup and generate 40 queries for each document and use BM25 with default Anserini params
+Dense Retrieval:
+    - Represents queries and documents as dense vectors in a low-dimensional space
+    - Aim to capture semantic meaning beyond exact word matches
+    a. DPR a two-tower bi-encoder trained w/a single BM25 hard negative and in-batch negatives
+        - The open-sourced Multi model performs better over the single NQ model in our setting
+        - Multi-DPR model is a bert-base-uncased model trained on four QA datasets:
+            - NQ, TriviaQA, WebQuestions, CuratedTREC
+    b. ANCE is a bi-encoder constructing hard negatives from an Approx Nearest Neighbor (ANN) index of the corpus
+        - In parallel updates to select hard negative training instances during fine-tuning of the model
+        - We use the publicly available RoBERTa model trained on MS MARCO for 600k steps
+    c. TAS-B is a bi-encoder trained with Balanced Topic Aware Sampling using dual supervision from a cross-encoder and a ColBERT model
+        - The model was trained with a combination of both a pairwise Margin-MSE loss and an in-batch negative loss function
+    d. GenQ: an unsupervised domain-adaption approach 
+Late-Interaction:
+    - Combine aspects of dense retrieval with more fine-grained matching
+    - Encode queries and documents into multiple vector representations and perform matching at a more granular level
+Re-Ranking: Re-ranking models take an initial set of retrieved documents and refine the ranking. They often use more computationally expensive methods to achieve higher accuracy on a smaller set of documents
+    - BM25 + CE uses a cross-encoder to re-rank initial BM25 results
+    - CE process the query and document together, allowing for more complex interactions but at a higher cost
+Sparse vs Dense Retrieval
+    - Sparse: high-dim vectors, with mostly zero values
+        - Exact matching and interpretability
+    - Dense: lower-dim vectors with mostly non-zero values
+        - Better at semantic similarity
+Bi-encoders vs Cross-encoders
+    - Process query and document together
+    - More accurate but computationally expensive
+
+
+Efficiency: Retrieval Latency and Index Sizes
+    - Speed and index sizes are vital and are often stored entirely in memory
+    - For dense models, we use exact search, while for ColBERT we follow the original setup and use approximate nearest neighbor search
+
+
+APPENDIX
+C Training and In-domain Evaluation
+    - We use MS MARCO Passage Ranking dataset, which contains 8.8M Passages and an official training set of 532,761 query-passage pairs for fine-tuning for a majority of retrievers
+    - Bing search logs, with one text passage annotated as relevant
+    - Useful for:
+        - Wide variety of topics
+        - Highest number of training pairs
+    - We use the official MS MARCO development set for our in-domain evaluation
+        - 6980 queries with only 1 document judged relevant
+
+
+D Zero-shot Evaluation Tasks
+    - Each dataset contains a document corpus T and test queries for evaluation Q
+Bio-Med IR
+    - Input: scientific query
+    - Output: bio-med documents
+Open-domain QA
+    - Input: question
+    - Output: the passage with the answer
+...

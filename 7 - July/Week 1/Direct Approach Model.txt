@@ -1,0 +1,27 @@
+Direct Approach Interactive Model
+
+31 May 2023
+
+Summary
+    - Present an interactive model for forecasting TAI
+    - We present a simple extrapolative model of key inputs (algorithmic progress, investment, hardware efficiency)
+    - Under default parameter values calibrated on historical estimates, the simple extrapolative model assigns a high chance of development of TAI by 2050
+    - Current trends of algorithmic progress and copmute scaling, if continued, will likely lead to AI systems within several decades
+
+    - Four user-adjustable components:
+        - Investment in model training, hardware price performance, algorithmic progress, and compute requirements produced by the Direct Approach
+    - Together they produce a probability of TAI being trained during each year
+    - "Physical FLOP" -> of the total FLOP available during a given year
+    - When the amount of physical FLOP is adjusted to account for algorithmic progress, we get an estimate of the amount of "effective FLOP"
+        - The amount of physical FLOP that would be required to reach a given level of perfomance if algorithms did not improve
+        - This effective FLOP estimate is compared to the FLOP requirements produced by the Direct Approach 
+        - When # of effective FLOP exceeds those requirements, we consider TAI to have been achieved
+
+
+Investment
+    - Large-scale training runs has grown at between 26%-151% per year
+
+
+Conclusion
+    - We combine the estimate of physical FLOP with the previous estimate of the algorithmic progress multiplier to get the number of effective FLOP available by year
+    - 

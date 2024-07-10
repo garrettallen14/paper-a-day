@@ -1,0 +1,61 @@
+Transformative AI and Scenario Planning for AI X-risk
+
+22 Mar 2024
+
+Overview
+    - TAI is a useful key milestone to consider for AI Scenario Analysis
+    - It places the focus on the socio-technical impact of AI and is both widely used and well-defined within the existing AI literature
+    - We briefly explore the literature and provide a definition of TAI
+    - We examine TAI as a revolutionary, general purpose technology that could be achieved with "competent" AGI
+    - We highlight the use of Task Automation Benchmark as a common indicator of TAI
+    - We note that there are significant uncertainties on the time differences between when TAI is created, when it is deployed, and when it transforms society
+
+
+Introduction
+    - The treshold of TAI is a useful milestone:
+        - Wide but well-defined scope
+        - Focus on societal impacts
+        - Lack of dependence on any specific form of AI
+
+
+What is TAI?
+    - Gruetzemacher and Whittlestone:
+        - AI systems could have very large impacts on society w/o reaching human-level cognitive abilities
+    - Karnofsky:
+        - AI powerful enough to bring us into a new, qualitatively different future
+    - Direct Approach:
+        - AI if widely deployed would precipitate a change comparable to the industrial revolution
+    - Maas:
+        1. Form and architecture of advanced AI
+        2. Pathways towards advanced AI
+        3. General societal impacts of advanced AI
+        4. Critical capabilities
+    - We define:
+        - TAI causes significant, irreversible changes broad enough to impact all of society
+    - ASI and AGI generally refer to capabilities
+    - We can achieve TAI w/o high level AGI
+        - AI automates a large fraction of current tasks
+            - Mass unemployment and possible economic chaos
+        - Narrow AI revolutionizes energy production and distribution, resulting in an end to scarcity and poverty
+        - A totalitarian state uses AI to defeat rivals and maintain and extremely stable dystopian regime
+        - A malicious actor uses advanced AI to develop and distribute an incredibly virulent virus, killing nearly all humans
+
+
+Revolutions, Competency and the Automation Benchmark
+Revolutionary Technology
+    - A subset of the broader category of "general purpose technologies"
+        - Gen purpose: "Unusually pervasive use, tendency to spawn innovations, and large inherent potential for technical improvement"
+    - Rev tech: "Support an especially fundamental transformation in the nature of economic production"
+        - Domesticated crops -> Neolithic revolution
+        - Steam engine -> industrial revolution
+    - AI may be revolutionary through task revolution, and provide "near-complete" automation
+
+
+Competent AGI
+    - Levels:
+        - No AI, Emerging (>= unskilled human), Competent (>=50%), Expert(>=90%), Virtuoso(>=99%), Superhuman
+    - Rapid social change may occur once Competent AI is achieved, not just near total automation
+
+
+The date that TAI is developed is not the date TAI transforms society, but it may happen fast:
+    - 

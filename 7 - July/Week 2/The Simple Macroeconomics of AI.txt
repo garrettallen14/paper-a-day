@@ -1,0 +1,19 @@
+The Simple Macroeconomics of AI
+
+12 May 2024
+
+
+Conceptual Framework
+    1. Y = B(N)(summation(.))
+        - This is the GDP measurement based on:
+            - z task
+            - sigma elasticity of substitution between tasks
+                - <= 1 st tasks are gross complements
+            - B(N) depends on N to capture the possible system-wide effects of new tasks
+    2. Task production function:
+        y(z) = labor_augmenting_coefficient * labor_task_specific_productivity_schedule(z) * labor_allocated(z)capital_augmenting_coefficient * capital_task_specific_productivity_schedule(z) * capital_allocated(z)
+        - Capital and labor have different productivities in different tasks
+        - In the same task, perfect substitutes''''
+
+
+

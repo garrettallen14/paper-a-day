@@ -1,0 +1,108 @@
+Matryoshka Representation Learning
+
+8 Feb 2024
+
+Abstract
+    - Can we design a flexible representation that can adapt to multiple downstream tasks with varying computational resources?
+    - MRL encodes information at different granularities and allows a single embedding to adapt to the computational constraints of downstream tasks
+    - MRL minimally modifies existing representation learning pipelines and imposes no additional cost during inference and deployment
+    - MRL learns coarse-to-fine representations that are at least as accurate and rich as independently trained low-dim representations
+    - The flexibility within the learned Matryoshka Representations offer:
+        a. Up to 14x smaller embedding size for ImageNet-1K classification at same level of accuracy
+        b. Up to 14x real-world speed-ups for large-scale retrieval on ImageNet-1K and ImageNet-4K
+        c. Up to 2% accuracy improvements for long-tail few-shot classification
+    - All representations are still as robust as the original representations
+
+    - MRL extends seamlessly to web-scale datasets across various modalities (ViT, ResNet), ALIGN, BERT
+
+
+Introduction
+    - MRL learns representations of varying capacities within the same high-dimensional vector through explicit optimization of O(log(d)) lower-dim vectors in a nested fashion, hence the name Matryoshka
+    - MRL can be adapted to any existing representation pipeline and is easily extended to many standard tasks in computer vision and NLP
+        - MRL is adaptable to any representation learning setup
+        - Begets a Matryoshka Representation z by optimizing the original loss L(.) at O(log(d)) chosen representation sizes
+    - The first m-dims of the MR is an information-rich low-dim vector (no additional training cost) that is as accurate as an independently trained m-dim representation
+    - The information within the Matryoshka Representation increases with the dimensionality creating a coarse-to-fine grained representation, all without significant training or additional deployment overhead
+
+
+MRL
+    - For d in N, consider a set M in [d] of representation sizes
+    - For a datapoint x in the input domain X, our goal is to learn a d-dim representation vector z in R^d
+    - For every m in M, MRL enables each of the first m dimensions of the embedding vector z[1:m] in R^m to be independently capable of being a transferable and general purpose representation of the datapoint x
+    - We obtain z w/a DNN F(., thetaF): X -> R^d parameterized by learnable weights thetaF
+
+    - For ease of exposition, we present the formulation for fully supervised representation learning via multi-class classification
+    - Matryoshka Representation Learning modifies the typical setting to become a multi-scale representation learning problem on the same task
+    - We train ResNet50 on ImageNet-1K which embeds a 224x224 pixel image into a d=2048 representation vector and then passed through a linear classifier to make a prediction, y among L=1000 labels
+    - For MRL, we choose M = {8,16,...,1024,2048} as the nesting dimensions
+
+    - Dataset D: {(x1,y1),...,(xN,yN)} where xi in X is an input point and yi in [L] is the label of xi for all i in [N]
+    - MRL optimizes the multi-class classification loss for each of the nested dimension m in M using std empirical risk minimizatino using a separate linear classifier, parameterized by W^m in RLxm
+
+    - All losses are aggregated after scaling with their relative importance respectively
+
+    - This is a standard optimization problem that can be solved using sub-gradient descent methods
+    - Despite only optimizing for O(log(d)) nested dimensions, MRL results in accurate representations, that interpolate, for dimensions that fall between the chosen granularity of the representations
+    - A natural way to make this efficient is weight-typing across all linear classifiers:
+        - Define W(m) = W[1:m] for a set of common weights W in R^Lxd
+        - Reduce the memory cost due to the linear classifiers by almost half
+        - Crucial in cases of extremely large output spaces
+    
+    - Adaptation to Learning Frameworks
+        - MRL can be adapted seamlessly to most representation learning frameworks at web-scale with minimal modifications
+        - MRL's adaptation to masked language modelling reduces to MRL-E due to the weight-tying between the input embedding matrix and the linear classifier
+        - For contrastive learning, both in context of vision & vision + language, MRL is applied to both the embeddings that are being contrasted with each other.
+
+        - The presence of normalization on the representation needs to be handled independently for each of the nesting dimensions for best results
+
+
+Applications
+    - We discuss MRL for a diverse set of applications along with an extensive evaluation of the learned mutlifidelity representations
+    - We showcase the downstream applications of the learned Matryoshka Representations for flexible large-scale deployment through
+        a. Adaptive Classification
+        b. Adaptive Retrieval
+Representation Learning
+    - We adapt MRL to various representation learning setups
+        a. Supervised learning for vision
+        b. Contrastive learning for vision + language
+        c. Masked LM
+    - We do not search for best hyper-parameters for all MRL experiments, but use the same hyperparameters as the independently trained baselines
+    - ResNet50 outputs a 2048-dim representation
+    - ViT / BERT output 768-dim embeddings for each datapoint
+    - We use M = {8,16,32,64,128,256,512,1024,2048} and M = {12,24,48,96,192,384,768} as the explicitly optimized nested dimensions respectively
+    - We extensively compare the MRL and MRL-E models to independently trained low-dim (fixed feature) representations (FF), dimensionality reduction (SVD), ...
+
+    - We evaluate the quality and capacity of the learned representations through linear classification/probe (LP) and 1-nearest neighbor (1-NN) accuracy
+    - Experiments show that MRL models remove the dependence on |M| resource-intensive independently trained models for the coarse-to-fine representations while being as accurate
+    - We show that despite optimizing only for |M| dimensions, MRL models diffuse the information, in an interpolative fashion, across all the d dimensions providing the finest granularity required for adaptive deployment
+Classification
+    - MRL is as accurate as the independently trained FF models for every representation size
+Adaptive Classification
+    - The flexibility and coarse-to-fine granularity within Matryoshka Representation allows model cascades for Adaptive Classification
+    - Unlike standard model cascades, MRL does not require multiple expensive NN fwd passes
+    - To perform AC w/an MRL trained model, we learn thresholds on the maximum softmax probability
+    - We then use these thresholds to decide when to transition to higher dimensional representation (8->16->32) of the MRL model
+Retrieval
+    - Nearest neighbor search w/learned representations powers a plethora of retrieval and search applications
+    - In this section, we discuss the image retrieval performance of the pretrained ResNet50 models on two large-scale datasets ImageNet-1K and ImageNet-4K
+
+    - ImageNet-1K has a database size of ~1.3M and query set of 50K samples uniformly spanning 1000 classes
+    - We also introduce ImageNet-4K which has ~4.2M and query set of ~200K samples uniformly spanning 4202 classes
+    - ResNet50:
+        - Fwd pass: 4 GFLOPs
+        - Exact retrieval: 
+            - 2.6 GFLOPs per query for ImageNet-1K
+            - 8.6 GFLOPs per query for ImageNet-4K
+    - Retrieval cost grows linearly with the size of the database
+    - Memory and disk usage are also often bottlenecked by the large databases
+    - However, in most real-world applications, exact search O(dN) is replaced with ApproxNN search
+        - O(dlog(N))
+        - Minimal accuracy drop at cost of additional memory overhead
+    
+    - Goal of image retrieval: find images that belong to the same class as the query using representations obtained from a pretrained model
+    - We compare retrieval performance using mean Average Precision @ 10 (mAP@10) which comprehensively captures the setup of relevant image retrieval at scale
+    - We measure the cost per query using exact search in MFLOPs
+    - All embeddings are unit normalized and retrieved using the L2 distance metric
+    - We report an extensive set of metrics spanning mAP@k and P@k for k={10,25,50,100} and real-world wall-clock times for exact search and HNSW
+
+    

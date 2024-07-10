@@ -1,0 +1,97 @@
+GenAI: Too much spend, too little benefit?
+
+25 Jun 2024
+
+Abstract
+    - Tech are set to spend +$1T on AI capex in coming years
+    - Will this large spend ever pay off?
+    - The tech isn't designed to solve the complex problems that would justify the costs
+
+    - We explore whether the current chips shortage and looming power shortage will constrain AI growth
+    - We still see room for the AI theme to run: AI delivers, or bubbles take a long time to burst
+
+
+Title
+    - Acemoglu MIT estimates only a quarter of AI-exposed tasks will be cost-effective to automate within the next 10 years
+        -  AI will impact less than 5% of all tasks
+    - AI adoption may not create new tasks and products
+        - He forecasts AI will increase US productivity by only 0.5% and GDP growth by only 0.9% cumulatively over the next decade
+
+    - GS Covello argues we need a return on our ~$1tn cost of developing and running AI technology
+        - Skeptical that AI's costs will ever decline enough to make automating a large share of tasks affordable given the high starting point as well as the complexity of building GPU chips
+    - He is doubtful that AI will boost the valuation of companies that use the tech
+        - Efficiency gains would likely be competed away
+        - Path to boosting revenues is unclear
+
+    - GS Briggs is more optimistic
+        - Gen AI will ultimately automate 25% of all work tasks and raise US productivity by 9% and GDP growth by 6.1% cumulatively over the next decade
+        - Briggs acknowledges that automating many AI-exposed tasks isn't cost-effective today, but the large potential for cost savings should lead to more AI automation
+        - Briggs incorporates both the potential for labor reallocation and new task creation into his productivity estimates
+
+    - Rangan and Sheridan remain enthusiastic about AI's long-term transformative and returns potential
+    
+    - Chips will indeed constrain AI growth over the next few years
+        - Shortages in HBM technology and Chip-on-Wafer-on-Substrate packaging
+
+
+Interview with Daron Acemoglu
+    - Differences in forecasts come down to the timing of the technology
+    - AI technology will instead primarily increase the efficiency of existing production processes
+
+
+Joseph Briggs addresses the AI productivity and growth debate
+    - Baseline estimate implying as much as 15% cumulative upside to US labor productivity and GDP growth, following widespread adoption
+    - Scenarios w/superintelligence or robotics estimate even more upside
+    - Differences:
+        - Acemoglu: GenAI will automate only 4.6% of total work tasks
+        - 19.9% of all tasks are exposed to AI and assumes that only 23% of exposed will be cost effective to automate
+        - We assume 25%ß
+
+Covello:
+    The idea that technology typically starts out 
+    expensive before becoming cheaper is revisionist history. E-
+    commerce, as we just discussed, was cheaper from day one, 
+    not ten years down the road.
+
+    - Bruh... this can't be right
+
+    - Moore's law in chips only proved true because competitors to Intel, like AMD, forced Intel and others to reduce costs and innovate over time to remain competitive
+        - What is the point here (?!?!?!?)
+
+    - Nvidia has no competition !!
+
+    - Nvidia may not follow that pattern, and scale in dollars is different, but the market is too complacent about certainty of cost declines!
+        - Its not just cost declines brother!!!
+            - Algorithmic + Unhobbling !!!
+            - It was never just about the compute my friend !!!
+
+    - Replacement of the power grid (???)
+    - For example, we’ve 
+    found that AI can update historical data in our company models 
+    more quickly than doing so manually, but at six times the cost. 
+    - Wtf are you talking about brother .... I thought you made bank at GS. were they really spending like $30 an hour for data imputing and thought that was the best they could do xD
+
+    - In our experience, even 
+    basic summarization tasks often yield illegible and nonsensical 
+    results.
+    - Muh hallucination !!! durrrr
+
+    - I struggle to believe that the 
+    technology will ever achieve the cognitive reasoning required to 
+    substantially augment or replace human interactions.
+    - Yayyy <3 :)
+
+    - Humans 
+    add the most value to complex tasks by identifying and 
+    understanding outliers and nuance in a way that it is difficult to 
+    imagine a model trained on historical data would ever be able to 
+    do.  
+    - You don't need imagination to pave a road or lay bricks.
+
+    - But eighteen months after the introduction 
+    of generative AI to the world, not one truly transformative—let 
+    alone cost-effective—application has been found. 
+    - Retarded comment
+
+    -  I don't think the technology is, or will likely be, smart 
+    enough to make employees smarter

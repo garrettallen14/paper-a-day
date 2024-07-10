@@ -1,0 +1,83 @@
+Text and Code Embeddings by Contrastive Pre-training
+
+24 Jan 2022
+
+Abstract
+    - Text embeddings are useful in semantic search, text similarity
+    - Previous work typically trains models customized for different use cases
+        - Vary in dataset choice, training objective, model architecture
+    - We show that contrastive pre-training on unsupervised data at scale leads to high quality vector representations of text and code
+    - Same unsupervised text embeddings that achieve SOTA in linear-probe classification also display impressive semantic search capabilities and sometimes even perform competitively with fine-tuned models
+    - On linear-probe classification accuracy over 7 tasks, our best unsupervised model achieves an improvement of 4% to 1.8% over previous best unsupervised and supervised text embedding models respectively
+
+
+Introduction
+    - We train embedding models w/ contrastive learning objective with in-batch negatives on unlabeled data
+    - The input is encoded with a Transformer encoder
+    - We leverage naturally occurring paired data to construct training data with no explicit labels
+    - Text embedding models are trained on paired text data where we consider neighboring pieces of text on the Internet as positive pairs
+    - Code embedding models treat the top-level docstring in a function along with its implementation
+
+    - We train a series of unsupervised text embedding models (cpt-text) from 300M to 175B parameters
+    - Observe a consistent performance improvement with increasing model sizes
+    - On classification accuracy averaging across 7 linear-probe classification tasks, our largest unsupervised model achieves new SOTA results
+
+
+Approach
+    - Models are trained with a contrastive objective on paired data
+    - Paired samples (x,y) are positive example pairs, indicating that xi and yi are semantically similar or contextually relevant
+Model
+    - Given a training pair, (x,y) a transformer encoder E processes x and y independently
+    - The encoder maps the input to a dense vector representation or embedding
+    - We insert two special token delimiters, [SOS] and [EOS]
+    - The hidden state from [EOS] is considered the embedding of the input sequence
+
+    - E maps input, x and y to embeddings, vx and vy respectively
+    - The similarity between two inputs is quantified by the cosine similarity between their embeddings, vx and vy
+Training Objective
+    - The paired samples in the training set are contrasted against in-batch negatives
+    - Contrastive learning with in-batch negatives has been widely used for unsupervised representation learning in prior work
+
+    - For each example in a mini-batch of M examples, the other (M-1) in the batch are used as negative examples
+    - The usage of in-batch negatives enables re-use of computation both in the forward and backward pass making training highly efficient
+
+    - The logits for one batch is an MxM matrix, where each entry logit(xi, yi) is given:
+        logit(xi,yi) = sim(xi,yi) * exp(tau)
+        where tau is a trainable temp param
+    - Only entries on the diagonal of the matrix are considered positive examples
+    - The final training loss is the sum of cross-entropy losses on the row and the column direction, as described in the following pseudocode:
+        labels = np.arange(M)
+        l_r = ce_loss(logits, labels, axis=0)
+        l_c = ce_loss(logits, labels, axis=1)
+        loss = (l_r + l_c) / 2
+    - When finetuning our models, the supervised training data like NLI datasets contain explicit negative examples and these are used along with the in-batch negatives
+
+
+Results
+    - Our models are trained on naturally occurring paired data
+    - cpt-text models are trained on Internet data with neighboring pieces of text as positive pairs for the contrastive objective
+    - We evaluate our text embedding models on a broad range of tasks:
+        - Linear-probe classification
+        - Sentence similarity
+        - Semantic search
+Text Embedding
+    - The SentEval benchmark is widely adopted to assess the quality of sentence embeddings, consisting of a broad collection of tasks in the categories of linear-probe classification and sentence similarity
+    - Linear Probe Classification
+        - When evaluated on linear-probe classification, the embeddings are used as features to train a linear classifier to solve a variety of downstream tasks
+        - We fine-tune unsupervised cpt-text models on SNLI and MNLI datasets using entailment pairs as positive examples and contradiction pairs as negative examples
+        - On both, we achieve SOTA
+    - Zero-shot and k-NN Classification
+        - We experiment w/6B cpt-text model fine-tuned on NLI data for this study
+        - In the first zero-shot experiment, each input text is assigned with one of the two labels ('positive', 'negative') based on which label has its embedding closest to the input text embedding
+Text Search
+    - Previous work on training embedding methods for search typically requires fine-tuning on a particular text search dataset
+    - It is also common to have a multi-step setup where fine-tuned models rely on an expensive query and document cross-attention encoder in the final step
+    - In contrast, we push the limits of using a single embedding model for large-scale semantic search
+    - Large-Scale Search
+        - MSMARCO requires the model to search over 4M documents
+        - NQ and TriviaQA involve searching over 21M Wikipedia documents
+        - We use FAISS library to build vector indices for approximate k-NN search
+        - The same unsupervised model discussed previously achieves impressive performance on semantic search
+        
+        - cpt-text outperforms prior unsupervised approaches by a large margin and larger model sizes consistently lead to improved performance
+         
