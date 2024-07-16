@@ -1,0 +1,36 @@
+OVERVIEW OF THE TREC 2019 DEEP LEARNING TRACK
+
+Abstract
+    - Goal of studying ad hoc ranking in a large data regime
+    - First track with human-labeled training sets
+        - Two sets corresponding to two tasks
+    - Doc retrieval task:
+        - Corpus of 3.2 million documents
+        - 367 thousand training queries
+        - Reusable test set of 43 queries
+    - Passage retrieval task:
+        - Corpus of 8.8 million passages
+        - 503k training queries
+        - Reusable test set of 43 queries
+
+
+Task Description
+    - Doc retrieval & passage retrieval
+Document Retrieval Task
+    i. Full retrieval
+        - Rank documents based on relevance to the query
+        - Can be retrieved from full document collection provided
+        - Models end-to-end scenario
+    ii. Top-100 reranking
+        - Provided initial ranking of 100 documents
+        - Rerank candidates wrt their estimated relevance to the query
+        - Common scenario in real-world retrieval systems that employ a telescoping architecture
+        - The reranking subtask allows participants to focus on learning an effective relevance estimator, without the need for implementing an end-to-end retrieval system
+Passage Retrieval Task
+    i. Full retrieval
+    ii. Top-1000 reranking tasks
+
+Datasets
+    - Both tasks have large training sets based on human relevance assessments, derived from MS MARCO
+    - These are sparse with no negative labels and often only one positive label per query, analogous to some real-world training data such as click logs
+    - NDCG@10 makes use of our 4-level judgements and focuses on the first results that users will see

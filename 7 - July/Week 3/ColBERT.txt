@@ -1,0 +1,64 @@
+ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT
+
+4 Jun 2020
+
+Abstract
+    - ColBERT
+        - Independently Encodes the query and document using BERT
+        - Employ a cheap yet powerful interaction step that models their fine-grained similarity
+    - By delaying and yet retaining this fine-grained interaction, ColBERT can leverage the expressiveness, but allow to precompute representations offline
+
+
+ColBERT
+    - Balancing quality/cost of neural IR
+    - Delaying query-doc interaction can facilitate cheap neural re-ranking (pre-computation)
+    - Can support end-to-end neural retrieval (pruning via vector-similarity search)
+Architecture
+    - ColBERT
+        a. Query encoder fQ
+        b. Document encoder fD
+        c. Late-interaction mechanism
+    - Given query q and document d, fQ encodes q into a bag of fixed-size embeddings Eq while fD encodes q into another bag Ed
+        - Each embeddings in Eq and Ed is contextualized based on the other terms in q or d, respectively
+    - With Eq and Ed,ColBERT computes relevance score between q and d via late-interaction, which is a summation of maximum similarity (MaxSim) operators
+    - We find the maximum cosine similarity of each v in Eq with vectors in Ed
+Query and Document Encoders
+    - Query Encoder
+        - Prepend [Q] to the query, right after BERT's sequence-start token [CLS]
+        - Padding w/masked tokens => Query Augmentation
+            - Allows BERT to produce query-based embeddings at the positions corresponding to these masks
+            - Intended to serve as a soft, difftble mechanism for learning to expand queries with new terms or re-weigh existing terms based on their importance for matching the query (???)
+        - Given BERT's representation of each token, our encoder passes the contextualized output representations thru a linear layer with no activations
+        - Serves to control the dimension of ColBERT's embeddings, producing m-dimensional embeddings for the layer's output size m
+        - As we discuss later in more detail, we typically fix m to be much smaller than BERT's fixed hidden dimension
+    - Eq = Normalize( CNN( BERT( "[Q]q0q1...ql###")))
+    - Ed = Filter( Normalize( CNN( BERT("[D]d0d1...dn"))))
+Late Interaction
+    - Relevance score Sqd is estimated via late interaction between their bags of contextualized embeddings
+    - A sum of maximum similarity computations, ie cosine similarity or squared L2 distance
+    - ColBERT is difftble end-to-end
+    - We fine-tune the BERT encoders and train from scratch the addtional params
+        - Linear layer + [Q], [D] marker embeddings
+    - Interaction mechanism has no trainable params
+    - Given (q,d-,d+), ColBERT is used to produce a score for each document individually and is optimized via pairwise softmax ce_loss
+
+
+Experimental Evaluation
+Methodology
+    - MS MARCO
+        - We use MRR@10 to measure effectiveness
+    - TREC CAR
+        - We use the first four of five pre-defined folds for training, use the fifth for validation
+Implementation
+    - PyTorch
+    - Transformers
+    - Fine-tune all ColBERT models w/3e-6, batch size of 32
+    - Num embeddings per query = 32
+    - Emb dim = 128
+    - For MS MARCO
+        - Init BERT components of the ColBERT query and document encoders using official pretrained BERTbase model
+        - We train all models for 200k iterations
+    - For TREC CAR
+        - We use a different pretrained model to the official ones
+        - To avoid leaking test data into train, we pretrain a randomly-initialized BERT on the Wiki pages corresponding to a training subset of TREC CAR
+        - They release BERTlarge pretrained model 

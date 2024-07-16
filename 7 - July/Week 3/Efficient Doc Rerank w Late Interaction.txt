@@ -1,0 +1,114 @@
+Efficient Document Ranking with Learnable Late Interactions
+
+25 Jun 2024
+
+Abstract
+    - Cross-enc and dual-enc are two fundamental approaches for predicting query-doc relevance in information retrieval
+    - CE models use joint query-doc embeddings
+        - Higher quality
+    - DE maintain factorized query-doc embeddings
+        - Lower latency
+    - Late-interaction models have been proposed to realize more favorable latency-quality trade-offs, by using a DE structure followdde by a lightweight scorer based on query + document token embeddings
+    - These lightweight scorers are often hand-crafted and there is no understanding of their approximation power
+        - Such scorers require access to individual document token embeddings, which imposes an increased latency and storage burden over DE models
+    - We propose novel learnable late-interaction models (LITE) that resolve these issues
+    - We prove that LITE is a universal approximator of continuous scoring functions, even for relatively small embedding dimension
+    - LITE outperforms previous late-interaction models such as ColBERT on both in-domain and zero-shot re-ranking tasks
+    - Experiments on MS MARCO passage re-ranking show that LITE not only yields a model with better generalization, but also lowers latency and requires 0.25x storage vs ColBERT
+
+
+Introduction
+    - CE:
+        - Doc and query concatenated and sent to a Transformer encoder which outputs a relevance score
+    - DE:
+        - Apply two separate Transformer encoders to the query and document respectively, producing separate query and document embedding vectors
+        - Less accurate but lower latency bc doc embedding vectors can be pre-computed offline
+    - Late-interaction
+        - More favorable latency-quality trade-off compared to CE and DE models
+        - Late-int models also use a two-Transformer structure, but they store more info and employ additional nonlinear operations to calculate the final score
+        - Q query and D doc embeddings from the two Transformers
+        - DE Models simply pool Q and D into two vectors and take the dot product
+        - ColBERT calculates the token-wise similarity matrix Q^TD and copmutes the final score via a sum-max reduction
+
+    - sum-max lets ColBERT achieve better acc than DE
+    - Unclear whether this hand-crafted reduction can capture arbitrary complex query-document interactions
+    - ColBERT can have higher latency
+
+    - We introduce lightweight scoring with token einsum (LITE)
+        - Apply a lightweight and learnable non-linear transformation on top of Transformer encoders, which corresponds to processing the (token-wise) similarity matrix S = Q^TD via shallow MLP layers
+        - We focus on a seperable LITE scorer which applies two shared MLPs to the rows and columns of S and then projects the resulting matrix to a single scalar
+
+        - We rigorously establish the expressive power of LITE:
+            - LITE is a universal approximator of continuous scoring functions in l2 distance
+        - We also construct a scoring function that cannot be approximated by a DE model with restricted embedding dimension
+    - Empirically, we show that LITE can systematically improve upon existing late-interaction methods like ColBERT on both in-domain benchmarks such as MS MARCO and Natural Questions, and out-of-domain BEIR
+    - LITE can be much more accurate than ColBERT while having lower latency / storage cost
+
+
+Background
+Cross and Dual Encoders
+    - CE
+        - Apply a single Transformer to the concat of q and d
+        - Estimate relevance with learned weights w
+        - pool denotes a pooling strat by which we reduce a sequence of Transformer token embeddings into a single vector
+    - DE
+        - Apply separate Transformers T1, T2 to query and doc
+            - s(q,d) = pool(T1(q))^Tpool(T2(d))
+    - Another idea:
+        - Apply an MLP to the concatenation of T1 and T2 results
+        - However, this may not be better than dot-product DE because it is non-trivial to learn the dot-product operation with an MLP given the concatenated query-doc embedding as input
+Late-Interaction Scorers
+    - ColBERT
+    - Qian (2022) suggests considering the top-k aligned document tokens
+    - COIL only considers pairs of query / doc tokens with same token ID
+    - CITADEL implements a dynamic lexical routing
+    - Li et al use sparse token representations that can achieve competitive accuracy compared to ColBERT while being faster
+    - Mysore suggest co-citations as supervision for training
+Limitations of Existing Late-Interaction Scorers
+    - Late-interaction scorers such as ColBERT may be used in both retrieval and re-ranking phases
+    - We focus on re-ranking
+    - Limitations
+        1. Limited expressivity of hand-crafted relations
+            - Hand-crafted sum-max
+            - Unclear if these operations can capture arbitrary complex interactions among query and document tokens that define the true relevance
+        2. Latency and storage overhead
+            - Compared with CE, both DE and late-interaction models reduce latency by relying on pre-computed doc (token) embeddings
+            - For DE, this requires storing a single doc embedding vector and during online inference, we need to take one dot product
+            - For late-int models, L1 query emb vectors and L2 doc emb vectors => storage cost is L2 times larger than that of DE models
+            - We need to take L1L2 dot products to obtain similarity matrix
+
+
+LITE Scorers
+    - S := Q^TD denote the similarity matrix which consists of the dot-products of all query-doc Transformer token embedding pairs
+    - LITE models apply MLPs to reduce S to a scalar score
+    - Natural option: flatten S and then apply an MLP
+        - Flattened LITE
+    - Separable LITE
+        - First, apply row-wise updates to S, then col-wise updates, then a linear projection to get a scalar score
+    - First, calc S',S'' as follows:
+        - 
+
+
+Experimental Setup
+Datasets
+    - In-domain re-ranking on MS MARCO and NQ
+    - Zero-shot re-ranking on BEIR
+Training
+    - For training on MS MARCO, we use official training set of triplets (q,d+,d-)
+    - We use labels from a CE teacher model during training, as it has been observed that distillation can significantly improve performance
+    - For MS MARCO, we use scores from the T2 teacher released by Hofstatter
+    - For NQ dataset, we use a teacher model trained with 19 hard-negatives mined with BM25
+    - For loss functions, we try KL loss and margin MSE loss
+Evaluation
+    - MS MARCO: std Dev set
+    - TREC DL: 19 and 20 test sets
+    - NQ: Use the version in Karpukhin which consists of questions, positive passages w/correct answer, and collection of Wikipedia passages.
+    - Re-ranking metrics are reported on the Dev query set with 200 passages containing positivies, 100 BM25 hard-negatives and up to 100 random negatives
+    - We report MRR@10 and nDCG@10 scores
+
+    - For BEIR, we take the scorers trained on MS MARCO and evaluate zero-shot transfer performance
+Models
+    - For the Transformer encoder, we start from a pretrained BERT model w/ 6 layers and 768 token dimension
+    - For DE and late-interaction models, we let the query and encoder and document encoder share weights
+    - We use a query sequence length of 30 and a document sequence length of 200 with the Transformer
+    - If we use all 200 document tokens to calculate d

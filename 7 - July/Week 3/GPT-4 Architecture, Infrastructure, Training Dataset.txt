@@ -1,0 +1,25 @@
+GPT-4 Architecture, Infrastructure, Training Dataset, Costs, Vision, MoE
+
+10 Jul 2023
+
+Intro
+    - Problem statement: From GPT-3 to 4, OAI wanted to scale 100x, but cost is an issue
+    - Dense transformers will not scale further
+
+    - Training cost are irrelevant
+    - 10s to 100s millions are trivial to many firms
+
+    - The real AI brick wall is inference
+        - Goal: decouple training compute from inference compute
+    - Devices can never have enough memory bandwidth for LLMs to achieve certain levels of throughput
+
+    - In the datacenter, in the cloud, utilization rates are everything
+    - Nvidia is constantly updating low level software that pushes FLOPs utilization rates up with smarter movement of data around a chip, between chips, and memory
+
+    - LLM inference in most current use cases is to operate as a live assistant, meaning it must achieve throughput that is high enough that users can actually use it
+    - Humans read ~250 wpm
+        - Need at least 8.33 tokens per second
+        - Need more like 33.33 tps
+
+    - 1 trillion parameter dense model mathematically cannot achieve this throughput even on H100s
+    - 

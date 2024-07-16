@@ -1,0 +1,36 @@
+Improving Efficient Neural Ranking Models with Cross-Architecture Knowledge Distillation
+
+22 Jan 2021
+
+Abstract
+    - We propose a cross-architecture training procedure w/ a margin focused loss (Margin-MSE) that adapts knowledge distillation to the varying score output distributions of different BERT and non-BERT passage ranking architectures
+    - We apply the teachable information as additrional fine-grained labels to existing training triples of the MSMARCO-Passage collection
+
+
+Cross-Architecture Knowledge Distillation
+    - MSMARCO only contains binary annotations for fewer than two positive examples per query, and no explicit annotations for non-relevant passages
+    - One approach: utilize randomly selected passages retrieved from the top 1000 candidates of a traditional retrieval system as negative examples
+
+    - Neural retrieval models are commonly trained on triples of binary relevance assignments of one relevant and one non-relevant passage
+    - They are used in a setting that requires a much more nuanced view of relevance when they re-rank a thousand possibly relevant passages
+    - The BERTCAT architecture shows the strongest generalization capabilities, which other arch do not posses
+    
+    - We propose to utilize knowledge distillation loss by only optimizing the margin between the scores of the relevant and non-relevant sample passage per query
+    - Margin-MSE
+    - We train ranking models on batches containing triples of queries Q, relevant passages P+ and non-rel P-
+    - We utilize the output margin of the teacher model Mt as label to optimize the weights of the student model Ms
+        L(Q,P+,P-) = MSE(Ms(Q,P+) - Ms(Q,P-), Mt(Q,P+) - Mt(Q,P-))
+    
+    - MSE calculates the mean of the squared differences between S scores and T targets over the batch size
+
+    - Margin-MSE loss discaards the original binary relevance information
+
+
+Experiment Design
+    - We use MSMARCO-Passage collection with sparsely-judged MSMARCO-DEV query set of 49k queries as well as the densely-judged query set of 43 queries derived from TREC-DL'19
+    - For TREC graded relevance labels, we use a binarization point of 2 for MRR and MAP
+
+    - We evaluate our teachers on the full training set, so to not limit future work in terms of the number of triples available
+    - We cap the query length at 30 tokens and the passage length at 200 tokens
+
+    

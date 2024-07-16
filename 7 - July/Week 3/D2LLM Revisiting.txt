@@ -1,0 +1,26 @@
+Teacher Model:
+    - Query Xi and passage Xj are compatible
+    - We craft specific prompts that guide the LLM in analyzing the query-passage pairs
+        - Symmetric
+        - Asymmetric prompts
+    - Concatenate the prompt with the query-passage pair (Xi,Xj)
+        - Prompts LLM to generate a "yes" or "no" response
+    - LLM generates an embedding for the response
+        - Use this as a classification token that labels the query-passage pair as related or not, with the prompt P aiding in adapting to different search task types
+
+    - To determine the probability of "yes" or "no", we extract the corresponding rows from the weight matrix W^T in the last layer of the original LLM, we compute the logits zijT and finally apply a softmax function to calculate the probability of "yes" (ie. score) sijT that is,
+        zijT = W^T["yes","no"]yijT
+        sijT = softmax(zijT)
+    - In practice, it is more convenient to compute the logits for all tokens within the LLM and subsequently extract the probabilities sijT for "yes" and "no" by inputting the relevant logits into the softmax function
+
+Student Model:
+    - Teacher model decomposed into three components processing the input of:
+        1. the query
+        2. the passage
+        3. the prompt
+            - Integrates + examines the interactions between the query and the passage to determine their match
+    - Mirroring the teacher, the student model retains the same structure for handling
+        1. the query
+        2. the passage
+    - For 3. it assimilates the prompt information asnd query-passage-prompt interactions via PMA and IEM
+    - 
