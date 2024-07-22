@@ -1,0 +1,29 @@
+A Neural Scaling Law from
+the Dimension of the Data Manifold
+
+22 Apr 2020
+
+Abstract
+    - When data is plentiful, the loss achieved scales as a power law L wrt N^-alpha in the number of network parameters N
+    - This empirical scaling law holds for a wide variety of data modalities, and may persist over many orders of magnitude
+    - The scaling law can be explained if neural models are effectively just performing regression on a data maniforld of intrinsic dimension d
+    - This simple theory predicts that the scaling experiments alpha ~ 4/d for ce_loss and mse_losses
+    - We confirm the theory by independently measuring the intrinsic dimension and scaling exponents in a teacher/student framework, where we can study a vqriety of d and alpha by dialing the properties of random teacher networks
+    - We also test w/CNN classifiers on several datasets and with GPT-type LMs
+
+
+Main Ideas
+    - The key idea: neural models map the data to a manifold w/intrinsic dimension d, and then use added capacity to carve up this manifold into ever smaller sub-regions
+    - If the underlying data varies continuously on the manifold, then the size of these sub-regions determines the model's loss
+    - To shrink the size of the sub-regions by a factor of 2 requires increasing the parameter count by a factor of 2^d
+
+Predictions and Results
+    - Concrete predictions. L = loss, N = num parameters, alpha = power-law scaling exponent, d = intrinsice dimension of the data manifold
+    - Prediction: In the range of N where the loss scales as L(N) r 1/N^alpha, we predict alpha r 1/d where d is the intrinsic dimension of the data manifold for the dataset and task in question
+        - If the network is composed of ReLU and loss is MSE or CE or KL, we predict
+        - alpha >~ 4/d
+    - Prediction: The maximum network size N_max where we obtain power-law scaling grows with d via log(N_max) r d. Larger d should correspond with march larger N_max
+    - Prediction: The exponent alpha will not depend significantly on model architecture except through the intrinsic dimension d
+        - Since larger alpha and smaller d lead to improved performance with scale, the best architectures will tend to have the smallest d
+    - Prediction: Models w/ size N in [N_min, N_max] where the loss scales as a power-law in N all map the data to a manifld with the same intrinsic dimension d
+    - Prediction: If the data manifold M = X1x...xXn and the loss L(x) = sum(Li(xi)) then we should replace the dim of M with the max dim of Xi when estimating alpha

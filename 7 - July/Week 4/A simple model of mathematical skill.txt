@@ -1,0 +1,46 @@
+A simple model of math skill
+
+21 Jul 2024
+
+Intro
+    - Understanding a piece of math requires understanding (in this order):
+        - Definitions
+        - Theorems
+        - Proofs
+    - Producing math requires another associated skill of generating these three levels
+
+
+Understanding
+    - Definitions
+    - Theorems
+    - Proofs
+        - The point of proving theorems is so that others don't have to understand the proof to make use of the result. Theorem statements are like interfaces that abstract away from the details of the proof. You can go away remembering the compressed theorem, and, since it's definitely true, you don't have to worry about why.
+        - Verifying proofs:
+            1. Verifying each step is a valid manipulation of the symbols
+            2. "See" why it's true with your intuition
+            3. Understand why the first way is the same thing as the second way (!!!)
+
+
+Generating
+    - Proofs
+        - Being able to prove theorems is a huge part of the aim in training to become a mathematician
+        - Well-suited to prizes due to their objective validatability
+    - Theorems
+    - Definitions
+        - The model places generating definitions as the highest level of difficulty
+        - You must generate them from nothing
+
+        - You've noticed an interesting phenomenon in your domain, and you're pretty sure that you could make a theorem out of it, if only you could pinpoint the right objects
+        
+        - Sometimes, humanity figured out the right theorems without quite nailing the definitions. The main theorems of calculus emerged in the late 1600s (with significant conceptual precursor work for 2000 years)
+        - The modern epsilon-delta definition of limits wasn't fully formed until the 1800s
+        - Probability theory had intuitive results for a few hundred years before Kolmogorov found an axiomatizaiton that gained consensus, long after other quite advanced results like the law of large numbers
+
+        - Sometimes there are multiple reasonable definitions
+            - A standard topological space is defined as a set of open sets of "points" with various properties, but you can also get most of the results from a pointless version of topology that instead uses a lattice to represent the relationship between the open sets
+            - Computability theory was famously founded in part by showing that several formal models of computation were equivalent
+
+
+Paradigm formation starts at the end
+    - What makes something a new paradigm in math is that the old definitions are no longer useful for continued progress
+    - The open problems are generating the definitions: generating the definitions that lead to proofs of theorems that usefully capture truths about the domain
