@@ -1,0 +1,29 @@
+Stable Video Diffusion: Scaling Latent Video Diffusion Models to Large Datasets
+
+25 Nov 2023
+
+Abstract
+    - SVD -- a latent video diffusion model for high-res SOTA text/image-to-video generation
+    - Latent diffusion models trained for 2D image synthesis have been turned into generative video models by inserting temporal layers and finetuning them on small, high-quality video datasets
+    - We identify and evaluate three diff stages for successful training of video LDMs:
+        - Text-to-image pretrain, video pretraining, and high-quality video finetuning
+
+
+Background
+    - Most recent works on vid gen rely on diffusion models to jointly synthesize multiple consistent frames from text/image conditioning
+    - We follow this paradigm and train a latent video diffusion model on our video dataset
+Latent VDMs
+    - Train the main generative model in a latent space of reduced computational complexity
+    - Most make use of pretrained text-to-im model and insert temporal mixing layers into the pretrained arch
+    - We insert temporal conv and attn layers after every spatial conv and attention layer
+    - We finetune the full model
+
+
+Training VMs at scale
+Pretrained Base Model
+    - Our video model is based on Stable Diffusion 2.1
+        - It is crucial to adopt the noise schedule when training image diffusion models, shifting towards more noise for higher-resolution
+        - As first step, we finetune the fixed discrete noise schedule from our image model towards continuous noise
+        - After inserting temporal layers, we then train the model on LVD-F on 14 frames at resolution 256x384
+High res ItV model
+    - 

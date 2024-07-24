@@ -1,0 +1,113 @@
+The Llama 3 Herd of Models
+
+23 Jul 2024
+
+Abstract
+    - Largest model is a dense Transformer w/405B parameters w/context window of 128K tokens
+    - Publicly release Llama 3 and our Llama Guard 3 model for input and output safety
+    - The paper also presents the results of experiments in which we integrate image, video and speech capabilities via a compositional approach
+        - Competitive w/SOTA on image, video, speech tasks
+        - Image, video and speech are still under development, so not yet released
+
+
+Introduction
+    - Three key levers in development of high-quality foundation models: data, scale, managing complexity:
+        - Data:
+            - We improve quantity and quality of data for pre- and post-training
+            - Develop more careful pre-processing and curation pipelines for pre-training data and the development of more rigorous quality assurance and filtering approaches for post-training data
+            - We pre-train Llama 3 on a corpus of 15T multilingual tokens, compared to 1.8T tokens for Llama 2
+        - Scale:
+            - We train a model at far larger scale
+            - 405B pretrained w/ 3.8e25, 50x more than largets Llama 2
+                - 15.6T text tokens
+                - Outperforms smaller models trained with the same procedure
+                - Scaling laws suggest 405b is approximately compute-optimal size for training budget, we also train smaller models for longer than compute-optimal
+        - Managing Complexity:
+            - We seek to maximize our ability to scale the model development process
+            - Opt for dense Transformer model with minor adaptations rather than MoE to maximize training stability
+            - We adopt a relatively simple post-training procedure based on SFT, rejection sampling, and DPO. Opposed to more complex RL algorithms
+
+
+General Overview
+    - Development in two main stages:
+        1. Language model pre-training
+            - Pre-train 405B on 15.6T tokens w/context window of 8K tokens
+            - Followed by a continued pre-training stage that increases the supported context window to 128K tokens
+        2. Language model post-training
+            - Pre-trained model has a rich understanding of language but does not yet follow instructions or behave in the way we would expect an assistant to
+            - We align the model w/human feedback
+    - Perform experiments to add image, video, and speech w/a compositional approach
+        1. Multi-modal encoder pre-training
+            - Train our image encoder on large amounts of image-text pairs
+        2. Vision adapter training
+            - We train an adapter that integrates the pre-trained image encoder into the pre-trained language model. The adapter consists of a series of cross-attention layers that feed image-encoder representations into the language model
+            - The adapter is trained on image-text pairs
+            - This aligns the image representations with the language representations
+            - During adapter training, we also update the params of the image encoder, but do not update language-model parameters
+            - Train a video adapter on top of the image adapter on paired video-text data
+        3. Speech adapter training
+            - We integrate the speech encoder into the model via an adapter that converts speech encodings into token representations
+
+
+Pre-Training
+    - Involves:
+        1. Curation / filtering of large-scale training corpus
+        2. Development of a model architecture and corresponding scaling laws for determining model size
+        3. Development of techniques for efficient pre-training at large scale
+        4. Development of a pre-training recipe
+Pre-Training Data
+    - Knowledge cutoff end of 2023
+    - Apply several de-dupe methods and data cleaning mechanisms on each data source to obtain high-quality tokens
+    - Remove domains that contain large amounts of personally identifiable information (PII) and domains with known adult content
+Web Data Curation
+    - Much of that data we utilize is obtained from the web and we describe our cleaning process below
+    - PII and safety filtering
+    - Text extraction and cleaning
+        - Process the raw HTML for non-truncated web docs to extract high-quality diverse text
+        - We build a custom parser that extracts HTML content and optimizes for precision in boilerplate removal and content recall
+        - We evaluate our parser's quality in human evaluations, comparing it with third-party HTML parsers
+        - Carefully process HTML pages w/math + code content to preserve this structure
+        - Markdown is harmful to the performance of a model that is primarily trained on web date compared to plain text
+            - We remove all markdown markers
+    - De-duplication
+        - We apply several rounds of de-duplication at URL, document and line level:
+            - URL-level de-dupe
+                - Keep most recent version for pages corresponding to each URL
+            - Document-level
+                - Global MinHash de-dupe across entire dataset to remove near duplicate documents
+            - Line-level
+                - We perform aggressive line-level de-dupe similar to ccNet
+                - We remove lines that appeared more than 6 times in each bucket of 30M documents
+                - Although our manual qualitative analysis showed that line-level de-dupe removes not only leftover boilerplate (nav menus, cookie warnings) but also frequent high-quality text... our empirical evals showed strong improvements
+    - Heuristic filtering
+        - Use duplicated n-gram coverage ratio to remove lines that consist of repeated content such as logging or error messages
+        - Use "dirty word" counting to filter out adult websites that are not covered by domain block lists
+        - Use token-distribution Kullback-Leibler divergence to filter out documents containing excessive numbers of outlier tokens compared to the training corpus distribution
+    - Model-based quality filtering
+        - We experiment with applying various model-based quality classifiers to sub-select high-quality tokens
+            - Fasttext trained to recognize if a given text would be referenced by Wikipedia
+            - Roberta-based classifiers trained on Llama 2 predictions
+        - To train a quality classifier based on Llama 2, we create a training set of cleaned web documents, describe the quality requirements, and instruct Llama 2's chat model to determine if the documents meet these requirements
+        - We use DistilRoberta to generate quality scores for each document for efficiency reasons
+        - We experimentally evaluate the efficacy of various quality filtering configurations
+    - Code and reasoning data
+        - Build domain-specific pipelines to extract code / math pages
+        - Use DistilledRoberta classifiers
+    - Multilingual data
+        - Use fasttext language identification model to categorize docs into 176 languages
+        - Perform doc-level and line-level de-dupe within data for each language
+        - Apply language-specific heuristics and model-based filters to remove low-quality documents
+Determining the Data Mix
+    - We must carefully determine the proportion of different data sources in the pre-training data mix
+    - Our main tools in determining this data mix are knowledge classification and scaling law experiments
+    - Knowledge Classification
+        - We develop a classifier to categorize the types of information contained in our web data to more effectively determine a data mix
+        - We use this classifier to downsample data categories that are over-represented on the web
+    - Scaling laws for data mix
+        - To determine the best data mix, we perform scaling law experiments in which we train several small models on a data mix and use that to predict the performance of a large model on that mix
+        - We repeat this process multiple times for different data mixes to select a new data mix candidate
+        - We train a larger model on this candidate data mix and evaluate the performance of that model on several key benchmarks
+    - 50% tokens for general knowledge, 25% mathematical and reasoning, 17% code, 8% multilingual
+Annealing Data
+    - We find that annealing on small amounts of high-quality code / math data can booth performance
+    - We perform annealing with a datamix that upsamples high-quality data in select domains
