@@ -1,0 +1,55 @@
+INTRODUCTION TO DAPPS
+
+23 Apr 2024
+
+Introduction
+    - A decentralized application (dapp) is an application built on a decentralized network that combines a smart contract and a frontend user interface.
+    - On Ethereum, smart contracts are accessible and transparent--like open APIs--so your dapp can even include a smart contract that someone else has written
+
+Definition of a dapp
+    - A dapp has its backend code running on a decentralized peer-to-peer network
+    - This is in contrast to an app where backend code is running on centralized servers
+    - A dapp can have frontend code / user interfaces written in any language to make calls to the backend
+    - Frontend can be hosted on decentralized storage such as IPFS:
+        - Decentralized
+        - Deterministic: dapps perform same function irrespective of env executed
+        - Turing complete
+        - Isolated: dapps are executed in a virtual environment known as EVM, so if the smart contract has a bug, it won't hamper the normal functioning of the blockchain network
+    - On smart contracts:
+        - Smart contracts: a dapp's backend
+        - Code that lives on the Ethereum blockchain and runs exactly as programmed
+        - Once smart contracts are deployed on the network, you can't change them
+        - dapps can be decentralized because they are controlled by the logic written into the contract, not an individual or company
+        - This also means you need to design your contracts very carefully and test them thoroughly
+
+Benefits of dapp development:
+    - Zero downtime:
+        - Once the smart contract is deployed on the blockchain, the network as a whole will always be able to serve clients looking to interact with the contract
+        - Malicious actors, therefore, cannot DDoS attacks targeted towards individual dapps
+    - Privacy:
+        - No need to provide real-world identity to deploy / interact w/a dapp
+    - Resistance to censorship:
+        - No single entity on the network can block users from submitting transactions, deploying dapps, or reading data from the blockchain
+    - Complete data integrity
+        - Data stored on the blockchain is immutable and indisputable
+        - Malicious actors cannot forge transactions or other data that has already been made public
+    - Trustless computation/verifiable behavior
+        - Smart contracts can be analyzed and are guaranteed to execute in predictable ways
+        - No need to trust a central authority
+        - Not true in traditional models; for ex. when we use online banking systems, we must trust that financial institutions will not misuse our financial data, tamper with records or get hacked
+
+Drawbacks of dapp development:
+    - Maintenance: dapps are harder to maintain because code/data published are harder to modify
+        - Hard for devs to make updates to their dapps once deployed
+    - Performance overhead:
+        - Huge performance overhead, and scaling is hard
+        - To achieve the level of security, integrity, transparency, reliability, every node runs/stores every transaction
+        - Proof-of-consensus takes time as well
+    - Network congestion:
+        - When one dapp uses too much compute, the entire network gets backed up
+        - Currently, the network can only process ~10-15 transactions per second
+        - If transactions are being sent in faster than this, the pool of unconfirmed transactions can quickly balloon
+    - User experience:
+        - It may be harder to engineer user-friendly experiences because the avg end-user might find it too difficult to set up a tool stack necessary to interact w/blockchain in a truly secure fashion
+    - Centralization:
+        - Many dapps may end up looking like centralized services anyways

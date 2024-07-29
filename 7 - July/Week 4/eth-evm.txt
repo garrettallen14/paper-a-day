@@ -1,0 +1,42 @@
+ETHEREUM VIRTUAL MACHINE (EVM)
+
+21 Jun 2024
+
+Introduction
+    - The EVM is a decentralized virtual environment that executes code consistently and securely across all Ethereum nodes
+    - Nodes run EVM to execute smart contracts
+    - Use "gas" to measure the computational effort required for operations, ensuring efficient resource allocation and network security
+
+From Ledger to State Machine
+    - 'Distributed ledger' is often used to describe blockchains like BTC
+        - Enable a decentralized currency using fundamental tools of crypto
+    - Ledger maintains a record of activity which must adhere to a set of rules that govern what someone can/cannot do to modify the ledger
+    - Ex. BTC address cannot spend more BTC than it has previously received
+
+    - Because of Smart Contracts, Ethereum is moreso a distributed state machine.
+    - Ethereum's state is a large data structure which holds not only all accounts and balances, but a machine state, which can exchange from block to block according to a pre-defined set of rules, and which can execute arbitrary machine code
+
+Ethereum State Transition Function
+    - The EVM behaves as a mathematical function would: given an input, we produce a deterministic output
+    - We will more formally describe Ethereum as having a state transition function:
+        - Y(S,T) = S'
+State
+    - The state is an enormous data structure called a modified Merkle Patricia Trie
+    - Keeps all accounts linked by hashes and reducible to a single root hash stored on the blockchain
+Transactions
+    - Cryptographically signed instructions from accounts
+    - Two types of transactions:
+        - Those which result in message calls
+        - Those which result in contract creation
+    - Contract creation results in the creation of a new contract account containing compiled smart contract bytecode
+    - Whenever another account makes a message call to that contract, it executes its bytecode
+
+EVM Instructions
+    - EVM executes as a stack machine, with a depth of 1024 items
+    - Each item is a 256-bit word, which was chosen for the ease of use with 256-bit crypto
+    - During execution, the EVM maintains a transient memory which does not persist between transactions
+    - Contracts do contain a Merkle Patricia storage trie (as a word-addressable word array), associated with the account in question and part of the global state
+    - Compiled smart contract bytecode executes as a number of EVM opcodes, which perform standard stack operations like XOR, AND, ADD, SUB, etc.
+    - The EVM also implements a number of blockchain-specific stack operations, such as ADDRESS, BALANCE, BLOCKHASH, etc
+
+    

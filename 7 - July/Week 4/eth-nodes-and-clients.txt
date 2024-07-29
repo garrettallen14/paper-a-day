@@ -1,0 +1,19 @@
+NODES AND CLIENTS
+
+1 July 2024
+
+Intro
+    - Ethereum is a distributed network of computers (nodes) running software that can verify blocks and transaction data
+    - The software must be run on your computer to turn it into an Ethereum node
+    - There are two separate pieces of software (clients) required to form a node
+
+What are Nodes and Clients?
+    - A "node" is any instance of Ethereum client software that is connected to other computers also running Ethereum software, forming a network
+    - A client is an implementation of Ethereum that verifies data against the protocol rules and keeps the network secure
+    - Execution client listens to new transactions in the network, executes them in EVM, and holds the latest state and db of all current Ethereum data
+    - Consensus client enables the network to achieve agreement based on validated data from the execution client
+Client Diversity
+    - Exec and consensus clients exist in a variety of programming languages
+
+Node Types
+    - 

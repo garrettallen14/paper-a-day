@@ -1,0 +1,12 @@
+SGLang: Efficient Execution of Structured Language Model Programs
+
+6 Jun 2024
+
+Abstract
+    - We introduce SGLang, a system for efficient execution of complex LM programs
+    - SGLang consists of a frontend language and a runtime
+        - Simplifies programming with primitives for generation and parallelism control
+        - Accelerates execution with novel optimizations like RadixAttention for KV cache reuse and compressed finite state machines for faster structured output decoding
+    - Achieves up to 6.4x higher throughput compared to SOTA inference systems on various LLM / Multimodal Models
+
+

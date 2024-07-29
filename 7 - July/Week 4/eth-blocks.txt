@@ -1,0 +1,60 @@
+BLOCKS
+
+26 May 2024
+
+Introduction
+    - Blocks are batches of transactions with a hash of the previous block in the chain
+    - This links blocks together (in a chain) because hashes are cryptographically derived from the block data
+    - This prevents fraud, because one change in any block in history would invalidate all the following blocks as all subsequent hashes would change and everyone running the blockchain would notice
+
+Why Blocks?
+    - To maintain a synchronized state and agree on the precise history of transactions, we batch transactions into blocks
+    - This means dozens (or hundreds) of transactions are committed agreed on, and synchronized all at once
+
+    - We space out commits which gives all network participants enough time to come to consensus
+    - Even though transaction requests occur dozens of times per second, blocks are only created and committed on Ethereum once every twelve seconds
+
+How Blocks Work
+    - To preserve the transaction history, blocks are strictly ordered (parent references)
+    - Transactions within blocks are strictly ordered as well
+    - All participants on the network are in agreement on the exact number and history of blocks
+    - Once a block is put together by a randomly selected validator on the network, it is propagated to the rest of the network
+
+    - All nodes add this block to the end of their blockchain, and a new validator is selected to create the next block
+    - The exact block-assembly process and commitment/consensus process is currently specifid by Ethereum's "proof-of-stake" protocol
+
+Proof-of-Stake Protocol
+    - Proof-of-stake means the following:
+        - Validating nodes have to stake 32 ETH into a deposit contract as collateral against bad behavior.
+        - In every slot (spaced 12 sec apart) a validator is randomly selected to be the block proposer
+            - Transactions are bundled together, executed and determine a new "state"
+            - They wrap this information into block and pass it around to other validators
+        - Other validators heading about the new block re-execute the transactions to ensure they agree with the proposed change to the global state
+            - Assuming the block is valid, they add it to their own database
+        - If a validator hears two conflicting blocks for the same slot, they use their fork-choice algorithm to pick the one supported by the most staked ETH
+
+What's in a Block?
+    - There is a lot of information contained within a block. At the highest level a block contrains the following fields:
+        - slot: the slot the block belongs to
+        - proposer_index: the ID of the validator proposing the block
+        - parent_root: the hash of the preceding block
+        - state_root: the root hash of the state object
+        - body: an object containing several fields, as defined below
+    - The block body contains several fields of its own:
+        - randao_reveal: a value used to select the next block proposer
+        - eth1_data: information about the deposit contract
+        - graffiti: arbitrary data used to tag blocks
+        - proposer_slashings: list of validators to be slashed
+        - attester_slashings: list of 
+        ...
+
+Block Time
+    - Time separating blocks
+    - In Ethereum, time is divided up into twelve second units called "slots"
+    - In each slot a single validator is selected to propose a block
+
+    - Assuming all validators are online and fullly functional, there will be a blcok in every slot, meaning the block time is 12s
+
+Block Size
+    - Blocks are bounded in size
+    - Each block has a target size of 15 million gas but the size of blocks will increase or decrease in accordance with network demands, up until about 30 million gas

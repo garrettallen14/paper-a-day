@@ -1,0 +1,41 @@
+GAS AND FEES
+
+23 Jul 2024
+
+What is Gas?
+    - Unit of measurement of amount of compute needed to execute specific operations on the Ethereum network
+    - We pay for computational resources w/ a gas fee
+    - Gas fee is the amount of gas used to do some operation, multiplied by the cost per unit gas
+    - Fee is paid regardless of whether a transaction succeeds or fails
+
+How are Gas fees calculated?
+    - You set the amount of gas you are willing to pay when you submit a transaction
+    - By offering a certain amount of gas, you are bidding for you transaction to be included in the next block
+    - Too little gas => validators less likely to choose your transaction for inclusion => may execute late or not at all
+
+    - Too much => you may waste some ETH
+    - The total gas you pay is divided into two components:
+        - Base fee: set by the protocol
+        - Priority fee: a tip you add to the base fee to increase attractiveness to validators
+Base fee
+    - Every block has a base fee which acts as a reserve price
+    - To be eligible for inclusion in a block, the offered price per gas must at least equal the base fee
+    - The base fee is calculated independently of the current block and is instead determined by the blocks before it -- this makes transaction fees more predictable
+
+    - When block is created, the base fee is "burned", removing it from circulation
+
+    - Base fee increases quickly preceding a full block, so it is unlikely we will see extended spikes of full blocks
+Priority fee (tips)
+    - Incentive to validators to include a transaction in the block
+    - Wihtout tips, validators could just mine empty blocks, as they would receive the same block reward
+    - Small tips give validators a minimal incentive to include a transaction
+    - For transactions to be preferentially executed ahread of other transactions in the same block, a higher tip cean be added to try to outbid competing transactions
+Max fee
+    - To execute a transaction on the network, users can specify a max limit willing to pay for the execution
+    - maxFeePerGas: must exceed the sum of the base fee and the tip
+Block size
+    - Each block has target size of 15 million
+
+Why do Gas Fees Exist?
+    - Gas fees help keep the Ethereum network secure
+    - By requiring a fee for every computation executed on the network, we prevent bad actors from spamming the network

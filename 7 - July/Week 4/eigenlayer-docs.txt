@@ -1,0 +1,67 @@
+Intro to EigenLayer
+What is EigenLayer
+    - EigenLayer is a protocol built on Ethereum that introduces restaking, a new primitive in crypto security
+    - Enables the reuse of ETH on the consensus layer
+    - Users that stake ETH natively or with a liquid staking token (LST) can opt-in to EigenLayer smart contracts to restake their ETH or LST and extend cryptoeconomic security to additional applications on the network to earn additional rewards
+Why Build with EigenLayer
+    - ETH stakers can help secure many services by restaking their staked ETH and opting-in to many services simultaneously, providing pooled security
+    - Reusing ETH to provide security across many services reduces capital costs for a staker to participate and significantly increases the trust guarantees
+    - Anyone building a new decentralized service for ETH must bootstrap a new trust network to secure their system
+    - EigenLayer enables any service to tap into the pooled security of ETH's stakers, creating an environment for permissionless innovation and free-market governance
+Architecture Overview
+    - Restaking:
+        - Enables stakers to restake their native ETH or Liquid Staking Tokens (LST) to provide greater security for services in the EigenLayer ecosystem
+        - Actively Validated Services (AVSs)
+    - Operators:
+        - Entities that help run AVS software built on EigenLayer
+        - Register in EigenLayer and allow stakers to delegate to them
+        - Opt in to provide various services (AVSs) built on top of EigenLayer
+    - Delegation:
+        - Stakers delegate their staked ETH to operators or run validation services themselves, effectively becoming an operator
+        - Involves a double opt-in between both parties, ensuring mutual agreement
+        - Restakers retain agency over their stake and choose which AVSs they opt-in to validate for
+    - AVSs:
+        - Services built on the EigenLayer protocol that leverage ETH's shared security
+        - Operators perform validation tasks for AVSs, contributing to the security and integrity of the network
+        - AVSs deliver services to users (AVS Consumers) and the broader Web3 ecosystem
+
+
+Key Terms
+    - AVS: Any system that requires its own distributed validation semantics for verification
+        - Sidechains, data availability layers, new virtual machines, keeper networks, oracle networks, bridges, threshold crypto schemes, trusted execution environments
+    - AVS Developer: development team building AVS service
+    - Crypto security: security model that uses economic incentives and cryptography to ensure the proper functioning/security of a network
+    - Delegation in EigenLayer: feature that allows restakers holding ETH or LSTs to delegate their assets to other entities who will operate off-chain software containers of service modules built on EigenLayer, rather than operating the software themselves
+    - EigenPod: contract that is deployed on a per-user basis that facilitates native restaking
+    - Free-market governance: EigenLayer provides an open market mechanism that allows stakers to choose which services to opt into, based on their own risk and reward analysis
+    - Liquid staking: a service that enables users to deposit their ETH into a staking pool and receive a liquid staking token
+        - This token represents a claim on their ETH and its staking yield
+        - Liquid staking tokens can be traded in the DeFi ecosystem and redeemed for their underlying ETH value after a waiting period
+    - LST Restaking: a method where LST holders restake their LTSs by transferring them into EL smart contract
+    - Native Restaking: ETH stakers restake their staked ETH natively by pointing their withdrawal credentials to the EL contracts
+    - On-chain slashing contract: smart contract deployed by service modules on EL that enforces slashing, specifying and penalizing any misbehavior
+    - Operator: an entity who helps run AVS software built on top of EL. Operators register in EL and allow stakers to delegate to them, then opt in to provide various services AVSs built on top of EL. Operators may also be stakers, these are not mutually exclusive
+    - Pooled security via restaking: 
+
+
+EIGEN Token Overview
+What is the EIGEN token?
+    - A universal intersubjective work token
+    - Work token: a token that can be staked to perform some work within a blockchain platform
+        - Execution or validation task
+    - Existing work tokens have following limitations:
+        - Special-purpose: existing work tokens are designed to provide crypto security to only one enshrined specific digital task
+        - Objective: 
+What are intersubjectively attributable faults?
+    - In the event of such a fault, there will be wide agreement among observers outside the chain about the occurrence of the fault
+    - Unlike objectively attributable faults, intersubjectively attributable faults might not be provable mathematically and cryptographically onchain
+    - 
+
+
+Introduction
+What is a Node Operator within EL?
+    - Operators play an active role in the EL protocol
+    - By registering within EL, they enable ETH stakers to delegate their staked assets whether in the form of native ETH or LSTs
+    - Node Operators then opt-in to provide a range of services to AVSs, enhancing the overall security and functionality of their networks
+Operator Eligibility and Restaking Criteria
+    - Becoming an Operator in the EL ecosystem

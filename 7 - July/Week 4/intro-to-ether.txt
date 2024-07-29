@@ -1,0 +1,56 @@
+INTRO TO ETHER
+
+17 May 2024
+
+What is a cryptocurrency?
+    - Medium of exchange secured by a blockchain-based ledger
+        - Medium of exchange: Anything widely accepted as payment for goods / services
+        - Ledger: a datastore that keeps track of transactions
+    - Blockchain technology allows users to make transactions on the ledger without reliance upon a trusted third party to maintain the ledger
+
+What is Ether?
+    - ETH is the crypto used for many things on Eth network
+    - The only acceptable form of payment for transaction fees
+    - Ether is required to validate and propose blocks on Mainnet
+    - Primary form of collateral in the DeFi lending markets
+    - Unit of account in NFT marketplaces
+    - Payment earned for performing services/selling real-world goods
+
+    - Ethereum allows developers to create dapps (decentralized apps) which all share a pool of compute
+        - Finite pool, so Eth needs a mechanism to determine who gets to use it
+    - The ether cryptocurrency supports a pricing mechanism for Ethereum's computing power
+        - When users want to make a transaction, they must pay ether to have their transaction recognized on the blockchain
+        - Usage costs are "gas fees" and depend on the amount of computing power required to execute the transaction and the network-wide demand for computing power at the time
+    - Even if a malicious dapp submitted an infinite loop, the transaction would eventually run out of ether and terminate, allowing the network to return to normal
+
+Minting Ether
+    - How new ether is created on Ethereum ledger
+    - Underlying Ethereum protocol creates the new ether, and it is not possible for a user to create ether
+    - Ether is minted as a reward for each block proposed and at every epoch checkpoint for other validator activity related to reaching consensus
+    - The total amount issues depends on the number of validators and how much ether they have staked
+    - The total issuance is divided equally among validators in the ideal case that all validators are honest and online
+        - In reality, it varies based on validator performance
+        - 1/8 of the total issuance goes to the block proposer
+        - The remainder is distributed across the other validators
+
+Burning Ether
+    - Can be destroyed through 'burning'
+    - Ether burn occurs in every transaction on Ethereum
+    - When users pay for their transactions, a base gas fee gets destroyed
+    - This, coupled with variable block sizes and a max gas fee, simplifies transaction fee estimation on Ethereum
+    - When network demand is high, blocks can burn more ether than they mint, effectively offsetting ether issuance
+    
+    - Burning the base fee hinders a block producer's ability to manipulate transactions
+    - If block producers received the base fee, they could include their own transactions for free and raise the base fee for everyone else
+    - Alternatively, they could refund the base fee to some users off-chain, leading to a more opaque and complex transaction fee market
+
+Denominations of Ether
+    - Wei: smallest possible amount of ether: 1e-18
+    - Gwei (giga-wei): often used to describe gas costs: 1e-9
+
+Transferring ether
+    - Each transaction on Ethereum contains a value field (specifies amount of ether to be transferred, denominated in wei) to send from sender to recipient
+    - When recipient address is a smart contract, this transferred ether may be used to pay for gas when the smart contract executes its code
+
+Querying Ether
+    - Users can query the ether balance of any account by inspecting the account's balance field, which shows ether holdings denominated in wei
