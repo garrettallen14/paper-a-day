@@ -1,0 +1,46 @@
+CONSENSUS MECHANISMS
+
+14 Jun 2024
+
+Introduction
+    - Consensus mechanism often refers to 'proof-of-stake', 'p-o-work', or po-authority protocols
+    - These are just components in consensus mechanisms that protect against Sybil attacks
+    - Consensus mechanisms are the complete stack of ideas, protocols, and incentives that enable a distributed set of nodes to agree on the state of a blockchain
+
+What is Consensus?
+    - A general agreement has been reached
+    - Ethereum blockchain process is formalized, so reaching a consensus -> 66% of nodes agree on the global state of the network
+
+What is a Consensus Mechanism?
+    - Entire stack of protocols, incentives, ideas that allow it to work
+    - Ethereum uses Proof-of-stake consensus that derives its crypto-econ security from a set of rewards / penalities applied to capital locked by stakers
+    - This incentive structure encourages individual stakers to operate honest validators, punishes those who don't, and creates an extremely high cost to attack the network
+
+    - There is a protocol that governs how honest validators are selected to propose / validate blocks, process transactions, and vote for their view of the head of the chain
+    - In rare situations where mutliple blocks are in the same position near the head of the chain, there is a fork-choice mechanism that selects blocks that make up the 'heaviest' chain, measured by num of validators that voted for the blocks weighted by their staked ether balance
+
+    - Some concepts are important to consensus that are not explicitly defined in code, ie out-of-band social coordination as a last line of defense against attacks on the network
+
+Types of Consensus Mechanisms
+    - Proof-of-work based
+        - Block creation:
+            - Miners compete to create new blocks filled with processed transactions
+            - The winner shares the new block w/rest of network and earns some freshly minted ETH
+            - Race is won by computer which solves math puzzle the fastest
+        - Security:
+            - Network is kept secure by the fact you'd need 51% of the network's computing power to defraud the chain
+            - This would require such huge investments, you'd spend more than gain
+    - Proof-of-stake based
+        - Block creation:
+            - Validators create blocks
+            - One validator is randomly selected in each slot to be block proposer
+            - Their consensus client requests a bundle of transactions as an 'execution payload' from their paired exec client
+            - They wrap this in consensus data to form a block, which they send to other nodes on Ethereum network
+
+            - This block production is rewarded in ETH
+            - In rare cases when multiple possible blocks exist for a single slot, or nodes hear about blocks at different times, the fork choice alg picks the block that forms the chain with the greatest weight of attestations (where weight is num of validators attesting scaled by their ETH balance)
+        - Security:
+            - A PoS system is secure crypto-economically because an attacker attempting to take control of the chain must destroy a massive amount of ETH
+            - A system of rewards incentivizes individual stakers to behave honestly, and penalties disincentivize stakers from acting maliciously
+
+    

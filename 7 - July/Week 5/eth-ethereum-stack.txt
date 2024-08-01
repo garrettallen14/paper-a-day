@@ -1,0 +1,49 @@
+INTRODUCTION TO THE ETHEREUM STACK
+
+15 Aug 2023
+
+Level 1: EVM
+    - Runtime env for smart contracts on Ethereum
+    - All smart contracts and state changes on Ethereum blockchain are executed by transactions
+    - EVM handles all of transaction processing on Ethereum network
+
+    - As with any virtual machine, EVM creates a level of abstraction between the executing code and the executing machine (an Ethereum node)
+    - Currently, the EVM is running on thousands of nodes distributed across the world
+
+    - EVM uses a set of opcode instructions to execute specific tasks
+    - 140 unique opcodes allow the EVM to be Turing-complete
+
+    - As a dapp dev, you don't need to know much about the EVM other than it exists and reliably powers all applications on Ethereum w/o downtime
+
+Level 2: Smart Contracts
+    - Executable programs that run on Ethereum blockchain
+    - Written using specific programming languages that compile to EVM bytecode
+
+    - Smart contracts serve as open source libraries
+    - They are open API services that are always running and cannot be taken down
+    - Provide public functions which users and applications (dapps) may interact with, w/o needing permission
+
+    - Any application may integrate with deployed smart contracts to compose functionality, such as adding data feeds or to support token swaps
+    - Anyone can deploy new smart contracts to Ethereum in order to add custom functionality to meet their apps needs
+
+    - As a dapp dev, you'll need to write smart contracts only if you want to add custom functionality on the Ethereum blockchain
+    - You may find you can achieve most or all of your project's needs by merely integrating with existing smart contracts, for instance if you want to support payments in stablecoints or enable decentralized exchange of tokens
+
+Level 3: Ethereum Nodes
+    - For an app to interact w/Ethereum blockchain, it must connect to an Ethereum node
+        - Allows you to read blockchain data and/or send transactions to the network
+    - Ethereum nodes are computers running Ethereum clients
+        - Client: verifies all transactions in each block, keeping the network secure and data accurate
+    - Nodes collectively store the state of the Ethereum blockchain and reach consensus on transactions to mutate the blockchain state
+    - By connecting your app to an Ethereum node, your application is able to read data from the blockchain as well as broadcast new transactions to the network
+
+Level 4: Ethereum Client APIs
+    - Many convenience libraries allow your applications to connect to and communicate with the Ethereum blockchain
+    - If your user-facing app is a webapp, you may choose to npm install a JavaScript API directly into your frontend
+    - There are python APIs too
+
+    - These APIs abstract away from much of the complexity of interacting directly with an Ethereum node
+    - They provide utility functions (convt ETH to Gwei) so as a developer you can spend less time dealing w/intricacies
+
+Level 5: End-User Applications
+    - At the top level of the stack are user-facing apps

@@ -1,0 +1,243 @@
+ETHEREUM: A SECURE DECENTRALISED GENERALISED TRANSACTION LEDGER
+
+23 Jul 2024
+
+Abstract
+    - Blockchain when coupled with cryptographically-secured transactions has demonstrated its utility through a number of projects like BTC
+    - Each can be seen as a simple app on a decentralized, but singleton, compute resource
+    - We call this a transactional singleton machine with shared-state
+    - Ethereum implements this paradigm in a generalised manner
+    - It provides a plurality of such resources, each with a distinct state and operating code, but able to interact through a message-passing framework with others
+    - We discuss its design, implementation issues, opportunities and future hurdles
+
+
+Introduction
+    - Ethereum attempts to build the generalised technology on which all transaction-based state machine concepts may be built
+    - Aims to provide the end-dev a tightly integrated end-to-end system for building software on a hitherto un-explored compute paradigm in the mainstream: a trustful object messaging compute framework
+Driving Factors
+    - Many goals with this project:
+        - Facilitate transactions between individuals with otherwise no means to trust one another
+            - Incorruptability of judgement comes naturally
+            - Transparency
+Previous Work
+    - Buterin 2013 proposed the kernel of this work
+        - The key functionality of block-chain with a Turing-complete language and an effectively unlimited inter-transaction storage capability remains unchanged
+    - Dwork and Naor 1992 provided the first work into the usage of a crypto proof of computational expenditure ("proof-of-work") as a means of transmitting a value signal over the Internet
+        - Originally a spam deterrence mechanism
+        - Critically demonstrated the potential for a basic data channel to carry a strong economic signal
+        - Back 2002 produced a system similar
+    - Vishnumurthy 2003 utilises the proof-of-work as a strong economic signal to secure a currency
+        - Token was used to keep peer-to-peer file trading in check, providing "consumers" with the ability to make micro-payments to "suppliers" for their services
+        - Security model afforded by the proof-of-work was augmented with digital signatures and a ledger in order to ensure that the historical record couldn't be corrputed and that malicious actors could not spoof payement or unjustly complain about service delivery
+        - Nakamoto 2008 introduced a proof-of-work-secured value token which became BTC
+    - Our project aims to build upon the BTC network itself, leveraging the large amount of value placed in the system and vast amount of computation in the consensus mechanism
+
+
+The Blockchain Paradigm
+    - Ethereum, taken as a whole, can be viewed as a transaction-based state machine: we begin with a geneiss state and incrementally execute transactions to morph it into some current state
+    - We accept this current state as the canonical "version" of the world of Ethereum
+        - Account balances, reputations, trust arrangements, data pertaining to info of the physical world... anything representable by a computer is admissible
+    - Transactions represent a valid arc between two states
+        - 'Valid' is important--there exist far more invalid state changes than valid state changes
+        - Ex. 'Invalid' -> reducing an account balance without an equal / opposite increase somewhere
+    - A valid state transition comes about through a transaction. 
+        - sigma(t+1) = Tau(sigma(t), T)
+        - Tau is the Ethereum state transition function
+        - Tau w/sigma are considerable more powerful than any existing comparable system
+            - Tau allows components to carry out arbitrary computation
+            - sigma allows components to store arbitrary state between transactions
+        - Transactions are collated into blocks
+        - Blocks are chained together using a crypotgraphic hash
+            - Function as a journal, recording a series of transactions together with the previous block and an identifier for the final state
+    - Formally, we expand to:
+        - sigma(t+1) := PI(sigma(t), B)
+        - B := (...,(T0,T1,...),...)
+        - PI(sigma, B) := Tau(Tau(sigma, T0), T1)...
+        - Where:
+            - B is this block, which includes a series of transactions amongst some other components
+            - PI is the block-level state-transition function for transactions
+    - This is the basis of the blockchain paradigm, a model that forms the backbone of all decentralized consensus-based transaction systems to date.
+Value
+    - To incentivise computation within the network, there needs to be an agreed method for transmitting value
+    - Ethereum has an intrinsic currency, Ether (ETH) 
+        - One Ether = 1e18 Wei
+Which History?
+    - The structure is a tree of blocks
+    - In order to form a consensus as to which path, from root (genesis) to leaf (block with most recent transactions) through this tree structure, known as the blockchain, there must be an agreed-upon scheme
+    - If there is ever a disagreement between nodes as to which root-to-leaf path is the "best" blockchain, a fork occurs
+
+    - Past a given point of time (block), multiple states of the system may coexist:
+        - Some nodes believe one block
+        - Other believe another block
+    - This is to be avoided at all costs!
+
+    - Reaching consensus on new blocks is managed by Beacon Chain protocol
+    - This is the consensus layer of Ethereum, and it defines the rules for determining the canonical history of Ethereum blocks
+
+    - This document describes the execution layer of Ethereum
+        - Define rules for interacting with / updating the state of the EVM
+    - Consensus layer is described in greater detail in the consensus specifications
+
+    - There are many versions of Ethereum, as the protocol has undergone a number of updates. These occur at
+        - a particular block number
+        - after reaching a terminal total difficulty
+        - at a particular block timestamp
+    - In order to follow back the history of a path, one must reference multiple versions of this document
+    - Here are the block numbers of protocol updates on the Ethereum main network:
+        ...
+    - Occasionally actors do not agree on a protocol change, and a permanent fork occurs
+    - Beta is the chain ID. Beta=1 is main Ethereum network
+
+
+Conventions
+    - World-state := sigma
+    - Machine-state := mu
+    - Tau := Ethereum state transition function
+    - C := Cost function
+        - C_sstore
+    - Typewriter text (KEC) for functions
+    - Tuples are denoted with an upper-case letter
+        - T := Ethereum transaction
+        - T_n := the nonce of said transaction
+    - Scalars and fixed-size byte sequences (arrays) are denoted with a normal lower-case letter
+        - n := transaction nonce
+    - Arbitrary-length sequences are bold lower-case letter
+        - o := byte sequence given as output data of a message call
+    - We assume scalars are non-neg ints
+
+    - In case of global state sigma (a sequence of accounts, themselves tuples) the square brackets are used to reference an individual account
+
+
+Blocks, States and Transactions
+World State
+    - A mapping between addresses (160-bit identifiers) and account states (a data structure serialised as RLP)
+    - Although not stored on blockchain, it is assumed that the implementation will maintain this mapping on a modified Merkle Patricia tree
+        - The trie requires a simple database backend that maintains a mapping of byte arrays to byte arrays
+        - This is the underlying database called the state database
+        - The root node of this structure is cryptographically dependent on all internal data and as such its hash can be used as a secure identity for the entire system state
+        - Being an immutable data structure, it allows any previous state to be recalled by simply altering the root hash accordingly
+        - We are able to trivially revert to old states
+
+    - The account state sigma[a] comprises the following four fields:
+        - nonce: A scalar value equal to the number of transactions sent from this address, or for accounts with associated code, the number of contract-creations made by this account
+            - For account of address a in state sigma, this would be sigma[a]_n
+        - balance: A scalar value equal to num of Wei owned by the address
+            - sigma[a]_b
+        - storageRoot: A 256-bit hash of the root node of a Merkle Patricia tree that encodes the storage contents of the account (a mapping between 256-bit int values), encoded into the trie as a mapping from the Keccak 256-bit hash of the 256-bit int values
+            - sigma[a]_s
+        - codeHash: The hash of the EVM code of this account--this is the code that gets executed should this address receive a message call
+            - All such code fragments are contained in the state db under their corresponding hashes for later retrieval
+            - This hash is formally denoted sigma[a]_c
+
+    - We typically wish to refer not to the trie's root hash, but to the underlying set of k/v pairs stored within, we define a convenient equivalence:
+        - TRIE(L_*_I(sigma[a]_s)) := sigma[a]_s
+            - The collapse function for the set of k/v pairs in the trie, L_*_I, is defined as the element-wise transformation of the base function L_I, given as:
+            - L_I((k,v)) := (KEC(k),RLP(v))
+            - k in Byte_32, v in Int+
+    - sigma[a]_s is not a physical member of the account and does not contribute to its later serialisation
+
+    - If the codeHash field is the Keccak-256 hash of the empty string, ie. sigma[a]_c = KEC(()), then the node represents a simple account ("non-contract")
+        - We define a world-state collapse function L_S:
+        - L_S(sigma) := {p(a) | sigma[a] != empty}
+            - p(a) := (KEC(a), RLP((sigma[a]_n,sigma[a]_b,sigma[a]_s,sigma[a]_c)))
+    - L_S is used alongside the trie function to provide a short identity (hash) of the world state. We assume:
+        - For all a s.t. sigma[a] = empty OR (a in B20 and v(sigma[a]))
+            - v is account validity function
+            - v(x) := x_n in .....
+    - An account is empty when it has no code, zero nonce, and zero balance
+        - EMPTY(sigma, a) := sigma[a]_c = KEC(()) AND sigma[a]_n = 0 AND sigma[a]_b=0
+
+    - Even callable precompiled contracts can have an empty account state. This is because their account states do not usually contain the code describing its behavior
+
+    - An account is dead when its account state is non-existent or empty:
+        - DEAD(sigma, a) := sigma[a] = 0 OR EMPTY(sigma, a)
+The Transaction
+    - A transaction (formally, T) is a single cryptographically-signed instruction constructed by an actor externally to the scope of Ethereum
+    - Sender of a transaction cannot be a contract
+    - There are three transaction types (0,1,2) and two subtypes (message calls, and creaion of new accounts w/associated code "contract creation")
+    - Common fields:
+        - type: T_x
+        - nonce: A scalar value equal to the number of transactions sent by the sender, T_n
+        - gasLimit: Max amnt of gas should be used in execution of transaction. Paid up-front before any computation is done and may not be increased later, T_g
+        - to: 160-bit address of message call's recipient
+            - For contract creation transaction, empty
+            - T_t
+        - value: Number of Wei to be transferred to message call's recipient or as an endowment to newly created account, T_v
+        - r,s: Values corresponding to the signature of the transaction. Used to determine the sender of the transaction
+            - T_r, T_s
+    - For type1 and type2 transactions:
+        - accessList: List of access entries to warm up, T_A
+            - Each entry E is a tuple of an account address and list of storage keys E:=(E_a,E_s)
+        - chainId: Chain ID, T_c
+            - Must be equal to network chain ID Beta
+        - yParity: Signature Y parity; T_y
+    - Legacy transactions (0) do not have accessList (T_A=(()))
+        - w: A scalar value encoding Y parity and possibly chain ID
+
+    - There are differences in how one's acceptable gas price is specified in Type 2 transactions to take better advantage of gas mkt improvements
+        - Explicitly limit the priority fee that is paid
+
+    - Type 2:
+        - maxFeePerGas: scalar value equal to maximum num Wei for gas, T_m
+        - maxPriorityFeePerGas: scalar val equal to ... T_f
+
+    - A contract creation transaction contains:
+        - init: An unlimited size byte array specifying the EVM-code for the account initialization procedure, T_i
+
+    - init is an EVM-code fragment
+        - Returns the body
+        - A second fragment of code that executes each time the account receives a message call
+        - init is executed only once at account creation and is discarded immediately thereafter
+    - Message call transaction contains:
+        - data: An unlimited size byte array specifying the input data of the message call, formally T_d
+
+    - Function S maps transactions to the sender, and happens through the ECDSA of the SECP... curve, using the hash of the transaction (excepting the latter three signature fields) as the datum to sign
+        - We simply assert that the sender of a given transaction T can be represented with S(T)
+
+    - L_T(T) := ...
+
+    - We assume all components are interpreted by the RLP as integer values, with the exception of the access list T_A and arbitrary length byte arrays T_i and T_d
+The Withdrawal
+    - Formally, W, is a tuple of data describing a consensus layer validator's withdrawal of some amount of its staked Ether
+    - A withdrawal is created and validated in the consensus layer of the blockchain and then pushed to the execution layer
+    - A withdrawal is composed of:
+        - globalIndex: zero based incrementing withdrawal index that acts as a unique id for this withdraw; W_g
+        - validatorIndex: index of consensus layer's validator this withdrawal corresponds to; formally W_v
+        - recipient: the 20-byte address that will recieve Ether from this withdrawal: W_r
+        - amount: nonzero amount of Ether denominated in Gwei, W_a
+    - Serialization for withdrawals:
+        - L_W(W) := (W_g, W_v, W_r, T_a)
+    - Here, we assume all components are interpreted by RLP as integer values except for W_r which is a 20-byte address
+The Block
+    - The block in Ethereum is the collection of relevant pieces of information ( the block header), H, together with information corresponding to the comprised transactions, T, a now deprecated property U (headers of blocks "ommers") and W a collection of validator's withdrawal pushed by the consensus layer
+    - The block header contains several pieces of info:
+        - parentHash: Keccak 256-bit hash of parent block's header, H_p
+        - ommersHash: H_o
+        - beneficiary: 160-bit address to which priority fees are transferred, H_c
+        - stateRoot: 256-bit hash of the root note of the state trie, after all transactions and withdrawals are executed and finalisations applied, H_r
+        - transactionsRoot: 256-bit hash of root node of the trie structure populated with each transaction in the transactions list portion, H_t
+        - receiptsRoot: Keccak 256-bit hash of the root node of the trie structure populated with the receipts of each transaction in the list portion of the block; H_e
+        - logsBloom: bloom filter
+        - difficulty
+        - number: number of ancestory blocks, H_i
+        - gasLimit
+        - gasUsed
+        - timestamp
+        - extraData: 32 bytes or fewer
+        - nonce: a 64-bit value now deprecated to replacement of proof of work consensus... 0x000000000... H_n
+        - baseFeePerGas: scalar equal to amount of wei that is burned for each unit of gas consumed; H_f
+        - withdrawalsRoot: 256-bit hash of the root node of the trie structure populated with each withdrawal operations pushed by the consensus layer for this block; H_w
+
+    - The other three components in the block are a series of transactions, B_T, an empty array which was previously reserved for ommer block headers, B_U, and a series of withdrawals, B_W
+    - Block B := (B_H, B_T, B_U, B_W)
+Transaction Receipt
+    - In order to encode information about a transaction concerning which it may be useful to form a zero-knowledge proof, or index and search, we encode a receipt of each transaction containing certain information from its execution
+    - Each receipt, B_R[i] for ith transaction, is placed in an index-keyed trie and the root recorded in the header as H_e
+    - The transaction receipt, R, is a tuple of 5 items:
+        - Type of transaction R_x
+        - Status code R_z
+        - Cumulative gas used R_u
+        - Set of logs R_l
+        - Bloom filter R_b
+        - R := (R_x,R_z,R_u,R_b,R_l)
+    

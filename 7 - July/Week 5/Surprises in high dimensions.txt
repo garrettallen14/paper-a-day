@@ -1,0 +1,66 @@
+1 Surprises in high dimensions
+    - Our intuition about spaces (2d,3d) can be misleading
+    - We analyze the shape and properties of some basic geometric forms, which we understand very well in dimensions two and three, in high dimensions
+1.1 Geometry of the d-dim Sphere
+    - Unit sphere is d dims, volume is given V(d) = pi**d/2 / d/2 gamma(d/2)
+        - Gamma function grows much faster than pi**d/2, hence V(d) -> as d->inf
+    - ie, the volume of the d-dim sphere with radius 1 goes (very quickly) to 0 as the dimension d increases to infinity
+    - This means that a unit sphere in high dimensions has almost no volume
+
+    - Most of the volume of the d-dim sphere is contained near the boundary of the sphere, that is, for a d-dim sphere of radius r, most of the volume is contained in an annulu of width proportional to r/d
+    - This means that if you peel a high-dimensional orange, then there is almost nothing left, since almost all of the orange's mass is in the peel
+1.2 Geometry of the d-dimensional Cube
+    - Claim: Most of the volume of the high-dim cube is located in its corners:
+    - Proof (probabilistic argument): 
+        - Assume the cube is given by [-1,1]**d, our argument easily extends to cubes of any size
+        - Pick a point at random in the box [-1,1]**d
+        - We want to calculate the probability that the point is also in the sphere
+        - Let x = [x1,...,xd] in Rd and each xi in [-1,1] is chosen uniformly at random.
+        - The event that x also lies in the sphere means:
+            ||x||2 = sqrt(,,,,)
+        - Let zi = xi**2
+1.3 Comparisons between d-dim Sphere and Cube
+    - We compare a unit d-dim cube (cube w/sidelength=1) with a unit d-dim sphere (sphere w/radius=1) as dim=d increases
+    - In 2d, unit square completely contained
+    - Distance from center to a vertex is sqrt(2)/2
+    - In 4d, distance from center to a vertex is 1, so vertices of the cube touch surface
+    - The result, when projected in two dimensions no longer appears convex, however all hypercubes are convex
+    - d>4 -> distance from center to a vertex is sqrt(d)/2 > 1
+        - Vertices of the hypercube extend far outside the sphere
+    - We can picture a cube in high dimensions to look like a regular cube, but also something like the spiky solid in fig6
+
+2 Curses and Blessings of Dimensionality
+2.1 Curses
+    - Bellman in 1957 coined the term "curse of dimensionality"
+        - Exponential increase in volume associated with adding extra dimensions to Euclidean space
+        - 100 evenly-spaced grid points suffice to sample the interval [0,1] with a distance of 0.01 between the grid points
+        - For the unit square [0,1]x[0,1], we would need 100**2 grid points to ensure a distance of 0.01 between adjacent points
+
+        - To sample the 10-dim unit cube with a grid w/distance of 0.01 between adjacent points, we would need 100*10 points
+            - 1e18 more points needed, despite only factor of 10 increase
+        - Any algorithm would now need to process a factor of 1e18 more points than in dim=1
+
+        - We can feel the curse even if the complexity does not increase exponentially:
+            - The naive approach for finding nearest neighbors among n points in d im requires O(n**2d) operations, but for d==1 we can simply sort in O(nlogn) operations
+
+    - Results above -> Increasing the number of features until perfect classification results are obtained is the best way to train a classifier
+    - But, if we keep adding features, the dim of the feature space grows and becomes sparser and sparser
+    - Due to this sparsity, it becomes much more easy to find a seperable hyperplane because the likelihood that a training sample lies on the wrong side of the best hyperplane becomes infinitely small when the num of features becomes infinitely large
+    - However, if the amount of available training data is fixed, then overfitting occurs if we keep adding dims
+        - We perfectly seperate the training data, but when we try it on the rest of the data, the classification fails
+    - If we keep adding dims, the amount of training data needs to grow exponentially fast to maintain the same coverage and to avoid overfitting
+2.2 Blessings
+    - The concentration of measure phenomenon
+    - Certain random fluctuations are very well controlled in high dimensions
+    - The success of asymptotic methods, used widely in mathematical statistics and statistical physics, suggest that statements about very high-dim settings may be made where moderate dimensions would be too complicated
+
+    - LLN: Sum of i.i.d scalar R.V.s is approximately normally distributed
+    - It is very difficult to predict the behavior of individual atoms in a gas
+        - We nevertheless predict very precisely how a gas will behave, because we can make accurate statements about the behavior averaged over millions of atoms
+        - There is a vast number of such concentration phenomena that extend from scalars to vectors and matrices
+        - These generalizations often make our life in machine learning much easier
+        - Here is one such example of the blessings of dimensionality from random matrix theory
+
+    - The condition number of a matrix (the ratio of its largest singular value and its smallest singular value) is an important measure of its stability wrt noise when solving a linear system of equations
+        - It is very difficult/impossible to tell in advance what the condition number of a matrix will be w/o explicity access to all entries
+        - For random matrices, we can give a fairly precise prediction of the condition number based on very few parameters

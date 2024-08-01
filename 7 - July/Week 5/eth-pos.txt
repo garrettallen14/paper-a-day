@@ -1,0 +1,58 @@
+PROOF-OF-STAKE (POS)
+
+9 Jul 2024
+
+What is Proof-of-Stake (PoS)?
+    - Way to prove that validators have put something of value into the network that can be destroyed if they act dishonestly
+    - In PoS, validators explicitly stake capital in the form of ETH into a smart contract on Ethereum
+    - The validator is then responsible for checking that new blocks propagated over the network are valid and occasionally creating and propagating new blocks themselves
+    - If they try to defraud the network (ex. proposing multiple blocks when they ought to send one or sending conflicting attestations), some or all of their staked ETH can be destroyed
+
+Validators
+    - A user must deposit 32 ETH into the deposit contract and run:
+        - Execution client
+        - Consensus client
+        - Validator client
+    - On depositing their ETH, the user joins an activation queue that limits the rate of new validators joining the network
+    - Once activated, validators receive new blocks from peers on the Ethereum network
+
+    - The transactions delievered in the block are re-executed to check that the proposed changes to Ethereum's state are valid, and the block signature is checked
+    - The validator then sends a vote (attestation) in favor of that block across the network
+
+    - Under proof-of-work, the timing of blocks is determined by the mining difficulty
+    - In proof-of-stake, the tempo is fixed
+        - 12 seconds (slots)
+        - 32 slots (epochs)
+    - One validator is randomly selected to be a block proposer in every slot
+    - This validator is responsible for creating a new block and sending it to other nodes on the network
+    - In every slot, a committee of validators is randomly chosen, whose votes are used to determine the validity of the block being proposed
+    - Dividing the validator set up into committees is important for keeping the network load manageable
+    - Committees divide up the validator set so that every active validator attests in every epoch, but not in every slot
+
+How a transaction gets executed in Ethereum PoS
+    1. A user creates and signs a transaction with their private key
+        - User makes a request to a node using the Ethereum JSON-RPC API
+        - User defines the amount of gas they can pay as a tip to a validator to encourage to include the transaction into a block
+        - Tips are paid to the validator while base fee is burned
+    2. The transaction is submitted to an Ethereum execution client which verifies its validity
+        - Ensure that the sender has enough ETH to fulfill the transaction and they have signed it with the correct key
+    3. If transaction is valid, the exec client adds it to its local mempool (list of pending transactions) and broadcasts it to other nodes over the execution layer gossip network.
+        - While other nodes hear about the transaction, they add it to their local mempool too
+    4. One of the validator nodes on the network is the block proposer for the current slot. This node is responsible for building and broadcasting the next block to be added to the Ethereum blockchain and updating the global state
+        - The node is made up of:
+            - Execution client: bundles transactions from local mempool into "execution payload" and executes locally to generate a state change
+            - Consensus client: wraps execution client as a part of a "beacon block" that also contains info about rewards, penalties, slashings, attestations, etc.
+            - Validator client
+    5. Nodes receive the new beacon block on the consensus layer gossip network.
+        - Nodes pass it to their exec client where transactions are re-executed locally to ensure the proposed state change is valid
+        - The validator client attests that the block is valid and is the logical next block in their view of the chain (it builds on the chain with the greatest weight of attestations)
+        - The block is added to the local database in each node that attests to it
+    6. Transaction can be "finalized" if it has become part of a chain with a "supermajority link" between two checkpoints
+        - Checkpoints occur at start of epoch and exist to account for the fact that only a subset of active validators attest in each slot
+        - It is only between epochs that a "supermajority link" can be demonstrated
+        - This is where 66% must agree on two checkpoints
+
+Crypto-Econ Security
+    - Running a validator is a commitment
+    - Validator is expected to maintain sufficient hardware and connectivity to participate
+    - Validators miss out on ETH rewards if they fail to participate when called upon, and their existing stake can be destroyed if they behave dishonestly
