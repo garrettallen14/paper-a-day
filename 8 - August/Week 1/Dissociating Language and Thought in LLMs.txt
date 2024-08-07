@@ -1,0 +1,191 @@
+DISSOCIATING LANGUAGE AND THOUGHT
+IN LARGE LANGUAGE MODELS
+
+23 Mar 2024
+
+My take:
+
+
+Basically this article argued that being able to COMPOSE language / grammar is DISTINCT from being able to APPLY LANGUAGE to real-world situations.
+They then showed that LLMs CAN apply it to real-world situations.
+Following this logic, the LLM is (accurately modeling human) thinking...
+
+They finished by discussing potential MODULARITY additions (beyond vision, audio, etc.), which is very much NOT BITTER PILLED.
+
+
+
+
+
+
+LANGUAGE != THOUGHT
+But, LLMs ARE literally DISTILLED THOUGHT MACHINES !!!!!!!
+
+THE LANGUAGE NETWORK DOES NOT WORK IN ISOLATION!!!!! IT IS THE DISTILLATION OF THE HUMAN THOUGHT ITSELF!!!!!!!
+
+There must be some sort of universal wspretrained encoder we could build to map from anyones brain states to a general type of human thought.
+
+The reason LLMs are Good at "formal linguistic competence" => grammar, but lack in areas of "functional linguistic competence" => ability to use language in real-world situations is because it LACKS THE PROPER CONTEXT (sensory inputs like vision, touch, feel)
+    - When you try and predict my next word, you must model my thoughts and feelings and what I am trying to convey.
+    - I bet you that in this paper, they do not consider the fact that you cannot actually model exactly my thoughts from text alone. These are a distillation of my real thoughts.
+    - The LLM is trained to take the distilled thoughts of an author and continue these thoughts for them...
+    - In this way, the LLM is a model of the thoughts of a given brain instance. It is literally trained to learn what the thoughts of the author are, and convey those thoughts to the audience -- hence, it is really good at linguistic competence, because this is the distilled language of thought (ie, this is the most compressed version of thinking anyways)
+    - However, it is often bad at functional linguistic competence because it LACKS CERTAIN DOMAINS OF HUMAN THOUGHT
+    - So, it IS THINKING, but it is forced to map from:
+        - Author's distilled thoughts -> Model of Author's intuitive train of thought -> Author's next distilled thought
+        - Being stuck to the limited domain of text means there are deep intuitions that it may be missing out on (ie functional linguistic competence), but it is still LITERALLY a MODEL OF HUMAN THOUGHT.
+
+The language network supports language processing in the human brain:
+    - Human language processing draws on a set of interconnected brain areas in the frontal and temporal lobe.
+        - Supports both comprehension (Language Encoder)
+        - And production (Language Decoder)
+
+Language network does not support non-linguistic cognition
+    - The language network is remarkably selective for language
+
+Note: what we are training for IS formal linguistic competence first, THEN reasoning second
+    - But the modeling of the human train of thought is just as important in order to build a good model
+
+
+
+
+
+
+
+
+Abstract
+    - We evaluate LLMs using a distinction between formal linguistic competence--knowledge of linguistic rules and patterns--and functional linguistic competence--understanding and using language in the world.
+    - We ground this distinction in human neuroscience, which has shown that formal and functional competence rely on different neural mechanisms
+
+Language-thought conflation
+    - When we hear a sentence, we typically assume that it was produced by a rational, thinking agent
+    - Fallacies related to the language-thought relationship:
+        - "Good at language -> Good at thought" fallacy:
+            - An entity (human or machine) that is good at language must also be good at thinking
+            - If an entity generates long coherent stretches of text, it must posses rich knowledge and reasoning capabilities
+            - You must distinguish between their ability to think and their linguistic ability
+        - "Bad at thought -> Bad at language" fallacy:
+            - LLMs often criticized for their lack of consistent, generalizable world knowledge, etc.
+
+        - "Good -> Good" and "Bad -> Bad" fallacies stem from the conflation of language and thought
+        - It is novel and uncanny to encounter an entity that generates fluent sentences despite lacking a human identity
+        - Our heuristics for understanding what a LLM is doing are broken
+
+        - To mitigate the conflation fallacies, we propose to systematically distinguish between:
+            - Formal linguistic competence--knowledge of rules and statistical regularities of language (ENCODER)
+            - Functional linguistic competence--the ability to use language in real-world situations (ALSO AN ENCODER ???)
+
+        - Our motivation for the formal/functional distinction comes from the human brain, where these skills are robustly dissociable (???)
+        - Both formal and functional linguistic competence are essential components of human language use: an effective communicator needs to both generate grammatical, meaningful utterances and strategically use those utterances to achieve diverse, context-dependent goals
+
+        - Armed with this distinction, we evaluate the capabilities of contemporary LLMs and argue that LLMs exhibit a gap between formal and functional competence skills: for modern LLMs, formal competence in English
+
+        - Functional competence remains patchy (???)
+
+        - We posit that next-word prediction obj allows a model to master formal but not necessarily functional linguistic competence (it can only see a distilled form of thought, anyways!!!!!!!!)
+
+        - So much of human cognition (commonsense reasoning, scientific knowledge, everyday knowledge) can be conveyed through language and thus learned from language -- even if these capacities are not themselves inherently linguistic
+
+        - LLMs acquire a variety of non-linguistic capacities
+
+
+Formal vs. functional linguistic competence
+What does linguistic competence entail?
+    - Formal linguistic competence
+        - A set of capacities required to produce and comprehend a given language (ie semantic meaning encoded into the each token)
+        - Getting the form of language right...
+    - Functional linguistic competence
+        - Can use language to accomplish goals in the world:
+            - Talk about things that can be seen or felt or heard
+            - Reason about diverse topics
+            - Make requests
+            - Cajole, prevaricate and flatter
+        - People use language in tandem with other perceptual and cognitive systems
+            - Deploy words as part of a broader communication framework supported by our sophisticated social skills
+        - A formal language system is in isolation and useless unless it can interface with the rest of perception, cognition, and action
+
+        - The capacities required to use language to do things in the world are distinct from formal competence and depend crucially on non-linguistic cognition
+        - We define functional linguistic competence as non-language-specific cognitive functions that are required when using language in tandem with non-language-specific capacities in real-world circumstances
+Motivation for the distinction between formal vs. functional linguistic competence
+    - Language is robustly dissociated from the rest of high-level cognition, as well as from perception and action
+    - Below we briefly summarize a body of evidence from cognitive science and neuroscience that supports this dissociation:
+        - Language network supports langauge processing in the brain
+            - Frontal / temporal lobes
+            - Tight link between language network and language function indicates that these brain regions are responsible for language processing in humans
+        - Language network does not support non-linguistic cognition
+            - The language network is remarkably selective for language
+            - Evidence of a strong dissociation between lang processing 
+
+LLMs have largely mastered formal linguistic competence in English
+Statistical language models: some fundamentals
+Large language models learn core aspects of human language processing
+    - LLMs perform well on benchmarks of diverse linguistic phenomena
+        - Learn a lot about the structure of language
+    - LLMs learn hierarchical structure
+    - LLMs learn cool things
+    ...
+    - YEAH because grammar is the easiest thing to learn
+LLMs are predictive of activity in the human language network
+    - The internal architecture of LLMs resembles that of the language network
+    - Both operate at the level of abstract linguistic units (words/tokens) rather than modality-specific representations
+    - Combine these unit-level representations into composite representations of phrases and sentences
+
+    - Can establish a direct mapping between internal LLM representations and neural activity patterns within the brain language network
+
+    - This mapping can be successfully used to predict brain responses to novel sentences and words in previously unseen contexts
+
+    - We do not claim that the correspondence between LLMs and the language network is one-to-one. 
+        - LLMs learn patterns outside traditional human linguistic competency
+
+
+Non-augmented LLMs fall short on functional linguistic competence
+    - Real-life language use is impossible without non-linguistic cognitive skills.
+    - Understanding a sentence, reasoning about its implications, and deciding how to respond all rely on cognitive capacities that go beyond formal competence
+    - How good are LLMs at functional linguistic competence?
+
+    - Unlike formal competence, functional competence of LLMs is uneven, often requiring (XYZ bullshit)
+World models 1: factual and commonsense knowledge
+    - World models:
+        - World knowledge
+        - Situation tracking
+    - Humans:
+        - There is a dissociation between linguistic and semantic (world) knowledge
+        - Linguistic and semantic knowledge can be disentangled
+    - LLMs:
+        - Muh Hallucinations ... muh distractions ...
+        - Commonsense knowledge is often UNDERrepresented (STILL REPRESENTABLE ......)
+World models 2: situation tracking
+    - We can follow the plot of a story that spans multiple chapters or even multiple books
+    - ........
+    - Does the language network in humans construct a situation model based on its inputs?
+    - Humans:
+        - The language network in humans does not appear to track structure above the clause level
+        - integration of meaning over longer periods of time likely takes place within the so-called default network
+    - LLMs. Situation modeling in LLMs faces two main challenges: (1) extracting information from many sentences in a row; (2) integrating incoming inputs to appropriately update information about entities and their states.
+Social reasoning:
+    - linguistic meaning radically depends on context
+    - Is the word being gasped by a thirsty person in the desert? By a hiker warning his friend of a hidden stream? An impatient diner talking to a waiter? Work in cognitive science and linguistics has come to recognize that these context-dependent aspects of language are not just peripheral but a central part of human language production and understanding
+    - Humans:
+        - Human brain has dedicated machinery for processing social information
+        - Theory of Mind
+    - LLMs:
+        - Have shown strong performance in interpreting non-literal utterances
+Language input can bootstrap functional competence capabilities
+    - We do not argue that functional linguistic competence is out of reach for language-based models...
+    - Goals:
+        1. to highlight the conceptual distinction between formal and functional linguistic competence, which in the brain draw on separate neural circuits
+        2.  demonstrate the gulf between LLMs’ formal and functional linguistic abilities (which is now closing bruh)
+    - Models that can master language use would also require or benefit from separate mechanisms for formal and functional competence.
+
+Toward models that use language like humans
+    - We have shown that formal competence emerges in contemporary LLMs as a result o the word-in-context prediction objective; however, this objective alone appears insufficient for equipping LLMs with unctional linguistic competence skills.
+        - CAP!!!!!!!! GET BITTER PILLED, PUSSY
+    - 
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,107 @@
+Significantly Enhancing Adult Intelligence With Gene Editing May Be Possible
+
+12 Dec 2023
+
+Introduction
+    - The process involved in gene therapy to treat cancer and single gene disorders is excruciating and expensive
+    - CAR T-cell therapy requires the removal of white blood cells via IV
+    - Genetic modification of these cells outside the body, culturing the modified cells, chemotherapy to kill ... $500k to $1m
+        - This only adds a single gene
+    - Personality, diabetes risk, intelligence are controlled by hundreds/tens of thousands of genes, each exerts a tiny influence
+    - How could we get gene editing agents into all 200b brain cells ?
+
+    - If we get AGI, adult gene editing might have an impact on a much shorter time scale than embryo selection
+
+    - Poured over papers on base editors and prime editors and in-vivo delivery of CRISPR proteins via adeno-associated viruses trying to figure out whether this was possible
+    - There are no known fundamental barries to prevent us
+
+    - There are still unknowns, but many pieces of a viable editing protocol have been demonstrated independently in one research paper or another
+
+If this works, it's going to be a very big deal
+    - Nearly every trait and every disease you've ever heard of has a significant genetic component, from intelligence to breast cancer
+    - The amount of variance already present in the human gene pool is stunning
+    - For many traits, we could take someone from 3rd percentile to 97th percentile by editing just 20% of the genes involved in determining that trait
+
+    - Tweaking even a dozen genes might be able to halt the progression of Alzheimer's or alleviate the symptoms of major autoimmune diseases
+    - The same could apply to other major causes of aging: diabetes, heart disease, cancers. All have genetic roots to some degree or other
+
+    - Could all be done in people already born
+    - Could we modify intelligence ?
+        - In last 10k years, Humans have progressed mostly bc of their tools and environment
+        - Genes & brains have changed little
+
+How does intelligence even work at a genetic level?
+    - Intelligence is controlled by somewhere between 10k-24k variants
+    - Each one, on avg, contributes about +-0.2 IQ points
+
+    - Genetically altering IQ is more or less about flipping a sufficient number of IQ-decreasing variants to their IQ-increasing counterparts
+    - Most of the variance in the genome is linear in nature, by which I mean the effect of a gene doesn't usually depend on which other genes are present
+        - Modeling a cts trait like intelligence is actually extremely straightforward: simply add the effects of the IQ-increasing alleles to those of the IQ-decreasing alleles and then normalize the score relative to some reference group
+
+    - We've built a model based on summary statistics from UK Biobank
+
+    - Based on the model, we can come to a surprising conclusion: there is enough genetic variance in the human population to create a genome with a predicted IQ of about 900 !
+
+Total maximum gain
+    - Given the set of publicly available intelligence-associated variants available in UK biobank, here's a graph showing expected effect on IQ from editing genes in adults
+    - Not very impressive...there are several factors at play here:
+        1. We expect ~50% of the targeted edits to be successfully made in an average brain cell
+            - The actual amount could be more or less depending on editor and delivery efficiency
+        2. Some genes we know are involved in intelligence will have zero effect if edited in adults because they primarily influence brain development
+        3. We can only target ~90% of genetic variants with prime editors
+        4. About 98% of intelligence-affecting alleles are in non-protein-coding regions
+            - Remaining 2% are in protein-coding regions and are probably not safe to target
+        5. Off-target edits, insertions and deletions will probably have some negative effect
+            - As a very rough guess, we can probably maintain 95% of the benefit after the negative effects of these are taken into account
+        6. Most importantly, the current intelligence predictors only identify a small subset of intelligence-affecting genetic variants. With more data we can dramatically increase the benefit from editing for intelligence. The same goes for many other traits such as Alzheimer's risk or depression.
+    - The limitations in 1-5 together reduce the estimated effect size by 79% compared to making perfect edits in an embryo
+    - If you could make those same edits in an embryo, the gains would top out around 30 IQ points
+
+    - The bigger limitation originates from the size of the dataset used to train our predictor
+    - The more data used to train an intelligence predictor, the more of those 20k IQ-affecting variants we can identify, and the more certain we can be about exactly which variant among a cluster is actually causing the effect
+    - The more edits you can make, the better you can take advantage of that additional data
+
+    - Our current predictors are trained using ~135k samples, which would place it just above the lowest line on the graph
+        - Companies like 23&Me genotyped their 12m customer two years ago
+
+How can you make these edits anyways? Isn't CRISPR prone to errors?
+    - CRISPR was not designed to be a gene editing tool
+        - It is part of a bacterial immune system we discovered in 80s
+        - Good gene editing tool bc of luck and good engineering
+    - Gene editing part of CRISPR is the Cas9 protein
+        - Works like a pair of scissors
+        - Chops DNA in half at a specific location determined by "guide RNA"
+        - Bump around cell nucleus until it finds a particular three-letter stretch of DNA called the PAM
+            - Unravels the DNA starting at the PAM and checks to see if the guide RNA forms a complementary match with the exposed DNA
+    - Cas9 can actually measure how well the guide RNA bonds to the DNA
+        - If hybridization is strong enough (base pairs on the guide RNA are complementary to those of the DNA)
+    - To replace a sequence of DNA, one must introduce two cuts: one at the start of the DNA and one at the end of it
+    - Once Cas9 has cut away the part one wishes to be removed, a repair template must be introduce into the cell
+    - This template is used by the cell's normal repair processes to fill in the gap
+
+    - This is at least how it's supposed to work
+    - In reality, a significant portion of the time the DNA will be stitched back together wrong or not at all, resulting in the death of the chromosome
+        - Bad for the cell :/
+
+    - In 2016, a new type of CRISPR was created
+
+The first base editor
+    - Many of the problems with CRISPR stem from the fact that it cuts BOTH strands of DNA when  makes an edit
+    - A double stranded break is like a loud siren broadcast throughout the cell
+    - It can result in a bunch of new base pairs being added or deleted at the break site
+
+    - Sometimes it even results in the immune system ordering the cell to kill itself
+    - When David Liu started thinking about how to modify CRISPR to make it better gene editor, one of the first things he tried to do was prevent CRISPR from making double-straned breaks
+
+    - Modified Ca9 scissors so that they would still seek out and bind to a matching DNA sequence, but wouldn't cut the DNA
+    - They then attached a new enzyme to Ca9 called a "deaminase"
+    - Its job is to change a single base through a chemical reaction
+        - "Base editor"
+    - Target-AID (CRISPR-AID)
+        - There's more detail to go into regarding how base editors work
+        - They are far more reliable than Cas9
+
+    - Base editors make the correct edit between 60 and 180 times as often as the original Cas9 CRISPR
+    - They also make 92% fewer off-target edits and 99.7% fewer insertion / deletion errors
+
+    - Transformer base editor, which has an editing efficiency of 90% in T cells and no detected off-targets

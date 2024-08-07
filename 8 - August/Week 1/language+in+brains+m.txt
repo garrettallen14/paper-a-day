@@ -1,0 +1,32 @@
+Language in Brains,
+Minds, and Machines
+
+29 Mar 2024
+
+
+- Just like the last article argued, this article formalizes the idea that language processing is distinct from human thoughts, and that LLM is good at understanding language composition, etc. just like the Human Language Network
+- 
+
+
+Abstract
+    - LLMs can produce / understand language
+    - We discuss why LLMs might be expected to share similarities with the human language system
+    - LLMs represent linguistic information similarly enough to enable relatively accurate brain encoding and decoding during language processing
+    - We examine which LLM properties are critical for capturing human neural responses to language and review studies using LLMs as in silico model organisms for testing hypotheses about language
+    - These ongoing investigations bring us closer to understanding the representations and processes that underlie our ability to comprehend sentences and express thoughts in language
+
+1. THE HUMAN LANGUAGE SYSTEM
+1.1. Language as a Distinct Component of the Mind and Brain
+1.2. What Do We Want from Models of Language Processing?
+    - Predict behavioral / neural responses to arbitrary stimuli with high accuracy
+    - Parsimonious and offer some intuitive-level understanding
+
+
+2. LANGUAGE MODELS AS CANDIDATE MODELS OF HUMAN
+LANGUAGE PROCESSING
+2.2. A Priori, Why Might We Expect Language Models to Capture Something
+About Human Language Processing?
+
+
+3. LANGUAGE MODELS CAPTURE HUMAN NEURAL
+RESPONSES TO LANGUAGE

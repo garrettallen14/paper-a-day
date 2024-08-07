@@ -1,0 +1,41 @@
+A low-cost, wearable, do-it-yourself functional near-infrared spectroscopy (DIY-fNIRS) headband
+
+16 May 2021
+
+Abstract
+    - Neuromonitoring in naturalistic env is of increasing interest for a variety of research fields
+    - fNIRS is well regarded for its potential for miniaturization, good spatial / temporal dimesions, and resilience to motion artifacts
+    - We describe the first open source, fully integrated wireless fNIRD headband system with a single LED-pair source and four detectors
+    - The system is encased in a soft, lightweight cloth and silicone enclosure
+
+
+Hardware in context
+    - EEG and fNIRS are smaller and more economical
+        - Can access a broader range of activities
+    - EEG suffers from poor spatial resolution & susceptibility to motion artifacts
+    - fNIRS is best compromise
+        - Acceptable tolerance to motion artifacts, good spatial (cm) and temporal resolutions (8 to 10 Hz) and portability
+
+    - fNIRS systems consist of light sources and detectors placed on the scalp to quantify relative changes in oxygenated and deoxygenated hemoglobin in different cortical regions
+    - A single channel for fNIRS sensing is typically referred to as an "op-tode" and consists of a light source and a detector
+        - A light source may be shared by multiple detectors and vice versa to create mutliple sensing channels without adding components
+    - The distance between a source and detector controls the depth of imaging
+        - Source-detector distances can be as little as 5 mm to 10 mm ("short channel") for detecting and correcting shallow physiological signals or motion artifacts not from the brain
+    - Source-detector distances for "long channels" are selected based on the light source and how deep a user wishes to image into brain tissue:
+        - Low-cost LED sources have a low depth of penetration in tissue and are used with shorter source-detector distances of 20 to 35 mm
+        - Expensive laser-based sources have greater depth of penetration in tissue and can image deeper into the brain with larger source-detector separations
+    - Light source wavelengths are typically selected in near-infared pairs, wherein the first source ranges from 650 nm to 750 nm and the second source is above 820 nm
+
+    - Recently, three-wavelength fNIRS systems speculating detection of analytes other than hemoglobin, such as water or cytochrome C-oxidase have also been developed to either improve calculations of changes in hemoglobing concentrations or to utilize an alternate biomarker for cerebral activity
+
+    - Three wave-lengths have also been used for hemoglobin-only systems
+        - The third wavelength is selected at a point such as 805 nm, close to the isobestic point of hemoglobin
+
+    - Most commercial and research systems utilize two wavelengths for their studies
+    - Our system is intended to be as low-cost as possible, so we only utilized two LEDs at 740 nm and 850 nm
+
+    - We provide a scalable prototype of a low-cost, lightweight, wireless single-channel fNIRS head-band platform that is easy to assemble and use for neuroimaging studies in naturalistic conditions
+    - We have designed single-channel fNIRS hardware and accompanying data collection software to be assembled for $215
+
+    - Attempt a breath-holding test
+

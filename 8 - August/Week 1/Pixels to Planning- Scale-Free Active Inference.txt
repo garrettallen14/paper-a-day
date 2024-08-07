@@ -1,0 +1,85 @@
+From pixels to planning: scale-free active inference
+
+27 Jul 2024
+
+Abstract
+    - Describe a discrete state-space model for generative modeling
+    - Model generalizes partially observed Markov decision processes to include paths as latent variables, rendering it suitable for active inference and learning in a dynamic setting
+    - We consider deep / hierarchical forms using the renormalisation group
+        - Ensuing renormalising generative models (RGM) can be regarded as discrete homologues of deep conv neural networks or cts state-space models in generalised coordinates of motion
+    - By construction, these scale-invariant models can be used to learn compositionality over space and time, furnishing models of paths or orbits; ie, events of increasing temporal depth and itinerancy
+    - This illustrates the automatic discovery, learning and deployment of RGMs using a series of applications
+    - We start with image classification and then consider compression and generation of movies / music
+    - We apply the same variational principles to the learning of Atari-like games
+
+
+Introduction
+    - Renormalisability rests on a renormalisation group (RG) operator
+        - Take a description of the system at hand (action, partition function, etc.)
+        - Return a coarse-grained version that retains the properties of interest
+        - Discard irrelevant details
+    - When the statistical process generating the data is of a certain hierarchical from prevalent in physics and ML, a DNN can be more efficient than a shallow one
+        - Any random dynamical system w/sparse coupling--and an implicit Markov blanket partition--is renormalisable
+        - Therefore, any generative model that recapitulates 'the statistical process generating the data' must be renormalisable
+    - We illustrate applications of the same RGM in several settings
+    - The universality calls upon the apparatus of the renormalisation group
+    - In brief, its deep structure ensures that each level can be renormalised to furnish the level above
+
+    - The renormalisation group requires that the functional form of the dynamics (eg. belief updating) is conserved over levels or scales
+    - This is assured in variational inference; in the sense that the inference process itself can be cast as pursuing a path of least action, where action is the path integral of variational free energy.
+    - ...
+
+
+Active Inference, Learning and Selection
+    - This section overviews the model used in the numerical studies of subsequent sections
+    - This model generalises a partially observed Markov decision process (POMDP) by equipping it with random variables called paths that 'pick out' dynamics or transitions among latent states
+    - These models are designed to be composed hierarchically, in a way that introduces a separation of temporal scales
+Generative Models
+    - Active inference rests upon a generative model of observable outcomes
+        - This model infers the most likely causes of outcomes in terms of expected states of the world
+        - These states / paths are latent (hidden) because they can only be inferred through observations
+        - Some paths are controllable, in that they can be realised through action
+        - Therefore, certain observations depend upon action (eg. where one is looking)
+            - This requires the generative model to entertain expectations about outcomes under different combinations of actions (ie, policies)
+            - These expectations are optimised by minimising variational free energy
+            - The prior probability of a policy depends upon its expected free energy
+            - Having evaluated the expected free energy of each policy, the most likely action is selected and the implicit perception-action cycle continues
+    - Fig 1: Overview of generative model in this paper
+        - Outcomes at any time depend upon hidden states
+        - Transitions among hidden states depend upon paths
+        - Paths are RVs
+        - First set: A maps from hidden states to outcome modalities:
+            - Exteroceptive (eg. visual) or proprioceptive (eg. eye position) modalities
+            - These params encode the likelihood of an outcome given their causes
+        - Second set: B encodes transitions among the hidden states of a factor, under a particular path
+            - Factors correspond to different kinds of causes;
+                - eg. the location vs class of an object
+        - Remaining tensors:
+            - C encode prior beliefs about paths
+            - D and E encode prior beliefs about initial conditions
+        - Tensors are generally parameterised as Dirichlet distributions, whose sufficient statistics are concentration parameters or Dirichlet counts, which count the number of times a particular combination of states and outcomes has been inferred
+        - We will focus on learning the likelihood model, encoded by Dirichlet counts
+
+    - Outcomes are generated as follows:
+        1. A policy is selected using a softmax function of expected free energy
+        2. Sequences of hidden states are generated using the probability transitions specified by the selected combination of paths (ie. policy)
+        3. These hidden states generate outcomes in one or more modalities.
+    - Inference about hidden states (ie, state estimation) corresponds to inverting a generative model, given a sequence of outcomes, while learning corresponds to updating model parameters
+    - The requisite expectations constitute the sufficient statistics (s,u,a) of posterior beliefs Q(s,u,a) = Qs(s)Qu(u)Qa(a)
+    - The implicit factorisation of this approximate posterior effectively partitions model inversion into inference, planning and learning
+Variational free energy and inference
+    - In variational Bayesian inference, model inversion entails the minimisation of variational free energy wrt sufficient statistics of approx posterior beliefs
+    - Free energy = 0 when the approximate posterior is the true posterior
+        - At this point, the free energy becomes the negative log evidence for the generative model
+    - This means minimising free energy is equivalent to maximising model evidence
+
+    - Planning emerges under active inference by placing priors over (controllable) paths to minimise expected free energy
+
+    - Note that the expectation is over observations in the future that become random variables, hence, expected free energy.
+        - This means that preferred outcomes--that subtend expected cost and risk--are prior beliefs, which constrain the implicit planning as inference
+    - One can also express the prior over the parameters in terms of an expected free energy, where, marginalising over paths: ...
+    - Expected free energy can be regarded as a universal objective function that augments mutual information with expected costs or constraints
+Active inference
+    - Sufficient statistics are updated to minimise variational free energy
+    - Expectations about hidden states are a softmax function of messages that are linear combinations of other expectations and observations
+    - 

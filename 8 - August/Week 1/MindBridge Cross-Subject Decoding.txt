@@ -1,0 +1,74 @@
+MindBridge: A Cross-Subject Brain Decoding Framework
+
+11 Apr 2024
+
+Abstract
+    - Brain decoding aims to reconstruct stimuli from acquired brain signals, primarily from fMRI
+    - Currently, brain decoding is confined to a per-subject-per-model paradigm
+        - Limits its applicability to the same individual for whom the decoding model is trained
+    - This stems from:
+        1. The inherent variability in input dimensions across subjects due to differences in brain size
+        2. The unique intrinsic neural patterns, influencing how different individuals perceive and process sensory information
+        3. Limited data available for new subjects in real-world scenarios
+    - We present MindBridge, which achieves cross-subject brain decoding by employing only one model
+    - Our proposed framework establishes a generic paradigm capable of addressing these challenges by introducing biological-inspired aggregation function and novel cyclic fMRI reconstruction mechanism for subject-invariant representation learning
+
+    - Notably, by cycle reconstruction of fMRI, MindBridge can enable novel fMRI synthesis, which can also serve as pseudo data augmentation
+    - Within the framework, we also devise a novel reset-tuning method for adapting a pretrained model to a new subject
+    - Experimental results demonstrate MindBridge's ability to reconstruct images for multiple subjects, which is competitive with dedicated subject-specific models
+
+    - Furthermore, with limited data for a new subject, we achieve a high level of decoding accuracy, surpassing that of subject-specific models
+
+
+Introduction
+    - Human brain possesses the remarkable ability to encode the sensory stimuli that we encounter every day, making sense of our perceptual world
+    - Brain decoding is the reverse process
+
+    - A decoding model trained on one subject's brain can only be effectively applied to that same subject, and can not be applied to other subjects
+        - High costs to model storage and training
+    - Need: cross-subject bran decoding
+        - One model to decode brain signals from multiple subjects and adapting to new subjects
+
+    - This requires adequately addressing various substantial challenges:
+        1. Size variability:
+            - fMRI signals exhibit substantial size differences across subjects
+            - Inherent variability in brain size / architecture
+            - Need a flexible approach to handle this variability
+        2. Diverse Neural Responses:
+            - The intricacies of the brain extend beyond structural variations
+            - The way each subject's brain processes stimuli is uniquely shaped by their experiences, biases and cognitive patterns
+        3. Data Scarcity for New Subjects:
+            - In real-world applications, it is highly cumbersome to acquire extensive fMRI data for new subjects if not infeasible
+
+    - We devise MindBridge:
+        1. Adaptive Signal Aggregation:
+            - Brain activation is probably sparse and only neurons exceeding a certain threshold activate
+            - We propose to use an aggregation function based on adaptive max pooling to extract the most useful information, and unify the input dimension of fMRI signals across different subjects
+        2. Subject-Invariant Representation:
+            - We extract semantic embeddings from disparate subject's fMRI signals by utilizing a novel cycle reconstruction mechanism
+            - These embeddings are then translated and aligned within a consistent CLIP embedding space, facilitating a standardized interpretation across varying neural responses
+        3. Efficient Adaptation Strategy:
+            - To mitigate the data scarcity issue for new subjects, we introduce a novel finetuning method, reset-tuning
+            - Transferable knowledge from cross-subject pretraining is held in the deep layers, while shallow layers are responsible for projecting diverse subject's fMRI signals into subject-invariant embeddings
+            - Reset-tuning reset the shallow layers, but reuses the deep layers
+
+    - MindBridge also incorporates:
+        - Visual but also text captions as training data
+        - Predict corresponding image and text embeddings to reconstruct more semantically faithful images
+        - MindBridge opens new possibility to synthesize new brain signals using data from other subjects while preserving same semantic meaning by cyclic fMRI reconstruction
+
+        - MindBridge not only bridges the gap among different brains, but also potentially augments the volume of available data
+
+    - To verify our approach, we conduct experiments on the publicly available NSD dataset
+    - The absence of common images across different subjects poses an additional challenge
+
+
+MindBridge
+Data Elaboration
+    - Natural Scenes Dataset
+        - High-resolution 7-Tesla fMRI scans collected from 8 healthy adult subjects
+        - Instructed to view thousands of natural images from MS-COCO dataset
+Cross-Subject Brain Decoding
+    - Current brain decoding pipeline:
+        - Mapping fMRI voxels to CLIP embeddings, then using these to guide diffusion models in generating reconstructed images
+        
