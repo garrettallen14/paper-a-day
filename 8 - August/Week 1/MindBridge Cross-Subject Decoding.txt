@@ -65,10 +65,6 @@ Introduction
 
 MindBridge
 Data Elaboration
-    - Natural Scenes Dataset
-        - High-resolution 7-Tesla fMRI scans collected from 8 healthy adult subjects
-        - Instructed to view thousands of natural images from MS-COCO dataset
-Cross-Subject Brain Decoding
-    - Current brain decoding pipeline:
-        - Mapping fMRI voxels to CLIP embeddings, then using these to guide diffusion models in generating reconstructed images
-        
+    - We illustrate the data
+    - NSD: high-res 7-Tesla fMRI scans from 8 healthy adults
+    - 

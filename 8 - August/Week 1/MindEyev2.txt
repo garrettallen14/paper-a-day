@@ -1,0 +1,47 @@
+MindEye2: Shared-Subject Models Enable fMRI-To-Image With 1 Hour of Data
+
+15 Jun 2024
+
+Abstract
+    - We pretrain our model across 7 subjects and then fine-tune on minimal data from a new subject
+    - Our novel functional alignment procedure linearly maps all brain data to a shared-subject latent space, followed by fine-tuning SD XL to accept CLIP latents as inputs instead of text
+    - Improve out-of-subject generalization with limited training data and also attains SOTA image retrieval and reconstruction compared to single-subject approaches
+    - MindEye2 demonstrates how accurate reconstructions of perception are possible from a single visit to the MRI facility
+
+
+Introduction
+    - Patterns of fMRI brain activity are translated into embeddings of pretrained deep learning models and used to visualize internal mental representations
+    - High-quality results use single-subject models that are not generalizable across people, and which have only been shown to work well if each subject contributes dozens of hours of expensive fMRI training data
+    - MindEye2 pretrains a shared-subject model that can be fine-tuned w/limited data from a held-out subject
+
+    - This approach yields similar reconstruction quality to a single-subject model trained w/40x the training data
+
+    - Map flattened spatial patterns of fMRI activity across voxels to the image embedding latent space of a pretrained CLIP
+        - Residual MLP backbone
+        - Diffusion prior: used for reconstruction and trained from scratch to take in the outputs from the MLP backbone and produce aligned embeddings suitable as inputs to any pretrained image generation model that accepts CLIP image embeddings
+        - Retrieval submodule: contrastively trained and produces CLIP-fMRI embeddings that can be used to find the original (nearest neighbor) image in a pool of images
+            - Not used to reconstruct a novel image
+    - Map brain activity to the latent space of SD's VAE to obtain blurry reconstructions that lack high-level semantic content but perform well on low-level image metrics which get combined with the semantically rich outputs from the diffusion prior to return reconstructions that perform well across perceptual and semantic features
+
+
+MindEye2
+    - Pretraining and fine-tuning a single model where brain activity is mapped to the embedding space of pretrained deep learning models
+    - During inference, these embeddings predicted from the brain are fed into frozen image gen models that translate them from model space to pixel space
+    - We first pretrain the model w/7 subjects (30-40 hours of scanning data each)
+    - We fine-tune the model w/data from a held-out 8th subject
+
+    - Single-subject models were trained/fine-tuned on a single 8xA100 GPU for 150 epochs
+Shared-Subject Functional Alignment
+    - Every subject has a uniquely shaped brain with different functional organization
+    - There needs to be an initial alignment step to ensure the model can handle inputs from different brains
+    - Unlike anatomical alignment (every subject brain is mapped to the same brain template), we remain in subject's native brain space and functionally align flattened spatial patterns of fMRI activity to a shared-subject latent space using subject-specific ridge regression
+
+    - Each subject has a separate linear layer with weight decay to map the input fMRI voxels to a 4096-dim latent
+
+    - Following this initial linear layer, the rest of the model pipeline is shared across subjects w/o any subject specific mappings
+
+    - The whole pipeline is trained end-to-end where pretraining involves each batch containing brain inputs from all subjects
+
+    - NSD: 90% of seen images are unique to the subject and 10% that were seen across subjects are relegated to the test set
+Backbone, Diffusion Prior & Submodules
+    - 

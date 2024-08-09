@@ -1,0 +1,73 @@
+Reconstructing the Mind’s Eye: fMRI-to-Image with
+Contrastive Learning and Diffusion Priors
+
+7 Oct 2023
+
+Notes:
+    - Training an SAE to get: Brain activity -> embeddings similar to XYZ ?
+    - Want to be able to put in an image, and see what parts of the brain contribute the most to this specific image embedding firing ?
+
+    - Enter an image, and it will provide you with the areas of the brain which contribute the most to this image being fired (?)
+
+    - Enter a set of images and see what areas of the brain contribute the most to this embedding being produced ?
+
+
+
+
+
+Abstract
+    - fMRI-to-image to retrieve and reconstruct viewed images from brain activity
+    - Two parallel submodules specialized for retrieval (contrastive) and reconstruction (diffusion prior)
+    - MindEye can map fMRI brain activity to any high-dim multimodal latent space, like CLIP image space
+        - Enables image reconstruction w/generative models that accept embeddings from this latent space
+    - We comprehensively compare our approach with other existing methods
+    - MindEye can retrieve the exact original image even among highly similar candidates, indicating that its brain embeddings retain fine-grained image-specific information
+    - This allows us to accurately retrieve images even from large-scale databases like LAION-5B
+    - We demonstrate through ablations that MindEye's performance improvements result from specialized submodules for retrieval and reconstruction, etc.
+    - MindEye can better preserve low-level image features in the reconstructions by using img2img with outputs from a separate autoencoder
+
+
+Introduction
+    - Decoding environmental inputs and cognitive states from brain activity is fundamental to the field of neuroscience
+    - MindEye involves mapping via MLPs, contrastive learning and diffusion models to achieve SOTA image reconstruction
+
+    - Map flattened spatial patterns of fMRI activity across voxels (3-dimensional cubes of cortical tissue to the image embedding latent space of a pretrained CLIP model)
+    - MindEye has an MLP backbone and 2 specialized submodules for retrieval and reconstruction
+    - Retrieval:
+        - Contrastively trained and produces "disjointed CLIP fMRI" embeddings with high cosine similarity with the corresponding image embeddings but differ in magnitude
+    - Reconstruction:
+        - We train a diffusion prior from scratch to take in the outputs from the MLP backbone and produce aligned embeddings suitable as inputs to any pretrained image generation model that accepts CLIP image embeddings
+
+    - To ensure that our reconstructions also match the original image's low-level features, we train a separate encoder that directly maps voxels to the embedding space of Stable Diffusion's VAE, obtaining blurry image reconstructions that lack high-level semantic content but perform SOTA on low-level image metrics
+
+    - Combining the high-level "semantic" pipeline with the low-level "perceptual" pipeline in an img2img setting allows MindEye to output SOTA reconstructions across both low- and high-level image metrics
+
+
+MindEye
+    - Two pipelines: high-level semantic pipeline, low-level perceptual pipeline
+High-Level (Semantic) Pipeline
+    - ...
+Low-Level (Perceptual) Pipeline
+    - Map voxels to the embedding space of Stable Diffusion's VAE
+    - The output of this pipeline can be fed into the VAE decoder to produce blurry image reconstructions that lack high-level semantic content, but exhibit SOTA low-level image metrics
+
+    - We use img2img to improve our final image reconstructions in terms of low-level metrics, with minimal impairment to high-level metrics, st. we start the diffusion process from the noised encodings of our blurry reconstructions rather than pure noise
+
+    - The MLP backbone for our low-level pipeline follows the same architecture as our high-level pipeline, except that the final outputs are of size (16,16,64)
+    - These are upsampled to (64,64,4) by a CNN upsampler
+    - An MLP projector projects the backbone outputs to a 512 dimensional space where an auxiliary contrastive loss is applied
+APPENDIX A.3.2 Low-Level Pipeline: Mapping to Stable Diffusion VAE
+    - To map to SD's VAE latent space, we use a low-level pipeline with the same architecture as the high level pipeline
+    - We use a separate residual MLP backbone with 4 residual blocks that maps flattened voxels to a 16x16x64 dimensional latent space
+    - The reconstruction submodule in the low-level pipeline is a CNN upsampler that upsamples these latents by 4x to create embeddings of size (64,64,4)
+    - Targets for the upsampler:
+        - We upsample NSD images to 512x512 thru bilinear interpolation and encode them with the SD VAE encoder
+        - The resulting (64,64,4) embeddings form the targets for the high-level pipelien
+
+    - Mean absolute error > mean squared error for pixel-level metrics like PSNR and SSIM due to better convergence properties
+    - The 4-channel SD latent space effectively compresses images, and latents can be converted to RGB images with a linear mapping from latent space to pixel space
+    - We observe that the problem of mapping to SD embedding space follows the same properties as low-level vision tasks, st. mae performs better than mse
+
+    - The contrastive submodule in the low-level pipeline acts as an auxiliary loss to improve the performance of the reconstruction submodule
+    - It uses an MLP projector that maps the (16,16,64) backbone outputs to (16,16,512)
+    - Since we do not care about retrieval performance for the low-level pipeline, we use SoftCLIP loss without BiMixCo
