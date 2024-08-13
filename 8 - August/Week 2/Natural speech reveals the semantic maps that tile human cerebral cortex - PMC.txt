@@ -1,0 +1,24 @@
+Natural speech reveals the semantic maps that tile human cerebral cortex
+
+28 Oct 2016
+
+Abstract
+    - The meaning of language is represented in regions of the cerebral cortex collectively known as the "semantic system"
+    - However, little of the semantic system has been mapped comprehensively, and the semantic selectivity of most regions is unknown
+    - Here we systematically map semantic selectivity across the cortex using voxel-wise modeling of fMRI data collected while subjects listened to hours of narrative stories
+
+    - We show that the semantic system is organized into intricate patterns that appear consistent across individuals
+    - We then use a novel generative model to create a detailed semantic atlas
+
+    - Most areas within the semantic system represent information about specifc semantic domains, or groups of related concepts, and our atlas shows which domains are represented in each area
+
+
+Introduction
+    - There are a group of regions that seem to represent info about the meaning of language
+        - These regions respond more to words than non-words
+        - More to semantic tasks than phonological tasks
+        - More to natural speech than temporally scrambled speech
+    - Studies have investigated specific types of representation in the semantic system have found areas selective for concrete or abstract words
+
+    - Dataset: Seven subjects listened to >2 hours of stories from The Moth Radio Hour, while whole-brain blood-oxygen level dependent (BOLD) responses were recorded via fMRI
+    - We used voxel-wise modeling (VM) to model responses to complex natural stimuli, to estimate the semantic selectivity of each voxel

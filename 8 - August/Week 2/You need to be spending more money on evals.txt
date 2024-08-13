@@ -1,0 +1,35 @@
+You need to be spending more money on evals.
+
+12 Aug 2024
+
+Intro
+    - The results of a single benchmark do not show that Opus is a better model than GPT-4-Turbo... you are just falling for small number statistics
+
+First, a side point about GPQA.
+    - GPQA is a challenging dataset of 4 MC questions that are difficult to answer even with unrestricted access to the internet
+    - GPQA Diamond is a 198 q subset of the most high quality questions
+
+    - Fulfills a specific need for AI alignment research: evaluating scalable oversight techniques
+    - GPQA is not a general intelligence eval
+
+Second, small numbers.
+    - There are 198 questions on GPQA Diamond
+    - Baseline: 0-shot CoT
+    - Because there's a sampling step involved for CoT, you'll get a slightly different reasoning and potentially different answer choice every time you ask the model (?)
+        - You could sample the highest probability token deterministically (T=0) or force the model to simply choose one letter w/o providing reasoning to eliminate noise
+        - I would argue this is a worse way to do an eval because it is not representative of the model at its most capable (includes "space for thinking")
+        - Nor is it representative of the way users engage with a model
+
+    - There are smaller sources of variability too: which letter choice the correct answer is assigned, how MC question is formatted
+    - To get reliable measurements of performance, you'll either need a sufficiently large dataset, or you'll need to run the eval several times to get an accurate estimate of performance
+
+    - You may be fooled into thinking you've detected some difference in model performance which would in fact disappear w/additional measurements
+
+    - GPQA (diamond) is a particularly noisy because it contains very few questions
+    - When running w/mean and 95% confidence intervals, it is not longer "obvious" that Claude 3 Opus performs better on GPQA than GPT 4 Turbo
+
+    - Results are noisy!!
+
+Unfortunately, statistics.
+    - How many examples in your dataset do you need to meaningfully compare the perf of two models on a given benchmark?
+    - 

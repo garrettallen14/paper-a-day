@@ -1,0 +1,27 @@
+A natural language fMRI dataset for 
+voxelwise encoding models
+
+Schematic:
+    - 27 unique nl stories
+    - 8 participants over 5 fMRI sessions
+    - One of the 27 stories was played in each of the 5 sessions, no other story was repeated
+
+
+Story stimulus:
+    - 6.4 hours, 11543 TRs, 78893 words, 219511 Phonemes
+
+NL stimulus set:
+    - stimulus set 26 10-15 min stories
+    - one 10=min story played in each session as a test dataset
+    - 370 mins of data per participant
+    - for 3 of the participants, the stimulus set contains an additional 55 stories
+    - for stim presentation, the audio for each story was filtered to correct for frequency response and phase errors induced by the headphones using calibration data provided by sensimetrics and custom python code
+    - all stories were manually transcribed by one listener
+    - the penn phonetics lab forced aligner was used to automatically align the audio to the transcript
+
+Extended dataset for 3 participants:
+    - UTS01, UTS02, UTS03
+        - 10 extra sessions with raw BOLD, preprocessed BOLD, wav files and corresponding textgrids
+        - organized in the same openneuro dataset descirbed above
+        - include stories from the moth and the new york times modern love
+        

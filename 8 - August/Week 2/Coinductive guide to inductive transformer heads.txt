@@ -1,0 +1,182 @@
+Coinductive guide to inductive transformer heads
+
+3 Feb 2023
+
+Abstract
+    - All building blocks of transformer models can be expressed with combinatorial Hopf algebra
+    - Transformer learning emerges as a result of interplay between algebraic and coalgebraic operations of the combinatorial Hopf algebra
+        - Transformer model is a linear time-invariant system where the attn mechanism computes a generalized convolution transform and the residual stream serves as a unit impulse
+
+    - Attn-only transformers learn by enforcing an invariant between these two paths
+        - Hopf coherence
+    - One could call combinatorial Hopf algebras: "Tensors with a built-in loss function gradient"
+    - This loss function gradient occurs within the single layers and no backward pass is needed
+
+    - This is in stark contrast to auto diff which happens across the whole graph and needs and explicit bwd pass
+    - This property is the result of the fact that combinatorial Hopf algebras have the surprising property of calculating eigenvalues by repeated squaring
+
+
+Introduction
+    - We analyze behaviors in context of Hopf algebras, a tensorial bialgebra
+    - This algebra turns out to be uniquely suited for interpretation and understanding of transformer models
+
+    - Semantic bridge between the representation of ML models in memory as IEEE 754 and the observable behaviors of said models
+
+
+Duality
+Induction
+    - Induction is about building objects from smaller components via the product operation:
+        C * C = C
+    - Inductive data structures are defined in terms of their constructors
+        nil: 1 -> U
+        cons: D x U -> U
+        - Where U is the data type being defined
+    - The linked list is formalized as
+        - phi: 1 + D x U -> U
+Coinduction
+    - Coalgebras are about observation
+        - We can think of a coalgebra f: X -> 1 + AX as observing about an entity whether it contains something A-detectable or not, and if so which element of A it detects
+        - Having observed something it modifies it
+        - The final coalgebra has as elements all possible outcomes of the behavior you might observe
+        - Do you still have obs to add as list elements? If ever no, we have a finite list.
+        - If alsaways yes, we have an infinite list. There's no other behavior that can be detected
+    - Coinduction, a dual of induction, has been relegated to CS esoterica
+    - Coinduction/coalgebra is about analysis--specifying how things break down by defining coproduct:
+        C = C*C
+    - Turning an algebra into a coalgebra is as simple as reversing the arrows ?
+    - We can create destructors from linked list constructors above:
+        head: U -> 1
+        tail: U -> D x U
+    - The coinductive list formula is then:
+        alpha: U -> 1 + D x U
+    - Coinduction is fundamentally about defining how something changes in response to observation
+    - This is the underlying principle of recurrent relationships, generating functions, dynamic systems, coinductive data structures, and fundamentally anything that deals w/modeling of observed, possibly infinite, behavior
+Recurrence relations
+    - Defining terms of a seq in terms of combinatinos of previous elements of the sequence
+Generation function
+    - G(a_n;x) = sum(a_n*x^n)
+    - Not functions per se, they instead provide a way of expressing something in terms of a sum of lower dim elements with addtl constraints on what combines with what via the use of "powers"
+    - These powers are indeterminate, one is not expected to substitute for x and eval
+    - Generating functions are for handling infinite sums and establishing recurrences
+
+    - Provide a unified interface between linearity and non-linearity
+        - Generating functions provide a stream of semi-rings which can be further combined to a single generating function producing semi-rings
+    - This idea is closely related to coproduct in Hopf algebras
+    - In context of ML, auto diff is instance of generating functions
+Stream algebra
+    - Change internal state in response to external changes
+    - Differential equations of programming
+    - Fundamental diff between recursion and corecursion is that recursive Fibonacci function returns only a single value, while corecursive returns a stream of all Fibonacci numbers
+Dynamic programming
+    - Naturally expressed in terms of recurrences
+Applications
+    - Approach: build up things from constituent parts enabling reasoning about all possible paths and interactions in a black-box dynamic system
+        - Analyze all possible interdependent interactions among the single atoms starting from the bottom
+    - The field of bisimulation defines equivalence in terms of observation equivalences
+        - Verifies the dynamic behaviors of the systems
+
+
+Hopf Algebra
+    - A tensor bialgebra A over a field C
+    - A tensor algebra and a tensor coalgebra at once
+
+    - The counit-unit path as "unit impulse path"
+    - Top/bottom paths as "conv paths"
+
+    - Hopf algebra enforces coherence between the two paths by updating internal state in response to input
+        - This is a powerful invariant for reasoning about the behavior of a linear time-invariant system
+
+    - Hopf algebra is defined by following operations
+        unit -- u: C -> A
+            - Take element of C and construct/element of A and obeys the rule:
+                u.e = e = e.u for all e in A
+        product -- m: A * A -> A
+            - Standard tensor product
+                (a*c)(b*d) = (ab * cd)
+        counit -- e: A -> C
+            - Similar to trace from linear algebra
+            - Provides a feedback loop operator from control theory
+            - It is a dual of the unit and works as a coequalizer
+        coproduct -- delta: A -> A*A
+            - A way to generate all possible splittings of a subset into disjoint pieces (!)
+                delta(x^n) = sum_i->n(x^i*x^(n-i))
+                    where x^0 = 1
+            - One can think of it as converting something into its generating function or into a sum of elements of lower graded subcoalgebra such as simplices
+            - In the context of physics, it is a probability density function, a total probability mass that's being shared out among different spaces
+        antipode -- S: A -> A
+            - Not all transformations are invertible
+            - Antipode provides a nonlocal "linearized inverse"
+            - Doesn't provide an inverse for single elements, but for linear combinations
+            - Similar to a complex conjugate
+            - If Hopf alg is finite-dim, then the antipode is an inverse (!)
+            - Antipode is defined as:
+                S.S = id
+                S(hg) = S(g)S(g)    (?)
+            - Serves as an intertwining operator, namely a equivariant linear map between two representations which get updated as the Hopf algebra "learns"
+            - In the context of interacting particle systems, the intertwiner provides a symmetric exclusion process
+    - Unit impulse, conv & Hopf coherence
+        - One can define the unit impulse d, (dirac delta)
+            d = e . u
+        - Traces of evolution operators can be evaluated as integrals over Dirac delta functions
+        - The purpose of the unit impulse is to serve as multiplicative identity for convolution . which is defined as (f.g) = m(f*g)delta
+
+        - The fundamental advantage of this conv over the std is, as is custom w/bi-algebras, it provides a way of controlling how splitting-up and recombination works via the coproduct and product
+        - The unit impulse delta function then provides the multiplicative identity:
+            f * d = f
+    - Hopf coherence: m(id*S)delta = e.u
+        - Enforces that the algebra updates its internal state in order for the unit impulse path to be equal to the convolution path
+
+
+Combinatorial Hopf algebra
+    - A Hopf algebra where the coproduct is defined as the shuffle product
+    - Besides combinatorics, this algebra has also been explored in control theory
+Shuffle product
+    - Provides a way of generating all the ways in which two words can be interwoven
+    - All possible ways which cars from two lanes can be interleaved to merge into one
+    - Word composition is non-commutative, so shuffle product is a natural match for combinatorial objects of words
+
+    - The most surprising property of the combinatorial Hopf algebra is that one can calculate the eigenvectors by repeated squaring (coproduct-product)
+
+
+Transformers
+    - Argument: attn-only transformer model can be understood in terms of combinatorial Hopf algebras and as such can be analyzed as a linear time-invariant system
+    - The summary:
+        - Since the residual stream has no preferred basis, it should be understood as a trace/counit/unit impulse, and since the attention mechanism is a positive definite matrix, it should be understood as a transfer function of the system
+        - The model learns by enforcing Hopf coherence between the two paths
+
+    - The attn heads continuously update the residual stream (trace) and their internal state in order to enforce the invariance between the unit impulse path and Hopf coherence
+    - Combinatorial Hopf algebra is a good match since it captures the non-commutativity of word composition
+Residual stream
+    - A channel used by single components of the model to communicate among themselves
+
+    - The residual stream is the trace/counit/unit impulse of the model
+    - The residual stream has no priviledged basis
+        - This is analogous to the behavior of the trace in linalg where the trace of the matrix is also independent of the basis
+
+    - While in linalg, the trace is a scalar, categorical trace is more akin to a formal power series
+
+    - Residual stream serves a similar purpose to the eval trace in autodiff, namely establishing recurrences
+
+    - The residual stream is a recurrence relationship that attention heads use for both steering (by writing into it) and being steered by it (by reading from it)
+
+    - The values in the stream are continuously updated in response to input in order to enforce Hopf coherence
+
+    - The residual stream provides the notion of a feedback analogous to feedback in ctrl theory
+Attention
+    - The attention mechanism's role is the same as that of a transfer function in a linear time-invariant system
+        - It calculates the frequency response of the transformer model, ie: the output token
+Transformer learning mechanism
+    - Most important property of the residual stream is its basis independence
+    - Most important property of attn: symmetry and positive definiteness
+
+    - In our interpretation, the transformer model learns by enforcing Hopf coherence between the residual stream (unit response path) and the attention path (convolution path)
+    - Learning works as follows:
+        1. Attn head receives an input
+        2. Attn head calcs output from both the unit response path and conv path
+        3. If outputs match, the token is copied
+        4. If the outputs differ, the transformer propagates the difference (error) backward along the conv path and unit impulse path, distributes the error between the QK and OV mechanisms and updates the residual stream (trace)
+        5. By repeating this coproduct-product process (squaring) with different inputs, the transformer learns a stationary Markov chain distribution in its natural basis
+
+    - This mechanism of calculating the gradient of the loss function provides a better alternative to autodiff since the error is calc within a single layer and there's no explicit bwd pass
+
+    

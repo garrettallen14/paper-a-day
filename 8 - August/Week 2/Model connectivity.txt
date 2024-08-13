@@ -1,0 +1,39 @@
+Model connectivity: leveraging the power of encoding models to overcome the limitations of functional connectivity
+
+19 Jul 2023
+
+Abstract
+    - Functional connectivity (FC) is most popular method for recovering functional networks of brain areas with fMRI
+    - FC is defined as temporal correlations in brain activity, FC networks are confounded by noise and lack of a precise functional role
+    - We develop Model Connectivity (MC)
+        - Similarities in encoding model weights, which quantify reliable functional activity in terms of interpretable stimulus-or task related features
+    - To compare FC and MC, both methods were applied to a naturalistic story listening dataset
+    - FC recovered spatially broad networks that were confounded by noise, and that lack a clear role during NL comprehension
+    - By contrast, MC recovered spatially localized networks that are robust to noise, and that represent distinct categories of semantic concepts
+        - Thus, MC is a powerful data-driven approach for recovering and interpreting the functional networks that support complex cognitive processes
+
+
+Introduction
+    - Complex cognitive functions are subserved by anatomically and functionally coupled networks of brain areas
+    - FC is most popular method
+        - Assumes brain areas are functionally coupled if their BOLD activity is temporally correlated
+        - Spurrious correlations between two brain areas can arise from temporally correlated noise generation by physiological sources
+    - The magnitude of the spurious correlations between brain areas is affected by the signal-to-noise-ratio (SNR) of the brain areas
+
+    - Two areas with low SNR are more likely to exhibit spurious correlations
+    - SNR varies across the brain, so the magnitude of the spurious correlations also varies across the brain
+    - FC is unavoidably confounded by spatial variations in SNR
+
+    - FC does not provide a direct / precise method for assigning functions to the recovered networks
+
+    - We developed a new method called model connectivity (MC)
+        - Leverages the oiwer if Voxelwise Modeling (VM) framework, which builds encoding models for each voxel with features extracted from an experiment
+    - These features quantify the cognitive, sensory, or motor information that is hypothesized to be represented in the brain activity during the experiment
+    - Regularized linear regression is used to predict brain activity from these features
+
+    - Because model weights are estimated through cross-validation and are eval on a separate test set, the model weights reflect reliable functional signals in the BOLD activity that generalize beyond the training set
+
+    - MC applied to a naturalistic fMRI dataset that was collected as participants listened to narrative stories
+    - We reasoned that the networks recovered from this narrative auditory dataset will reveal the functional organization of semantic processing systems in the brain
+    - For both MC and FC, the optimal sets of networks were identified by evaluating the cross-participant prediction accuracy of all possible sets of networks
+
