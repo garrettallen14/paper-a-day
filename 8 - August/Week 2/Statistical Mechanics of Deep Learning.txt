@@ -1,0 +1,144 @@
+Statistical Mechanics of Deep Learning
+
+9 Dec 2019
+
+Abstract
+    - What can deep networks compute?
+    - How can we train them?
+    - Why can they generalize?
+    - How does info propagate through them?
+    - Can we teach them to imagine?
+
+    - We look at random landscapes, spin glasses, jamming, dynamical phase transitions, chaos, Riemannian geometry, random matrix theory, free probability, and nonequilibrium statistical mechanics
+
+
+Introduction
+    - We provide frameworks for two major branches of ML
+        - SL, and UnSL
+Foundational Theoretical Questions in Deep Learning
+    - On the supervised side, we discuss four questions:
+        1. Advantage of depth D?
+            - Make a connection to dynamical phase transitions between order and chaos
+        2. Many methods for minimizing the training error involve descending the error landscape over the weights. What is the shape of this landscape and when can we descend to points of low training error?
+            - Make various connections to the stat mech of energy landscapes with quenched disorder
+            - Phenomena like random Gaussian landscapes, spin glasses, and jamming.
+            - Loss function can be thought of as an energy function over thermal degrees of freedom w, where the data D play the role of quenched disorder
+        3. When minimizing Loss via gradient descent, one must start at an initial point w, which is often chosen randomly. How can one choose the random initialization to accelerate subsequent gradient descent?
+            - Theories of signal propagation thru random deep networks provide clues to good initializations, making connections to topics in random matrix theory, free probability, and functional path integrals
+        4. Key is to minimize Loss_Test. Is it then critical to achieve a small generalization error Loss_Gen = Loss_test - Loss-train ? When can one achieve such a small generalization error, especially in situation when params far exceen number of data points?
+            - Address phase transitions in random matrix spectra, free field theories, and interacting particle systems
+    - Unsupervised:
+        - Review work in deep unSL connecting ideas in equilibrium stat mech like free-energy minimization, as well as nonequilibrium statistical mechanics, like the Jarzynski equality and heat dissipation in irreversible processes
+
+
+Expressivity of Deep Networks
+Efficient Computation of Special Functions by DNNs
+    - DNNs are highly expressive:
+        1. DNNs can compactly express highly complex functions over input space in a way shallow networks cannot
+        2. DNNs can disentangle highly curved decision boundaries in input space into flattened decision boundaries in latent space
+            - ie, high dim data is compressed into a latent space which is almost linear
+    - Are the particular example functions efficiently computed by particular deep networks merely rare curiosities, or in some sense is any function computed by a generic deep network not efficiently computable by a shallow network?
+Expressivity Through Transient Chaos
+    - Recent work addresses this question thru Riemannian geometry and dynamical mean-field theory to analyze the propagation of signals through random deep networks
+        - In a phase plane formed by the variance of the weights and biases, the work revealed a dynamical phase transition between ordered and chaotic regimes of signal propagation
+        - For small weights, relative to the strength of the biases, nearby input points coalesce as they propagate through the layers of a deep network and the ffwd map stays within the linear regime
+    - In this chaotic regime, global measures of the length and integrated extrinsic curvature of simple 1d input manifolds typically grow exponentially with depth for random networks
+        - Corresponding measure of length can grow at most as the sqrt of the width in a shallow netowrk
+
+    - This demonstrates: random deep networks cannot be approximated by shallow networks unless they have exponentially more neurons
+        - In this chaotic regime, flat decision boundaries in the output space correspond to decision boundaries in input space with principal extrinsic curvatures that grow exponentially with depth
+
+
+Error Landscape of Neural Networks
+    - Even if a deep network can express a desired function, it is unclear one can successfully find this set of parameters by descending the training error E_train
+    - We review insights gained from various analogies that have been drawn between neural network error landscapes and complex energy landscapes in statistical mechanics, as well as insights gained from controlled numerical explorations of neural network error landscapes
+Random Gaussian Landscapes and Saddles
+    - Powerful theoretical guarantees afforded by optimization over convex landscapes
+        - Convex landscapes: Every local minimum is a global minimum
+
+    - Classic work in the statistical physics of smooth random Gaussian landscapes over N variables revealed a very different picture for large N
+        - A random Gaussian function E(w) for w in R^N is characterized by the fact that its function values E(w^alpha) at any finite set of points w^alpha for alpha = 1,...,M are jointly Gaussian dist with zero mean and covariance matrix K_alpha_beta = Kernel(||w_alpha-w_beta||**2/N)
+            - The kernel function K(delta) which determines the correlation of function values at pairs of points separated by a normalized squared distance delta, decays with increasing delta
+        - Thus, this ensemble represents a null model of functions over high-dim spaces with no assumed structure other than a notion of locality in which nearby function values are similar
+
+    - The statistics of critical points of this null ensemble exhibit an interesting structure, providing a window into the shape of generic functions over high-dim spaces.
+        - In particular, any critical point w at which the gradient vanishes can be characterized by:
+            a. The height E(w) of the critical point
+            b. The index or fraction, f, of directions in which the function curves down
+        - The latter fraction f is defined to be the fraction of negative eigenvalues of the Hessian matrix H_i_j = ....
+    - The higher the critical point, the larger the number of negative curvature directions
+    - This automatically implies that at high error E, local minima with f=0 would be exponentially rare relative to saddle points in which f is nonzero...
+
+    - Although the correlation between E and f was computed specifically for random Gaussian landscapes, early work conjectured that this correlation may be more universally true of generic functions over high-dim spaces, including error functions of neural networks
+
+    - Physics-based conclusions regarding the absence of high-error local minima for large neural networks are consistent with more mathematical work proving the nonexistence of such minima in simpler settings
+        - The error landscape of linear neural networks with one hidden layer has no local minima that are also not global minima (!!!)
+An Analogy to Spin Glasses
+    - The error landscape of neural networks is a complex function over the synaptic weights w that also depends on the training data D
+    - A sequence of approximations and simplifying assumptions about both the data and the dependence of the error function over the weights leads to a toy model of a neural network error landscape:
+        ...
+    - This error function corresponds to the energy function of the well-known D-spin spherical spin glass
+
+    - Interesting structure for the critical points:
+        - E(w) can be thought of as a random Gaussian function on the sphere with a specific correlation kernel, and so its critical points qualitatively behave as in Fig2a
+    - A typical critical point with a certain fraction f of negative curvature directions is most likely to be found within a narrow band of error levels
+    - Gradient-descent dynamics converge w/o barrier crossing to the widest and the highest minima, despite the existence of deeper local and global minima
+        - There is an additional interesting aging phenomena in gradient-descent dynamics that were indicative of the prevalence of more flat directions as one descends the training error
+An Analogy to Jamming
+    - By considering a particular loss function L (hinge loss), there is an analogy between jamming and the error landscape of DNNs
+
+    - Jamming scenario exhibits an interesting phase transition
+        - Low-density phase: many particles allowed to move freely
+        - High-density (jammed) phase: most pairwise interactions involve particle overlaps with positive energy
+
+    - In the neural network analogy:
+        - Low-density phase: overparameterized regime
+        - High-density phase: underparameterized regime
+
+    - There is a prevalence of many flat directions in the training error at the jamming transition
+    - Avalanche-like dynamics in which the set of unsatisfied examples exhibit rapid macroscopic rearrangements over training time
+Explorations of Actual Neural Network Landscapes
+    - The Hessian near the bottom of the landscape after training exhibits a bulk spectrum that is heavy-tailed plus a set of outliers that are in a one-to-one correspondence with the number of class labels in classification
+
+    - Landscape constraints are rare but wide minima that are preferentially found by gradient descent, suggesting the possibility of new entropic algorithms that facilitate finding these minima
+
+
+Signal Propagation and Initialization in Deep Networks
+A Dynamical Phase Transition in Random Neural Networks
+    - Signal prop through random networks simplifies in a large-width, mean-field limit in which N_l is large for all l
+    - In large-width limit, we obtain the self-avging property in which the empirical distribution of inputsacross neurons into layer l for fixed weights and biases equals the distribution of the input for fixed i across randomly chosen weights and biases
+
+    - Furthermore, for sufficiently regular nonlinearities, both distributions converge to a Gaussian as the width gets large
+Fwd Propagation of Inputs
+    - Consider a set of K input vectors
+    - K will propagate fwd to a set of input vectors in layer l
+    - The dynamics of the point cloud exponentially converges (diverges) according to whether each eigenvalue of chi is less (greater) than 1 in magnitude
+
+    - Signal propagation predicts trainability
+
+    - Fully connected networks w/fixed points of the form in Eq8 exhibit a phase transition as one increases .w for .b for smooth bounded nonlinearities
+
+    - At the critical transition point, the depth scales diverge, implying that fwd prop of signals retains a deep memory trace of the initial input geometry
+
+    - Intriguingly, this diverging depth scale for info-prop of input geometry coincides with the ability to train extremely deep, critical networks
+
+
+Deep Imagination Through Probabilistic Models
+Energy-Based Probabilistic Models
+    - Boltzmann distribution
+Connections Between Learning, Info Theory, and Free Energy
+    - Z is complex and must be estimated often
+Free Energy Computation as a Barrier to Learning
+    - Even well-motivated approximations to Free Energy cease to be accurate over the course of training
+    - In the context of Energy-Based Models, many approaches have been proposed to overcome the barrier of computing with free energies
+
+    - Training expressive EBMs on high-dim data remains an open challenge
+    - The difficulty of normalizing probability distributions over high-dim spaces has led to interesting approaches for generative modeling of data that sidestep the probabilities themselves
+Nonequilibrium Stat Mech
+    - The bridge between ML and equilibrium stat mech is just beginning to form links
+    - We review two such links
+Jarzynski equality and annealed importance sampling
+    - JE is a special case of Annealed Importance Scheduling in ML
+    - JE replaces inequality in the second law of thermodynamics wiht an equality!
+
+    - 

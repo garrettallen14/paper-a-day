@@ -1,0 +1,23 @@
+DONE:
+Statistical Mechanics of Deep Learning (Bahri 2020) https://www.annualreviews.org/content/journals/10.1146/annurev-conmatphys-031119-050745
+
+Temperature based Restricted Boltzmann Machines (Li 2013) https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4725829/
+
+TODO:
+Natural language syntax complies with the free-energy principle (Murphy 2024) https://doi.org/10.1007/s11229-024-04566-3
+
+Extended critical regimes of deep neural networks (Qu 2022) https://arxiv.org/abs/2203.12967
+
+Criticality meets learning: Criticality signatures in a self-organizing recurrent neural network (Papa 2017) https://doi.org/10.1371/journal.pone.0178683
+
+Learning to learn by gradient descent by gradient descent (Andrychowicz 2017) https://arxiv.org/abs/1606.04474
+
+Adaptive Computation Time for Recurrent Neural Networks (Graves 2016) https://arxiv.org/abs/1603.08983
+
+Deep learning and the renormalization group (Beny 2013) https://arxiv.org/abs/1301.3124
+
+Scale-Free Neural and Physiological Dynamics in Naturalistic Stimuli Processing (Lin 2016) https://pubmed.ncbi.nlm.nih.gov/27822495/
+
+Cortical activity is more stable when sensory stimuli are consciously perceived (Schurger 2015) https://www.pnas.org/doi/abs/10.1073/pnas.1418730112
+
+Criticality versus uniformity in deep neural networks (Bukva 2023) https://arxiv.org/abs/2304.04784

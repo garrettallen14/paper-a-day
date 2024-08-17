@@ -1,0 +1,75 @@
+Natural language syntax complies with the free-energy principle
+
+3 May 2024
+
+Abstract
+    - NL syntax are used in the service of active inference in accord with the free-energy principle (FEP)
+    - While conceptual advances alongside modelling and simulation work have attempted to connect speech segmentation and linguistic communication with FEP, we extend this program to the underlying computations responsible for generating syntactic objects
+    - We argue that recently proposed principles of economy in language design -- "minimal search" criteria from theoretical syntax -- adhere to FEP
+    - This affords a greater degree of explanatory power to the FEP -- wrt higher language functions -- and offers linguistics a grounding in first principles wrt computability
+
+    - We show how both tree-geometric depth and a Kolmogorov complexity estimate (recruiting a Lempel-Ziv compression alg) can be used to accurately predict legal operations on syntactic worksapces
+
+    - This is used to motivate a general principle of language design we term Turing-Chomsky Compression (TCC)
+        - Use TCC to align concerns of linguists w/the normative account of self-organizaiton furnished by the FEP
+
+
+Introduction
+    - Models of language must be plausible from the perspective of neuroanatomy, but they must also be plausible from the perspective of how biophysical systems behave.
+    - We will argue that the structuring influence of the free-energy prinicple can be detected in language
+
+    - NL syntax yields an unbounded array of hierarchically structured expressions
+    - We argue that many historical insights into syntax are consistent with the FEP--providing a novel perspective under which the principlpes governing syntax are not limited to language
+
+    - Syntactic computation may adhere to "general principles that may well fall within extra-biological natural law, particularly considerations of minimal computation"
+
+    - Certain linguistic theories might be engaging with general properties of organic systems
+
+    - We consider the idea that many aspects of NL syntax may be special cases of a variational principle of least free-energy
+        - We examine whether a complexity measure relevant to formulations of free-energy -- Kolmogorov complexity -- relates to legal syntactic processes
+
+    - While the FEP has a substantial explanatory scope, it can also be seen as a method or principle of least action for multi-disciplinary research
+    - FEP describes the optimal behavior of an organism interacting with the environment
+    - The FEP itself has been argued to be more of a conceptual-mathematical model for self-organizing systems, or a guiding framework
+
+    - Some property of organic systems might be seen as realizing the FEP
+    - Hence, we will mostly focus here on presenting a series of principled conceptual relations between the FEP and NL Syntax
+
+    - Our goal: promote more systematic empirical research in the near future, given the space required to fully elaborate conceptual sympathies between two mature scientific fields with extensive histories
+
+    - After reviewing some of these general sympathies, we will aim to defend a specific analytic approach to the empirical assessment of syntactic models
+    - We will suggest that syntactic derivations minimising algorithmic complexity are licensed over those that result in structures / derivational paths that are less algorithmically compressible
+
+    - We begin by summarising the FEP, and describe how syntactic principles are consistent with it
+    - FEP is a variational principle of "least action" such as those that describe systems with conserved quantities
+
+    - We then review key observations from linguistics that speak to the structuring influence of computational efficiency
+
+
+Active inference and the free-energy principle
+The free-energy principle
+    - Any adaptive change in the brain will minimise free-energy, either over evolutionary time or immediate, perceptual time
+    - Free-energy is an information-theoretic quantity and is a function of sensory data and brain states:
+        - In brief, it is the upper bound on the 'surprise'--or surprisal--of sensory data, given predictions that are based on an internal model of how those data were generated
+
+        - The difference between free-energy and surprise is the difference between probabilistic representations encoded by the brain and the true conditional distribution of the causes of sensory input
+
+    - Variational free energy F is the neg-log-likelihood of observations o under a generative model (ie a surprise) plus the KL divergence between the approximate posterior distribution and the true posterior distribution
+
+    - Unlike surprise itself, variational free energy can be evaluated
+    - Under simplifying assumptions, free energy can be considered as the amount of prediction error
+
+    - Minimising free energy minimises surprise, and is equivalent to maximising the evidence for the internal model of how sensory data were generated
+
+    - By minimising free-energy, the brain is essentially performing approximate Bayesian inference
+
+    - Free-energy can be considered as a trade-off between accuracy and complexity
+        - The best internal model is the one that accurately describes the data in the simplest manner
+
+    - Because KL div can never be less than zero, variational free energy provides an upper bound on neg-log-evidence
+        - The negative free energy provides a lower bound on log evidence (ELBO)
+
+    - There is a complementary decomposition of variational free energy into accuracy and complexity
+        - This reflects the degree of belief updating afforded by some new sensory data;
+            - How much some new evidence causes one to "change one's mind"
+    - A good generative model--with the right kind of priors--will minimise the need for extensive belief updating and thereby minimise complexity

@@ -1,0 +1,48 @@
+Temperature based Restricted Boltzmann Machines
+
+13 Jan 2016
+
+Abstract
+    - RBMs apply graphical models to learning probability distributions for data
+    - Proposed as building blocks of multi-layer learning systems: DBNs
+    - Temperature is a key factor of the Boltzmann distribution that RBMs originate from
+    - We propose temperature based restricted Boltzmann machines TRBMs
+    - Reveals that temperature is an essential parameter controlling the selectivity of the firing neurons in the hidden layers
+
+    - We prove that the effect of the temperature can be adjusted by setting the parameter of the logistic function in the proposed TRBMs
+    - RBM performance can be improved by adjusting the temp param of TRBMs
+
+    - This work provides comprehensives of deep learning architectures from a physical point of view
+
+Introduction
+    - Boltzmann distribution is a prob dist of particles in a system over various possible states
+        - kT is the product of Boltzmann's constant and thermodynamic temperature
+    - None of the existing schemes in RBMs consider the temperature parameter in the graphical models, which limits the understanding of RBM from a physical POV
+    - We revise the RBM by introducing a parameter T called "temperature parameter"
+        - We propose a model named TRBM
+    - When T=1, the model TRBM reduces to the existing RBM
+        - The present RBM is a special case of the TRBM
+    - The temp param T plays an essential role which controls the selectivity of neurons firing in the hidden layers
+
+    - In statistical mechanics, Maxwell-Boltzmann statistics describes the average distribution of non-interacting material particles over various energy states in thermal equilibrium, and is applicable when the temperature is high enough or the particle density is low enough to render quantum effects negligible ..
+    - The change in temp affects the Maxwell-Boltzmann dist significantly, and the particle distribution depends on the temp (T) of the system
+        - At low temp, distributions move to the left side with higher kurtosis
+            - Lower particle activity, but higher entropy
+    - We uncover than T affects the firing neurons activity dist. similar to that of a temperature parameter in Boltzmann distribution
+        - Gives some insights on T from physical POV
+
+    - We prove that the effect of the temperature param can be transformed to the steepness of the logistic function, a common S shape
+
+    - Lower temperature enhances the selectivity of the extracted features, which improves the performance of a TRBM
+
+    - If the temp is lower than a certain value, the selectivity turns to deteriorate, as more and more neurons become inactive
+
+    - Temperature may affect the cognition performance of a real neural system (!!!!!!!!!!)
+
+
+Results
+    - RBM is a generative stochastic ANN that can learn a prob dist over a set of inputs
+    - RBM is an energy-based model with the energy function as defined:
+        ....
+    - TRBM is trained to maximize a distribution called likelihood function, which is a marginal distribution function
+    
