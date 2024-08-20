@@ -73,3 +73,136 @@ The free-energy principle
         - This reflects the degree of belief updating afforded by some new sensory data;
             - How much some new evidence causes one to "change one's mind"
     - A good generative model--with the right kind of priors--will minimise the need for extensive belief updating and thereby minimise complexity
+    - The complexity of variational free energy will be important later, when we evaluate the complexity of syntactic processes using a measure derived in both spirit and mathematical heritage to FEP
+
+    - In machine learning, variational free energy minimisation has been cast as minimising complexity -- or maximising efficiency 
+        - Same theme in predictive coding, where thereby maximising their efficiency Barlow, 1961; Linsker, 1990; Rao & Ballard, 
+
+    - FEP can be considered from the perspective of a Markov blanket
+        - Instantiates a statistical boundary between internal states and external states
+            - Internal (brain) external (world) states are conditionally independent
+            - They can only influence one another through blanket states
+            - Blanket states:
+                - Sensory states
+                - Active states
+            - External states affect internal states only through sensory states
+            - Internal states affect external states only throuhg active states
+        - The implicit circular causality is formally identical to the perception-action cycle
+    - Under previous accounts, the brain can minimise free-energy either through perception or action
+        - Perception: optimising its probabilistic generative model that specifies how hidden states cause sensory data (inferring the cause of sensory consequences by minimising variational free energy)
+        - Action: initiating actions to sample data that are predicted by this model
+Active Inference
+    - The enactive component of active inference rests on the assumption that action is biased to realize preferred outcomes
+    - Beliefs about which actions are best to pursue rely on predictions about future outcomes, and the probability of pursuing any particular outcome is given by the expected free energy of that action
+
+    - Expected Free Energy, G, can be expressed as the combination of extrinsic and epistemic value, where pi is a series of actions (policy) being pursued, tau is the current time point, and the other variables are the same as those defined above...
+        - G(pi) = sum(G(pi, tau))
+            - G(pi, tau) = negative epistemic value - extrinsic value
+    
+    - Extrinsic value => the expected evidence for the internal model under a particular course of action
+    - Epistemic value => the expected information gain; ie, the extent a series of actions reduces uncertainty
+
+    - The expected versions of Kullback-Leibler divergence and log evidence in the free energy A2 now become intrinsic and extrinsic value, respectively
+
+    - Selecting an action to minimise expected free energy reduces expected surprise (ie, uncertainty) in virtue of maximising the information gain while --at the same time-- maximising the expected log evidence; namely, actively self-evidencing
+
+    - When applied to a variety of topics, active inference has been shown to predict human behavior and neuronal responses
+        - We will be using these observations concerning complexity to motivate a specific application of these ideas to natural language syntax
+Belief updating
+    - Refers to a process by which free energy is minimized
+    - By specifying a process theory that explains neuronal responses during perception and action, neuronal dynamics have been cast as a gradient flow on free energy
+    - Any neuronal process can be formulated as a minimisation of the same quantity used in approximate Bayesian inferenece
+
+    - Brain seeks to minimise free energy -> mathematically equivalent to maximising model evidence
+        - This view can be conceived wrt Hamilton's principle of least action, whereby action is the path integral of free energy
+Previous applications
+    - Applying active inference to language relies on finding the right sort of generative model
+        - Nesting of states that unfold at different temporal scales
+        - How to map the hierarchical structures onto serial outputs?
+        - Models that are deep in time allow us to deconstruct associated nested structures
+
+    - Recently, a deep temporal model for communication was developed based on a simulated conversation between two synthetic subjects
+        - Certain behavioral and neurophysiological correlates of communication arise under variational message passing
+
+    - Sentential representaitons => structures designed (partially) to consolidate and appropriately frame experiences, and to contextualize and anticipate future experiences
+
+    - The range of parseable syntactic structures available to comprehenders provides alternate hypotheses that afford parsimonious explanations for sensory data and, as such, preclude overfitting
+
+    - If the complexities of linguistic stimuli can be efficiently mapped to a small series of regular syntactic formats, this contributes to the brain's goal of restricting itself to a limited number of states
+
+    - The active inference models for linguistic communication previously developed can generally capture interactional dynamics between agents
+
+    - What needs to happen within a single agent's language system?
+        - The psycholinguistic validity and polynomial parseability of minimalist 'bare phrase strucutre' grammars have recently been demonstrated, but little else has been said of how to motivate the fundamentals of syntactic theory from extra-linguistic computational constraints
+
+    - Before moving forward, we stress that we will be working within the framework of theoretical linguistics (derivational stages of word-by-word, element-wise operations that underlie sentences) and not a framework such as corpus linguistics (deals with the output of the generative/derivational process)
+
+    - Questions we raise here therefore cannot be addressed by consulting large corpora, but instead require investigation of incremental computational steps that ultimately appear to be responsible for the complex forms of human language behavior studied by sociolinguists ......
+
+
+Computational principles and syntactic hierarchies
+A system of discrete infinity
+    - How can the FEP contribute to our understanding of syntactic computation?
+        - First: It provides fundamental constraints on the physical realisation of a computational system
+    - Consider first 3 principles in classical recursive function theory:
+        - Substitution
+        - Primitive recursion
+        - Minimisation
+    - All reuse output of earlier computations
+    - Substitution replaces the argument of a function with another function
+    - Primitive recursion defines a new function on the basis of a recursive call to itself, bottoming out in a previously defined function
+    - Minmisation produces the output of a function w/smallest num of steps
+    - Free energy minimisation entails Baysians inference... a computational process
+        - FEP entails computationalism and at least a type of (basic) computational architecture for language we assume here
+
+    - Examining the core principles of recursion, NL clearly exhibits minimisation, while binary branching of structures limits redundant computations
+        - Reduces range of possible computations
+
+    - Even limitations on short-term memory have been hypothesized to contribute to the efficiency of memory search
+
+    - Syntax uses MERGE on binary-branches
+        - MERGE is an elementary function
+        - It can be thought of as a physical information coarse-graining (ie removal of superfluous DoF to describe a given physical system at a different scale)
+        
+        - MERGE is like a probability tensor implementing coarse-graining, akin to a probabilistic cfg
+
+    - MERGE has been described mathematically in terms of Hopf algebras, a formalism similar to the one arising in the physics of renormalization
+
+    - Syntax is driven by the closeness of computation
+    - Objects are bounded and their hierarchical ordering is based on a specific functional sequence such as C-T-v-V which imposes direct restrictions on combinatorics
+
+    - These objects can be combined in workspaces, phases or cycles
+        - Non-local dependencies
+    - These properties are guided by principles of minimal search and least effort
+
+    - Akin to FEP formulations, fulfill the imperatives of active inference to construct meaningful representations as efficiently as possible, directly contributing to surprise minimisation
+Compositionality
+    - Certain efficiency principles at the conceptual interface (syntax interfaces w/general conceptualization) have been proposed
+    - The instructions that language provides for the brain to build specific meanings are interpreted with notable simplicity
+
+
+A Kolmogorov complexity estimate for narrow syntax
+Economy
+    - Simplicity is a value that has guided linguistic inquiry for decades
+    - We are interested in the underlying representational issues that pertain to syntax-semantics
+Compression
+    - Kolmogorov complexity is a measure of the length of the shortest program that can reproduce a given pattern
+        - Relates directly to frameworks emerging from the FEP
+        - The prediction for NL syntax of reducing the complexity of hierarchical syntactic structures that are interpreted at conceptual interfaces being sympathetic to a corollary of the FEP that every computation comes with a concrete energetic cost
+
+    - Variational free energy can be formulated as a trade-off between accuracy and complexity
+        - Minimising complexity => minimising variational free energy
+
+
+Minimising free-energy, maximising interpretability
+    - Interpretive processes that yield the lowest possible amount of complexity (computational cost) can mostly be derived directly from what the syntactic component produces
+
+Turing-Chomsky Compression:
+    - An operation (M) on an accessible object (O1) in a syntactic workspace (Wp) minimizes variational free energy if structures from the resulting workspace (Wq) are compressed to a lower Kolmogorov complexity than if M has accessed O2 in Wp
+
+
+Future work
+    - Language and thought might indeed turn out to be a brief and rare spark in the universe, one that we may soon extinguish
+        - We are seeking to understand what may be a true marvel of the cosmos
+
+    - Evidence for a mental compression algorithm in humans (language of thought chunking algorithm) responsible for parsing very basic, binary sequences, providing evidence that human sequence coding involves a form of internal compression using language-like nested structures

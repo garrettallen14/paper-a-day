@@ -3,8 +3,11 @@ Statistical Mechanics of Deep Learning (Bahri 2020) https://www.annualreviews.or
 
 Temperature based Restricted Boltzmann Machines (Li 2013) https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4725829/
 
-TODO:
 Natural language syntax complies with the free-energy principle (Murphy 2024) https://doi.org/10.1007/s11229-024-04566-3
+
+
+
+TODO:
 
 Extended critical regimes of deep neural networks (Qu 2022) https://arxiv.org/abs/2203.12967
 
@@ -18,6 +21,34 @@ Deep learning and the renormalization group (Beny 2013) https://arxiv.org/abs/13
 
 Scale-Free Neural and Physiological Dynamics in Naturalistic Stimuli Processing (Lin 2016) https://pubmed.ncbi.nlm.nih.gov/27822495/
 
+Criticality versus uniformity in deep neural networks (Bukva 2023) https://arxiv.org/abs/2304.04784
+
 Cortical activity is more stable when sensory stimuli are consciously perceived (Schurger 2015) https://www.pnas.org/doi/abs/10.1073/pnas.1418730112
 
-Criticality versus uniformity in deep neural networks (Bukva 2023) https://arxiv.org/abs/2304.04784
+
+
+Free Energy Minimization for Decoding and Cryptoanalysis http://www.inference.org.uk/mackay/fes.pdf
+
+Linsker, R. (1990). Perceptual neural organization: Some approaches based on network models and infor-
+mation theory.
+
+Kirchhoff, M., Parr, T., Palacios, E., Friston, K., & Kiverstein, J. (2018). The Markov blankets of life:
+Autonomy, active inference and the free energy principle. Journal of the Royal Society Interface,
+15(138), 20170792.
+
+Palacios, E. R., Razi, A., Parr, T., Kirchhoff, M., & Friston, K. (2020). On Markov blankets and hierarchical
+self-organization. Journal of Theoretical Neurobiology, 486
+
+Parr, T., Da Costa, L., & Friston, K. (2020). Markov blankets, information geometry and stochastic ther-
+modynamics. Philosophical Transactions of the Royal Society A, 378
+
+Friston, K., FitzGerald, T., Rigoli, F., Schwartenbeck, P., & Pezzulo, G. (2017a). Active inference: A process
+theory. Neural Computation, 29(1), 1–49
+
+Friston, K. J., Parr, T., & de Vries, B. (2017b). The graphical brain: Belief propagation and active inference.
+Network Neuroscience, 1(4), 381–414.
+
+https://proceedings.neurips.cc/paper/1993/file/9e3cfc48eccf81a0d57663e129aef3cb-Paper.pdf
+
+Dehaene, S., Al Roumi, F., Lakretz, Y., Planton, S., & Sablé-Meyer, M. (2022). Symbols and mental
+programs: A hypothesis about human singularity. Trends in Cognitive Sciences, 26(9), 751–766.
