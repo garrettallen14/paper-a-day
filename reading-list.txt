@@ -5,15 +5,28 @@ Temperature based Restricted Boltzmann Machines (Li 2013) https://www.ncbi.nlm.n
 
 Natural language syntax complies with the free-energy principle (Murphy 2024) https://doi.org/10.1007/s11229-024-04566-3
 
+Extended critical regimes of deep neural networks (Qu 2022) https://arxiv.org/abs/2203.12967
+
+Learning to learn by gradient descent by gradient descent (Andrychowicz 2017) https://arxiv.org/abs/1606.04474
+
 
 
 TODO:
 
-Extended critical regimes of deep neural networks (Qu 2022) https://arxiv.org/abs/2203.12967
+The free energy principle made simpler but not too simple https://pdf.sciencedirectassets.com/271542/1-s2.0-S0370157323X00192/1-s2.0-S037015732300203X/main.pdf?X-Amz-Security-Token=IQoJb3JpZ2luX2VjEHMaCXVzLWVhc3QtMSJHMEUCIEjCdNY6eSRS%2Ful86Nh2b1SEYGbnqHjBpEKr0XKbiqG5AiEAhL8WnZy6bezOmPXXCLyNkh1cX7yoevefev5QuCxpPC4qsgUIfBAFGgwwNTkwMDM1NDY4NjUiDFLDa14HQO0Aocv9LCqPBXVwly5OrMAdPXd319rebirpc4eHSPB95My0KCHhshil7I3Grtkea6l3Xlsi6koc%2BI0uMddLNvu%2FXW3zOxaHojJr%2F%2Byk0%2BCSSfd3d1AvdoMXQN%2B0rqFeYo%2BHdxzGdUmf%2B9R7S2OtjRnBI5r%2FusGF0aE37xD2t%2BEcRO9iOK4cakqrkwTJnLlgx%2FCx8tjhv%2F2388HZAsAUZBs3koShLa2f2b%2Fzkdss2zuZLcDENpTWMS9gF%2FGLVlvRkI4hIUkXTUXwX1zTR2tZ3mu1GnsXtVGvLpXZwnN1JJ3%2FYJOztzA5MxzDxoNGw2%2BVW%2BmtpeAsCJsCHowBVmFLBSDoYWLz3t9NRBd4NOn25h6up%2Fq8M%2FXCbEri04S1maOnZ1TebolmOeRemhEcFJz0j9OBmYDKv5p6eiWSCMMc0oFnsfAgHGDrRSv7zMIVinQ2hcqw5TALuIAD5YROT%2BOhkMQfDHW4noiRGcd0EDtc9Ep6ncRFkBgdlI8oLvj0%2BYmAw%2F28MI%2F0GrfwR5TRDuRlbAtigKRqTVfvICrNMvS4N0DjzX6yzJ%2FU2EwrTzQnibhOO%2F7oNNMEsW3JUE%2BROFaaoy3LskOxWT0Q9rMrRUJ8pbRNeNCkSNvGtc5gN01NOK8qDp2dN8XlJLmM1u%2FiIDjCzghT5Ewp1R2Ptg9wndz1vdAkXreGcYNzO%2Fpn9WB0uqCexs3Fn0dQskrIUiaRkn25LivTKvzG%2BDY60q%2FcvIoedpB8Emj6L2vwQQR2d7CmRVBzNDCd1RZg66SEcltOUq5fvhcG09FupJ1N10cqeOx0It8x7UVqfVbX9vfNLjAW8IXBbQKMT0wMb4j3NJBWCmD3hYgUCoBGdgQEjDMGxn%2FXJC%2BNID7rcDo49AcwiuKYtgY6sQEsO2I8GrGP8xTqn%2Bu1DmpfLmWWLhOdntmOJ6%2Bq52c04BSkrIm9UU86qFKIzTs1zsWGTD%2BetwPWYFaMBC5031vvxcNA%2BLjQ8m1qbjvAn8r%2Bi%2BRNqdN5j0k9UrwTzgZ4wbnt1R7dBSyIAVR3L8Dz9QfnS%2BzsZlrozXTJH2aP1sukE3BbTfxB4y0MvK44j3QCZzGquVZdOs2EUD%2BAKb%2BoqFv6RRavKHleYGf7RuLdq0TEvVk%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20240821T183833Z&X-Amz-SignedHeaders=host&X-Amz-Expires=300&X-Amz-Credential=ASIAQ3PHCVTYYYHBTNKS%2F20240821%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=c9d1b1c5bd9ef2b0f23697e973a8eca5ad55056c485bf731aa38ee21c6bdd24e&hash=1a36fa020e8c9e8f3e88b571078276cf98c6491f226b8d894460d17691a31908&host=68042c943591013ac2b2430a89b270f6af2c76d8dfd086a07176afe7c76c2c61&pii=S037015732300203X&tid=spdf-4fa4106f-828c-43ac-897a-0e1eb92e66a6&sid=8ae4106f9cc06547944be1f867dd59976549gxrqa&type=client&tsoh=d3d3LnNjaWVuY2VkaXJlY3QuY29t&ua=0f165f0c550d06000e5a05&rr=8b6cbda5a81131d9&cc=us
+
+
+
+Ackley Hinton https://www.cs.toronto.edu/~hinton/absps/cogscibm.pdf
+
+
+Exact Phase Transitions in Deep Learning Liu Ziyin
+
+https://proceedings.neurips.cc/paper_files/paper/2018/file/196f5641aa9dc87067da4ff90fd81e7b-Paper.pdf
+
+
 
 Criticality meets learning: Criticality signatures in a self-organizing recurrent neural network (Papa 2017) https://doi.org/10.1371/journal.pone.0178683
-
-Learning to learn by gradient descent by gradient descent (Andrychowicz 2017) https://arxiv.org/abs/1606.04474
 
 Adaptive Computation Time for Recurrent Neural Networks (Graves 2016) https://arxiv.org/abs/1603.08983
 
@@ -52,3 +65,13 @@ https://proceedings.neurips.cc/paper/1993/file/9e3cfc48eccf81a0d57663e129aef3cb-
 
 Dehaene, S., Al Roumi, F., Lakretz, Y., Planton, S., & Sablé-Meyer, M. (2022). Symbols and mental
 programs: A hypothesis about human singularity. Trends in Cognitive Sciences, 26(9), 751–766.
+
+
+
+Poole B, Lahiri S, Raghu M, Sohl-Dickstein J, Ganguli S (2016) Exponential expressivity
+in deep neural networks through transient chaos 
+
+Pennington J, Schoenholz S, Ganguli S (2018) The emergence of spectral universality in deep
+networks 
+
+Schoenholz SS, Gilmer J, Ganguli S, Sohl-Dickstein J (2016) Deep Information Propagation

@@ -1,0 +1,66 @@
+Extended critical regimes of deep neural networks
+
+25 Mar 2022
+
+Abstract
+    - Conventional theoretical frameworks for analyzing DNNs often assume random networks with coupling weights obeying Gaussian statistics
+    - Non-Gaussian, heavy-tailed coupling is a ubiquitous phenomenon in DNNs
+    - Here, by weaving together theories of heavy-tailed random matrices and non-equilibrium stat physics, we develop a new type of mean field theory for DNNs
+        - Predicts that heavy-tailed weights enable the emergence of an extended critical regime without fine-tuning parameters
+    - In this extended critical regime, DNNs exhibit rich and complex propagation dynamics across layers
+    - The extended criticality endows DNNs with profound computational advantages:
+        - Balancing the contraction as well as expansion of internal neural representations and speeding up training processes, hence providing a theoretical guide for the design of efficient neural architectures
+
+
+Introduction
+    - Approaches use Gaussian mean-field approaches to establish parameter phases of vanishing and exploding signal propagation, corresponding to the classical phases of order and chaos respectively
+
+    - Deep networks have heterogeneous, heavy-tailed coupling regardless of architecture
+        - How does heavy-tailed heterogeneity endow DNNs with crucial dynamical and computational properties?
+    - Here we link non-equilibrium stat physics with recent results
+    - We develop a novel mean-field theory for random deep NNs with heavy-tailed connectivity
+
+    - We reveal an extended critical phase where DNNs balance order and disorder in a broad region of parameter space, allowing for deep information propagation
+        - Fine-tuning of parameters is thus no longer required as predicted by conventional theories (?)
+
+    - We formulate a phase diagram which can be used as a guide for designing DNNs in practice
+
+
+Results
+    - We first demonstrate that empirical coupling weights of DNNs have a heavy-tailed distribution which is ubiquitous across network architectures
+
+    - We then formulate a new dynamical mean-field theory revealing a novel phase diagram of DNNs, which features a broad, extended critical regime adjacent to the classical silent and chaotic regimes
+
+    - We numerically validate the theoretically predicted properties by demonstrating that extended criticality enables the balance of compression and expansion of internal representaiotns corresponding to neural inputs
+Heavy-tailed coupling weights of pretrained neural networks
+    - The spectrum of weight matrices of pretrained DNNs are heavy-tailed (power-law tails)
+        - Could arise from correlations within weight matrices, or the weight entries themselves originating from a heavy-tailed distribution
+
+    - We explore by fit the entries of each weight matrix between the l-1 and l layers individually as a Levy a-stable distribution (stable distribution)
+        - ...
+    - If a random variable X is drawn from a stable distribution, we denote it by X ~ Sa(B,sig,mu)
+Jacobian operator of heavy-tailed deep neural networks
+    - Conventional Gaussian mean-field approach characterises the transition to chaos by computing the covariance of two inputs as they propagate throughu the layers of DNNs
+    - In these studies, chaos is characterised as the separation of nearby points as they propagate through the layers, with asymptotic expansions yielding depth scales over which information may approximately propagate as the magnitude of a single input or the correlation between two inputs
+
+    - Because the variances of such inputs become infinite upon prop by a single layer for heavy-tailed networks, these covariances are no longer guaranteed to be well defined in HT networks
+An extended critical regime of signal propagation in deep
+neural networks
+
+....
+
+
+Discussion
+    - We identify an extended critical regime of enhanced signal propagation
+    - This extended critical regime w/multifractal properties provides key computational advantages linked to balancing compression and expansion of internal neural representaitons, and therefore presents a theoretical framework for guiding parameter selection and design
+
+    - The properties of the extended critical phase generalises the current analysis of singular values to a complete spectral theory of deep networks encompassing eigenvectors, and thus, the spatial properties of the system dynamics
+
+    - We have established connections between the improved performance of DNNs, spectral properties of layerwise Jacobian matrices and self-organised criticality
+
+    - Previous studies have demonstrated that criticality between the ordered and chaotic phases enables effective information propagation across layers
+        - Prevents gradient vanishing and explosion from back-prop
+    - ASide from this functional advantage entailed by the edge of chaos, our work has demonstrated that extended criticality enables the balance of contraction and expansion of internal neural representaiotns
+
+
+    

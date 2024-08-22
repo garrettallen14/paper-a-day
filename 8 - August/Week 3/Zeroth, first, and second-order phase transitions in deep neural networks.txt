@@ -1,0 +1,164 @@
+Zeroth, first, and second-order phase transitions in deep neural networks
+
+14 Dec 2023
+
+Could we say ... free energy loss is a form of regularization, and do without layernorm ??? 
+
+
+Abstract
+    - We investigate deep-learning-unique first-order and second-order phase transitions, whose phenomenology closely follows that in statistical physics
+    - We prove that the competition between prediction error and model complexity in the training loss leads to:
+        - Second-order phase transition for deep linear nets with one hidden layer 
+        - First-order phase transition for nets with more than one hidden layer
+    
+    - We prove the linear origin theorem, which states that common deep nonlinear models are equivalent to a linear network of the same depth and connection structure close to the origin...
+        - Therefore, the proposed theory is directly relevant to understandingt the optimization and initialization of neural networks and serves as a minimal model of the ubiquitous collapse phenomenon in DL
+
+
+Introduction
+    - In DL, learning proceeds as the parameters of different layers become structured so the model outputs correlate meaningfully to inputs
+        - Reminiscent of an ordered phase in Physics, where microscoping degrees of freedom respond to external pertubations collectively
+    - Regularization prevents model overfitting by limiting the correlation between model output and input, like an entropic force in physics that leads to disorder
+
+    - We expect a phase transition from the regime where the regularization is negligible to a regime where it is dominant!
+
+    - A series of recent works studied the under-to-over param phase transition in the context of linear regression.
+
+    - We study the loss landscape of a DNN and prove that there exist phase transitions that can be described as the first- and second-order phase transitions with a striking similarity to statistical physics
+    - We argue that these phase transitions can have profound implications for DL, such as the role of symmetry breaking, the qualitative distinction between shallow and deep architectures, and why collapses occur
+
+    - For a multilayer linear net with stochastic neurons and trained with L2 regularization:
+        1. We identify an order parameter and effective landscape that describes the phase transition between a trivial phase and a feature learning phase...
+        2. We prove that:
+            a. depth-0 nets (linear regression) have no phase transition
+            b. depth-1 nets have the second-order phase transitions
+            c. depth-D nets have the first-order phase transition for D > 1, and
+            d. infinite-depth nets have the zeroth-order phase transition
+        3. We prove that such networks approximate commonly used nonlinear networks of the same depth and connectivity structure
+
+    - Our result implies that one can precisely classify the landscape of DNNs according to the Ehrenfest classification of phase transitions.
+    - We discuss the relevance of the theory towards understanding optimization and initializtion of neural networks
+
+
+Formal Framework
+    - l(w,lam) a difftble loss function that is dependent on model param w and hyperparam lam
+    - l can be decomposed into a data-dependent feature-learning term l0 and a data-independent term lamR(w) that regularizes the model at strength lam:
+        - l(w, lam) = Ex[l0(w,x)] + lamR(w)
+    
+    - Learning amounts to finding the global minimizer of the loss function:
+        - L(lam) := minw l(w,lam)
+        - w* := argminw l(w, lam)
+
+    - When lamda is large, lambdaR(w) causes w to stay close to zero
+    - If L changes drastically against a small variation of lambda, it is hard to tune lamda to optimize the model performance
+        - Thus, that L(lambda) is well-behaved is equivalent to lambda being an esay-to-tune hyperparameter...
+
+    - We want to find the case where the tuning of lambda is difficult, which occurs where a phase transition comes into play
+        - This formalism can be seen as a zero-temperature theory that ignores the stochastic effects due to the noise in the stochastic gradient Langevin dynamics
+
+    - When the training proceeds with gradient flow and an injected isotropic Gaussian noise, the stationary distribution of the model params obeys the Gibbs distribution,
+
+        p(w) proportional to exp[-l(w,lambda)/T]
+        where T is proportional to the variance of the injected Gaussian noise in the gradient, and the partition function Z is given by the integral of exp[-l(w,lamda)/T] over w
+
+    - The free energy is given by -TlogZ
+        - In the limit T -> 0+, the partition function approaches the global minimizer of the loss function l:
+            F(T = 0+, lambda) = -lim T-> 0+ TlogZ = L(lambda)
+
+    - Therefore, lambda is ssomething like a nontemperature macroscopic thermodynamic variable, a little bit analogous to pressure!
+        - This identification of the free energy is common in the replica-symmetry treatment of the learning of neural networks
+    - In this view, optimization of the objective thus involves balancing the prediction error and the model complexity
+
+    - We will be considering the phase transitions at zero temperature, so it is worthwhile to remark that in the Ehrenfest framework, a zero-temperature phase transition for a finite-size system is not forbidden
+        - It is well-known that phase transitions can only happen when the system size tends to infinity, because e^E/T is analytic for any finite T and finite system!
+        - However, functions of the Gibbs measure are not guaranteed to be analytic in the limit T -> 0, which will serve as the mathematical basis behind the finite-size zero-temperature phase transitions we study in this paper...
+
+    - We define the order parameter and the effective loss as follows:
+        Defn: b=b(w) in R is an order parameter of l(w,lam) if there exists a function l_ st for all lam, minw l_(b(w),lam) = L(lam), where l_ is said to be an effective loss function of l...
+    - ie, an order parameter is a one-dimensional quantity whose minimization on l_ gives L(lam)
+NOTE: ORDER PARAMETERS:
+    - A measure to help understand how organized or "ordered" a system is... a thermometer for order.
+        - When the order parameter is zero, the system is disorganized, when order is non-zero it is strucutred in some way
+    
+    - Order distinguishes between different phases of a system
+        - It typically has a value of zero in disordered phase and non-zero in ordered phase
+        - Order param often changes continuously as the system transitions from one phase to another, allowing us to track the progress of phase transitions
+        - Ex. in a ferromagnet, the magnetization serves as an order parameter
+            - Magnetization is zero above Curie temperature (disordered phase)
+            - Magnetization is non-zero below this temperature (ordered phase)
+    
+    - An order parameter is a mathematical construct used in the study of phase transitions and critical phenomena:
+        1. Is zero in the disordered (high-symmetry) phase and non-zero in ordered (low-symmetry) phase
+            - Disordered => network has not learned enough meaningful patterns yet
+                - High symmetry because you can swap or transform many elements without changing overall behavior
+            - Ordered => network is structured bc learned more
+                - Lower symmetry bc now specific weights and connections matter
+        2. Transforms according to an irreducible representation of the symmetry group of the disordered phase.
+            - Irreducible representation: describing how objects transform under a set of symmetry operations, where the transformation cannot be broken down into simpler parts.
+            - For attention:
+                - Imagine a sequence of n tokens
+                - In disordered phase:
+                    - The order of these tokens shouldn't matter much... the symmetry group here is S_n, representing all possible permutations of n elements
+                - Say your order parameter is some measure of the attention distribution, call it A.
+                    - Assume A is a vector of n elements, where each element represents the amount of attention paid to the corresponding input token.
+                - The statement about irreducible representation means that when you apply any permutation sigma(S_n) to your input, your order parameter A should transform in a specific way that's consisten with this permutation!
+                    A' = P(sigma) * A
+                - This transformation is "irreducible" because you cannot break it down into simpler, independent transformations that work on subsets of the order parameter......
+            - Key insight: this transformation property should hold for any permutation in the symmetry group of the disordered phase...
+                - Your order parameter respects the underlying symmetries of the system before it starts to learn and break those symmetries
+        3. Has a conjugate field that can be used to bias the system towards the ordered phase.
+            - The conjugate field is like a control parameter you can adjust to push the system towards order. 
+                - In ML, this could be analogous to learning rate stuff...
+            - In your attention mechanism, the conjugate field might be a parameter that affects the sharpness of attention distribution.
+                - Adjusting this could bias the system towards more focused (ordered) or more uniform (disordered) attention.
+    - In the context of Landau theory, the free energy of a system can be expressed as a function of the order parameter
+        - The equilibrium state of the system is determined by minimizing this free energy wrt the order parameter
+        - The behavior of the order parameter near a critical point often follows power laws, characterized by critical exponents that are universal for systems in the same universality class
+
+    - So, order parameter is a one dimensional quantity whose minimization on l_ gives L(lambda)
+
+NOTE: Symmetry Breaking wrt Free Energy
+    - Free Energy (F) = Internal Energy (U) - T * Entropy (S)
+        - F = "Useful" energy in the system -- available to do work
+        - U = total energy content of the system. total information content, or complexity of attn patterns
+        - TS = "unusable" energy due to disorder... this could represent randomness or uniformity in attn distributions
+        - The interplay between U and TS is crucial... Minimize U (find efficient representations) but maximize S (maintain flexibility)... T controls the balance between these competing tendencies
+        - The partition function gives you access to F... by analyzing how F changes as you adjust parameters of your attention mechanism, you can understand the trade-offs between finding efficient attention patters (lowering U) and maintaining flexibility (increasing S)
+    - Symmetry and Free Energy
+        - In a highly symmetric state, the system typically has higher Entropy (contributes to lower free energy)
+        - As symmetry breaks, the internal energy U often decreases (the system becomes more ordered), but the entropy also decreases
+        - Deeper intuition:
+            - High symmetry states => blank slate... have high potential (high entropy S) but havent committed to any particular structure (high U)
+            - In an attention mechanism, a high symmetry state might be when attn is uniformly distributed across all inputs
+    - Symmetry Breaking and Free Energy Minimization
+        - Symmetry breaking occurs when the decrease in internal energy U outweighs the decrease in entropy TS, resulting in a lower overall free energy F.
+    - At a critical point, the Free Energy function becomes "flat" wrt the order parameter, allowing for large fluctuations and long-range correlations...
+
+    - Trivial Phase (High Symmetry)
+        - When b=0, network is high-entropy
+        - Free Energy is dominated by the regularization term
+    - Feature Learning Phase (Broken Symmetry)
+        - As b>0, network starts to learn features
+        - This corresponds to a decrease in internal energy (better fit to the data) but also a decrease in entropy (more structured weights)
+    - Phase Transitions
+        - The transition occurs when the decrease in "energy" (better fit to data/lower loss function) outweighs the increase in the regularization term and the decrease in entropy
+        - For deeper networks, theres a discontinuous jump implying a sudden change in the free energy landscape
+    - Critical Behavior
+        - At the critical point, the free energy function becomes very flat near its minimum
+        - This flatness allows for large fluctuations in the order parameter, corresponding to a high susceptibility to learning
+
+    - F = -kTlogZ where Z is the partition function
+    - Symmetry in Attention:
+        - High symmetry => uniform attn across all inputs
+        - Symmetry breaking => attn mechanism learns to focus on specific parts of the input
+    - Criticality in Attention
+        - The critical point would be where the free energy function for your attn mechanism is most sensitive to changes in the attn distribution.
+        - This could correspond to a state where the attn mechanism is most adaptive and efficient at processing information
+    - Temperature and Symmetry Breaking
+        - By including temperature in your model, you can explore how thermal fluctuations affect symmetry breaking in attention mechanisms
+        - There may be an optimal temperature where symmetry breaking occurs most effectively, leading to optimal learning...
+
+
+
+
+        

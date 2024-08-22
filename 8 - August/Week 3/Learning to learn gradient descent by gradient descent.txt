@@ -1,0 +1,54 @@
+Learning to learn gradient descent by gradient descent
+
+30 Nov 2016
+
+Abstract
+    - Move from hand-designed features to learned features in ML has been wildly successful
+    - We show how the design of an optimization algorithm can be cast as a learning problem, allowing the algorithm to learn to exploit structure in the problems of interest in an automatic way
+
+    - Our learned algorithms, implemented by LSTMs, outperform generic, hand-designed competitors on the tasks for which they are trained, and also generalize well to new tasks with similar structure
+
+
+Introduction
+    - Tasks in ML can be expressed as optimizing an objective function defined over some domain
+        - Find the minimizer
+    - Any method capable of minimizing this objective function can be applied, but the standard approach for difftble functions is some form of gradient descent, resulting in a sequence of updates
+
+    - The performance of vanilla gradient descent, however, is hampered by the fact that it only makes use of gradients.... ignores second-order information
+        - Classical optimization techniques correct this behavior by rescaling the gradient step using curvature information, typically via the Hessian matrix of second-order partial derivatives
+
+    - Much of modern work in optimization is based around designing update rules tailored to specific classes of problems
+
+    - No Free Lunch Theorems for Optimization:
+        - In the setting of combinatorial optimization, no algorithm is able to do better than a random strategy in expectation
+
+    - We propose to replace hand-designed update rules w/a learned update rule: the optimizer g, specified by its own set of parameters phi.
+        - This results in updates to the optimizee f of the form:
+            ...
+Transfer learning and generalization
+    - Goal of this work is to develop a learning algorithm which performs well on a particular class of optimization problems
+    - Casting alg design as a learning problem allows us to specify the class of problems we are interested in through example problem instances
+
+    - We can cast the problem of transfer learning as one of generalization, which is much better studied in the ML community
+A brief history / related work
+    - The idea of learning to learn (meta-learning) has long history
+        - A building block in AI
+        - Multi-task learning as generatlization
+    - Schmidhuber uses the Success Story Algorithm to modify its search strategy rather than gradient descent
+        - RL to train a controller for selecting step-sizes
+
+    - Bengio propose to learn updates which avoid back-prop by using simple parametric rules
+        - In relation to the focus of this paper, the work of Bengio could be characterized as learning to learn without gradient descent by gradient descent
+
+    - Fixed-weight RNN can exhibit dynamic behavior w/o need to modify their network weights
+
+    - Allow the output of backprop from one network to feed into an additional learning network
+        - Both networks trained jointly
+        - Our approach builds on this by modifying the network arch of the optimizer in order to scale this approach to larger neural-network optimization problems
+
+
+Learning to learn w RNNs
+    - We directly parameterize the optimizer
+    - What does it mean for an optimizer to be good>
+Coordinatewise LSTM optimizer
+    - 
