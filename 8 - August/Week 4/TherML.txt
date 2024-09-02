@@ -1,0 +1,116 @@
+THERML:
+THE THERMODYNAMICS OF MACHINE LEARNING
+
+4 Oct 2018
+
+Abstract
+    - We offer an information-theoretic framework for representation learning that connects a wide class of existing objectives in ML
+    - Develop a formal correspondence between this work and thermodynamics and discuss its implications
+
+
+Introduction
+    - X,Y some paired data (data, label)
+    - We imagine the data comes from some true, unknown data generating process from which we have drawn a set of training set of N pairs
+
+    - We imagine the process is exchangeable and the data is conditionally independent given the governing process PHI
+    - By studying the training set, we should be able to infer or predict new draws from the same data generating process
+        - A set of M future draws fromthe data generating process is the Test set.
+
+    - The predictive information is the mutual information between the training set and an infinite set, equivalently the amount of information the training set provides about the generative process itself
+
+    - The predictive information measures the underlying complexity of the data generating process.
+        - Fundamentally limited and must grow sublinearly in the dataset size
+        - Hence, the predictive information is a vanishing fraction of the total information in the training set:
+    - Basically, the predictive information is the amount of information from the total generating function that we can pull from to develop a model
+
+    - A vanishing fraction of the information present in our training data is in any way useful for future tasks
+    - We claim the goal of learning is to learn a representation of data, both locally and globally that captures the predictive information while being maximally compressed: that separates the signal from the noise
+
+
+A Tale of Two Worlds
+    - We are interested in learning a stochastic local representation of X (call it Z) defined by some parametric distribution of our own design: p(zi|xi, theta) with parameters theta.
+    - A training procedure is a process that assigns a distribution p(theta|xN, yN) to the parameters conditioned on the observed dataset
+
+    - The world now looks like the graphical model denoted World P: some data generating process PHI generates a dataset (XN, YN) which we perform some learning algorithm on to get some parameters p(theta| XN, YN) which we can use to form a parameteric local representation p(zi|xi, theta)
+
+    - World P is what we have... but not what we want...
+    - We want a world that corresponds to the traditional modeling assumptions in which Z acts as a latent factor for X and Y, rendering them conditionally independent, leaving no correlations unexplained
+    - We would prefer if we could easily marginalize out the dependence on our universal (PHI) and model specific (Theta) parameters
+
+    - We can measure the degree to which the real world aligns with our desires by computing the minimum possible relative information between our distribution p and any distribution consistent with the conditional dependencies encoded in graphical model Q
+    - This quantity is given by the difference in multi-informations between the two graphical models
+
+    - The multi-information of a graphical model is the KL divergence between the joint dist, and the product of all marginal distributions which can be computed as a sum of mutual informations
+
+    - This minimal relative information has two terms outside our control and we can take them to be constant, but which relate to the predictive information:
+        - I(Xi; Zi) measures how much information our representation contains about the input X
+            - Maximized to ensure our local representation actually represents the input
+        - I(Yi; Zi) measures how much information our representation contains about our auxiliary data
+            - Should be maximized as well to ensure that our local representation is predictive for the labels
+        - I(Zi; Xi, theta) measures how much information the params and input determine about our representation. This should be minimized to ensure consistency between worlds, and to ensure that we learn compressed local representations
+            - This is similar to, but distinct from the first term above
+        - I(Theta; XN,YN) measures how much information we store about our training data in the parameters of our encoder. This should also be minimized to ensure we learn compressed global representation, preventing overfitting
+    
+    - These mutual informations are all intractable in general, since we cannot compute the necessary marginals in closed form, given that we do not have access to the true data generating distribution
+Functionals
+    - Despite their intractability, we can compute variational bounds on these mutual informations.
+Entropy
+    - The relative entropy in our parameters, or just entropy for short, measures the relative information between the distribution we assign our parameters in World P after learning from the data (XN, YN), wrt some data independent q(theta) prior on the parameters
+    - This is an upper bound on the mutual information between the data and our parameters and as such can measure our risk of overfitting our parameters
+Rate
+    - The rate measures the complexity of our representation
+    - It is the relative information of a sample specific representation wrt our variational marginal
+    - This measures how many bits we actually encode about each sample, and can measure how our risk of overfitting our representation
+
+    - R := sum_i(Ri)
+Classification Error
+    - Measures the conditional entropy of Y left after conditioning on Z
+    - This is a measure of how much information about Y is left unspecified in our representation
+    - This functional measures our supervised learning performance
+    - C := Ci
+Distortion
+    - Measures the conditional entropy of X after conditioning on Z
+    - A measure of how much informaiton about X is left unspecified in our representation.
+    - This functional measures our unsupervised learning performance
+Geometry
+    - Distributions p,p,q,q,q can be chosen arbitrarily
+    - Once chosen, the functionals R,C,D,S take on well described values
+    - The choice of the five distrbutional families specifies a single point in a 4D space
+    - Importantly, the sum of these functionals is a variational upper bound for the minimum possible relative information between worlds
+
+    - Besides just the upper bound, we can consider the full space of feasible poitns.
+    - Notice that S and R are both themselves upper bounds on mutual informations, and so must be positive semi-defiinite
+
+    - Even in the infinite model family limit, data-processing inequalities on mutual information terms all defined in a set of variables that satisfy some nontrivial conditional dependencies ensure that there are regions in this functional space that are wholly out of reach
+
+    - The surface of the feasible region maps an optimal frontier, in the degree to which it minimizes mismatch between our two worlds subject to constraints on the relative magnitudes of the individual terms
+
+    - This convex polytope has edges, faces and corners that are identifiable as the optimal solutions for well known objectives!!!
+Generalization
+    - We can evaluate how much information our representations capture about the true data generating process
+    - For instance, I(Zi; PHI) which measures how much information about the true data generating procedure our local representations capture
+    - Notice that given the conditional dependencies in world P, we have the following Markov chain:
+        - PHI -> (Xi,Yi,theta) -> Zi
+        => I(Zi; PHI) <= Ri
+    - So, the per-instance rate Ri forms an upper bound on the mutual information between our encoding Zi and the true governing parameters of our data PHI
+
+    - Similarly, we can establish that:
+        PHI .... 
+
+
+Optimal Frontier
+    - The surface may be monotonic in all of its arguments
+    - The optimal surface in the infinite family limit can be characterized as a convex polytope
+    - Entropy Rate Distortion Classification-error
+
+    - Finding points on this surface equates to solving a constrained optimization problem:
+        min R such that D=D0, S=S0, C=C0
+    - Equivalently:
+        min R + dD + lC + sS
+
+    - This single objective encompasses a wide range of existing techniques:
+        - C alone, we are doing traditional supervised learning
+        - d=0, we no longer require a variational reconstruction network q(x|z) and are doing some form of supervised learning generally
+        - d=0,s=0 => we recover the Variational Information Bottleneck (VIB) objective where beta=1/lam, a form of stochastically regularized supervised learning that imposes a bottleneck on how much information our representation can retain about the input, while simultaneously maximizing the amount of information the representation contains about the target
+
+        - 

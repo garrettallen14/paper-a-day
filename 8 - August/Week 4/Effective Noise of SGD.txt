@@ -1,0 +1,22 @@
+The effective noise of Stochastic Gradient Descent
+
+1 Jun 2022
+
+Abstract
+    - SGD workhorse of deep learning
+    - Each step of training phase, a mini-batch of samples is drawn from training and weights of NN are adjusted wrt the performance on this specific subset of examples
+    - The mini-batch sampling introduces a stochastic dynamics to the gradient descent, with a nontrivial statedependent noise
+    - We characterize the stochasticity of SGD and a recently-introduced variant, persistent SGD, in a prototypical neural network model
+
+    - In the under-parameterized regime, where the final training error is positive, the SGD dynamics reaches a stationary state and we define an effective temperature from the fluctuation-dissipation theorem, computed from dynamic mean-field theory
+
+    - We use the effective temperature to quantify the magnitude of the SGD noise as a function of the problem parameters
+    
+    - In over-parametrized regime, where training error vanishes, we measure the noise magnitude of SGD by computing the average distance between two replicas of the system with the same initialization and two different realizations of SGD noise
+    - We find that the two noise measures behave similarly as a function of the problem parameters
+    - We observe that noisier algorithms lead to wider decision boundaries of the corresponding constraint satisfaction problem
+
+
+Introduction
+    - Training a supervised learning model consists in minimizing a cost function that depends on the parameters of the network/dataset
+    - 
