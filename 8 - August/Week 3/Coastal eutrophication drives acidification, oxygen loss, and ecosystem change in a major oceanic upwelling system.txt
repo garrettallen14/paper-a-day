@@ -1,0 +1,133 @@
+Coastal eutrophication drives acidification, oxygen loss, and ecosystem change in a major oceanic upwelling system
+
+2 Mar 2021
+
+Abstract
+    - Global change is leading to warming, acidification, and oxygen loss in the ocean
+    - In the Southern Califronia Bight, an eastern-boundary upwelling system, these stressors are exacerbated by the localized discharge of anthropogenically enhanced nutrients from a coastal population of 23 million
+
+    - We use simulations w/a high-resolution, physical-biogeochemical model to quantify the link between terrestrial and atmospheric nutrients, organic matter, and carbon inputs and biogeochemical change
+
+    - The model is forced by large-scale climatic drivers and a reconstruction of local inputs via rivers, wastewater outfalls, and atmospheric deposition; it captures the fine scales of ocean circulation along the shelf; and it is validated against a large collection of physical and biogeochemical observations
+
+    - Local land-based and atmospheric inputs drive a 79% increase in phytoplankton biomass, a 23% increase in primary production and 44% increase in sub-surface respiration rates along the coast in summer, reshaping the biogeochemistry of the SC Bight
+
+    - Seasonal reductions in subsurface oxygen, pH, and aragonite saturation state rival or exceed the global open-ocean oxygen loss and acidification since the preindustrial period
+
+    - The biological effects on local fisheries, proliferation of harmful algal blooms, water clarity and submerged aquatic vegetation have yet to be fully explored
+
+
+Introduction
+    - Emissions of CO2 are driving warming, acidification and oxygen loss in the ocean
+    - These global impacts overlap with the effects of anthropogenic nutrient inputs, particularly in shallow / enclosed bodies of water
+    - Coastal eutrophication is most prominent in regions w/large agricultural inputs and densely populated urban areas
+        - Linked to changes in ecosystem structure and declines in pH and O2 concentrations
+
+    - In the CA Current, a productive coastal region that supports important fisheries, wind-driven upwelling drives high biological productivity during spring and summer, exposing shelf waters to low-pH and low-O2 conditions
+
+    - This natural variability makes the CA Current exceptionally vulnerable to acidification and O2 loss from global change
+    - Strong upwelling / vigorous surface currents might suggest a minor role for coastal eutrophication in exacerbating these stressors; however, here, we find that the effect of local anthropogenically enhanced nutrient loads cannot be dismissed in this upwelling system
+
+    - Human activities are particularly intense in the SCB
+    - This region hosts a variety of marine communities and hotspots of biodiversity, many benefitting from Marine Protected Areas
+
+    - Point and non-point source discharges to the ocean from this population are partitioned across 19 urban outfalls that discharge effluent from 23 wastewater treatment plants and 75 rivers, which release, on average, 8 million m3d-1 of nutrient enriched water to the ocean.
+    - These nutrient sources rival natural upwelling in magnitude in coastal waters of SCB, roughly doubling available nitrogen within a coastal band of a few tens of kilometers, and making the SCB vulnerable to coastal eutrophication
+
+    - The SCB also hosts long-running monitoring programs that make it one of the best observed coastal ecosystems in the world
+        - CalCOFI samples Bight quarterly each year, collecting hydrographic and biogeochemical measurements in coordination with the SCCOOS
+
+    - These observations are augmented nearshore by quarterly surveys of water column and benthic parameters conducted collaboratively since 1990 by publicly owned treatment works (POTW) agencies as a part of regulatory intense monitoring efforts
+
+    - The influence of anthropogenic nutrient inputs on the pelagic habitats of the SCB remains poorly quantified, because observations cannot be used to disentangle the relative effects of local pollution, climate change, and natural variability
+
+    - In this study, we conduct an assessment of the fate / consequences of anthropogenic nutrients discharged in the SCB, showing a range of cascading effects that could threaten marine ecosystems and biodiversity in the region
+
+    - We conduct a series of simulations with a regional high-res, physical-biogeochemical model
+    - The model is forced by realistic atmospheric fields and oceanic boundary conditions and by a new reconstruction of natural, non-point-source, and point-source river and ocean outfall dischargers
+
+    - We use a submesoscale-resolving configuration of the model, run at a horizontal resolution of 0.3km over the SCB
+    - This is part of a suite of progressively finer-res simulations that translate global climate and circulation patterns to the coastal scales over which the release, dispersal, and biological utilization of anthropogenically enhanced nutrients occur
+    - We show results from two hindcast simulations run for the period from Jan 1997 to Dec 2000
+
+    - We estimate that 97% of total coastal nitrogen inputs are derived from point sources of treated wastewater effluent, while 2% are derived from non-point sources (urban and agricultural runoff) in the region
+    - Thus, ANTH largely simulates the effects of nutrient and carbon enrichment of the SCB caused by human activities
+    - The model is validated against in situ physical and biogeochemical observations from the Bight monitoring program, CalCOFI, and other data sources
+
+
+Observed and Simulated Coastal Eutrophication
+    - Eutrophication: an increase of primary production above natural levels
+    - Surface chlorophyll concentrations
+    - Away from the coast, a band of high chlorophyll can be observed along the shelf, extending from the coast to about 15km offshore
+
+    - Comparison of the CTRL and ANTH simulations shows that upwelling and mixing alone cannot maintain this high-chlorophyll band w/o the inclusion of anthropogenically enhanced terrestrial and atmospheric inputs via the ANTH simulation
+
+    - Our simulations indicate that the persistent coastal high phytoplankton biomass in the SCB differs from the classic upwelling paradigm that dominates large swathes of the California Current further north
+    - In the SCB, Upwelling typically takes place between March and the beginning of summer, peaking in April
+
+    - In CTRL, this would support avg phytoplankton concentrations of 7 mmol C m-3 0-15km from shore
+    - During rest of year, avg phytoplankton concentrations would rarely exceed this threshold
+
+    - ANTH drive coastal high phytoplankton biomass that consistently exceed 6 mmol C m-3 year-round, with mean peak values observed in March on the order of 13 mmol C m-3
+
+    - On avg, anthropogenically-enhanced nutrient inputs cause a nearly 2-fold increase in coastal phytoplankton and biomass concetrations
+        - Dramatically increase the concetration of phytoplanktons in certain areas
+Nutrient Sources Driving Coastal Eutrophication
+    - Nitrogen enrichment drives the persistent coastal high phytoplankton biomass in the SCB
+    - Nitrogen is the primary limiting nutrient in the SCB, supplied to coastal waters by oceanic and terrestrial pathways
+
+    - The oceanic circulation transports nitrate into the euphotic zone via upwelling and mixing
+
+    - Terrestrial sources introduce a combination of nitrate, ammonium and organic nitrogen via three major routes:
+        - atmospheric deposition
+        - rivers
+        - submarine wastewater outfalls
+
+    - Combined, this led to 188,000 kg N d-1 from 1997 to 2000
+        - this represents an estimated 75-fold increase relative to the natural terrestrial sources that would have occurred during the preindustrial period
+
+    - Dissolved inorganic nitrogen loads during the present day have declined ~7% from the historic simulation period, due to nitrogen management from several POTWs to support potable water recycling
+
+    - These coastal outfalls have no nitrogen limits in discharge permits, while inland river nitrate and ammonium criteria have generally kept dissolved inorganic nitrogen concentrations below 70 mmol m-3
+
+    - Organic nitrogen loads from large POTWs have declined 73% since 70s
+    - Total dissolved inorganic nitrogen loads from these outfalls have increased 35% from the 70s to current day, because of a regional population increases of 66%
+        - Individual outfalls have documented declines since their peaks in the 90s
+
+    - Natural, point, and nonsource inputs directly to Mexican coastal waters are not included in this simulation
+
+    - The relatrive contribution of land-based and atmospheric nutrient sources is shown in SI Appendix, Table S1
+    - Atmospheric deposition and riverine runoff are minor pathways for coastal nitrogen inputs relative to ocean outfalls, representing around 5% and 10%
+
+    - Submarine outfalls were designed to release wastewater as nutrient-enriched plumes below the pycnocline
+    - Because they are fresher than ambient seawater, these plumes rise to neutrally buoyant depths of about 30 to 45 m and then are swept along isobaths by the alongshore-flowing coastal current
+    - The model simulations show that this release strategy is mostly effective in preventing nutrients from reaching the surface during the stratified summer season
+        - Wintertime cooling, intense winds, and submesoscale circulation events periodically deepen the surface mixed layer to encompass wastewater, exposing excess nutrients to the euphotic zone
+
+    - Under natural conditions, ammonium concentrations would rarely exceed 1 mmol N m-3 in the euphotic layer
+
+
+Biogeochemical Consequences of Eutrophication
+Amplification of Coastal Productivity
+    - Coastwide, phytoplankton productivity integrated over the euphotic zone increases from an vg of 88 mmol C m-2 to 109 mmol m-2d-1, a 23% enhancement
+    - Off San Pedro and SM Bays, productivity increases by 80% and 42% respectively
+
+    - Productivity and biomass increase significantly during winter and early spring, when mixing exposes nutrient-enriched waters to the surface
+    - The interaction between subsurface nutrient buildup, vertical mixing, and surface productivity is further illustrated by the response to oceanic variability during the Oct 97 and March 98 El Niño
+
+    - At the peak, the deepening of the pycnocline and anomalously strong stratification reduced the input of nitrate to surface waters by natural upwelling
+
+    - Although rapidly nitrified, anthropogenically derived ammonium became the main source of inorganic nitrogen to surface waters, driving the largest amplification of primary production and maintaining levels similar to regular coastal upwelling events, despite the widespread decrease in productivity offshore
+Increase of Organic Matter Export
+    - The ANTH simulation shows a 23% increase in new production coastwide in the upper layer, where 30 to 40% of the total primary production is supported by external nitrogen inputs, one-third of which is from land-based sources
+
+    - This increase is balanced by a similar increase in organic matter export, enhanced coastwide by 24%
+    - In parallel, subduction and lateral transport of nonsinking organic matter are also enhanced in the ANTH sim
+Enhanced O2 Loss and Acidification
+    - 
+
+
+
+
+Question: what are datasets like now?
+    - how could they be better?
