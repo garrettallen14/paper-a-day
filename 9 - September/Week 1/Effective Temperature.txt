@@ -1,0 +1,111 @@
+The effective temperature
+
+29 May 2018
+
+Abstract
+    - Present the effective temperature notion as defined from the deviations from the equilibrium FDT in out of equilibrium systems with slow dynamics
+    - The thermodynamic meaning of this quantity is discussed in detail
+    - Analytic, numeric and experimental measurements are surveyed
+    - Open issues mentioned
+
+
+Introduction
+    - Core concept of stat mech: equilibrium states can be accurately described in terms of small number of thermodynamic variables like temperature and pressure
+    - There is no equivalent framework for generic out-of-equilibrium macroscopic systems, and one is forced to solve their dynamics on a case-by-case basis
+
+    - OOE macro systems are of many different kinds
+        - An interesting class: relaxation is slow, with observables decaying, say, as power laws instead of exponentially
+        - Coarsening phenomena + generic glasses, realized as molecular, polymeric or magnetic materials, among others
+
+        - Another: Non-equilibrium steady states in the weak drive limit:
+            - Gently vibrated granular matter and weakly sheared super-cooled liquids
+
+    - The quest for an approximate thermodynamic description of such systems, or to start with, the identification of effective parameters acting as the equilibrium one, has a long history we shall not review in detail here.
+    - In contrast, we shall focus on the development of the effective temperature notion, that has proven to be a successful concept at least within certain limits
+
+    - About 20yrs ago, ... proposed to define an effective temp throguh the departure from the FDT.
+        - ... mention same possibility in context of granular matter
+    - Teff solution established the importance of reaching an asymptotic limit with slow dynamics and of attributing a value of the effective temperature to each distinct dynamic regime
+    - The solutions demonstrate the relation with the phase space volume visited dynamically
+    - They illustrate the relevance of Teff to heat transfer and equilibration, and they set some limits to the extent of applicability of the concept
+
+    - The Teff definition based on FDT relations is not ambiguous and allows for direct measurements.
+    - In this review, we sift through the effective temperature notion trying to transmit the full allure of the idea
+
+    - The literature on FDT violations is immense and several reviews have already been published.
+
+
+Definitions
+Canonical setting
+    - We focus on the dynamics of a classical or quantum system coupled to a classical or quantum environment
+        - Typically in equilibrium at temperature T
+    - In this sense the setting is canonical
+    - Systems relax by transferring energy to the environment
+    - Atypical dissipation, as in granular matter, is referred to in ...
+    - Reference to some studies in isolated systems (microcanonical setting)... kB = 1
+Time and length scales
+    - In equilibrium studies, one rarely specifies the initial time or implicitly takes it to -inf
+    - OOE a reference moment has to be defined
+    - t=0 is the instant when the sample is prepared in some special conditions
+    - We focus on infinitely rapid quenches and we define t=0 as the moment when the working temperature is instantaneously reached
+
+    - We deal mainly with macroscopic systems in which the dof is assumed to be the most diverging quantity, N->inf
+    - In most of the theoretical and numerical calculations discussed are finite wrt N
+Correlations and responses
+    - OOE dynamics are explored by measuring observables that depend on one or several times after the preparation sample
+    - Observables:
+        1. Describing the free evolution
+        2. Those associated to responses to external perturbations
+    - A multi-time correlation is the avg over histories or initial conditions of several observalbles Oj, that are functions of the systems DoF, evaluated at different times:
+        Co1,o2,...,on(t1,...,tn) = <o1(t1)o2(t2)...on(tn)>
+        oj is any observable wlog, zero mean
+    - In systems with an energy function, the impulse response functions are the averaged reaction of an observable to a perturbation that modifies the potential energy as:
+        V -> V - hOn at a given instant tn.
+
+    - In dynamical systems in which the time evolution of the DoF is not related to the gradient of an energy function, one can similarly compute the response to an instantaneous kick that translates the DoF at a chosen instant as x(tn)->x(tn) + delta*x(tn)
+
+    - The search for a link between dissipation and fluctuations started w/Einstein derivation of a relation between the mobility and diffusion coefficient of a Brownian particle
+    - Former is induced by an external force, a response
+    - Latter is due to spontaneous mean-squared displacement of the particle's position, thus a correlation
+
+    - Onsager's regression hypothesis, and Kubo's linear response theory, elaborated upon the idea of an existing relation between the two types of fluctuations near equilibrium
+
+    - We now present some relations between induced and spontaneous fluctuations that hold in and out of equilibrium
+Fluctuation-dissipation relations
+    - Several FDRs between responses and correlations computed over unperturbed trajectories have been derived in recent years
+    - Langevin dynamics with white or coloured equilibrium noise and Markov processes described by a master eqn with detailed balance
+        - The linear response is related to a correlation function of the unperturbed system which, however is more complex than the overlap between the two observables involved in the repsonse
+    - Ex. 1d white-noise Langevin equation: ...
+        - F is any deterministic force -- not necessarily conservative
+        - The generalization to other observables or field-theories is straightforward
+    - All these FDRs become the FDT under equilibrium conditions
+Linear FDT
+    - FDT states that the decay of spontaneous fluctuations cannot be distinguised from the one of forced fluctuations.
+Classical
+    - FDT expresses the equilibrium thermal fluctuations of an observable O in terms of the available thermal energy T and the linear response of O to a vanishingly small applied field linearly coupled to itself.
+Fluctuation dissipation ratio
+    - Consider the following adimensional object:
+        X(t,t') = TR(t,t')/dt'C(t,t'), Teff(t,t') = T / X(t,t')
+Beyond linear-response
+    - Building upon the study of non-linear responses in Langevin processes, ..., present a unified derivation of out of equilibrium fdrs to arbitrary order for discrete and continuous variables ruled by stochasitc Markovian dynamics of quite generic type
+
+    - These relations are conceptually simple although pretty lengthy to write down
+    - They are derived from a rewriting of the multiple variations of the evolution operator wrt the perturbation strength
+
+    - One ends up wiht a sum of an increasing number of terms that are time-derivatives of higher order correlations
+
+    - The generic FDRs can also be derived from a fluctuation principle that simply uses the detailed balance property of the transition properties
+
+
+Insight
+    - Fully connected disordered spin models provide a mean-field description of glassy phenomenology
+    - They capture many features of glassy thermodynamics and dynamics, at least in an approximate way
+    - They have static and dynamic transitions at finite temperatures Ts and Td that do not necessarily coincide
+    - In a family of such models aimed to describe fragile glasses with the random first order transition scenario, Ts corresponds to an entropy crisis realizing the Kauzmann paradox,
+    - Below Td an infinite system does not come to equilibrium with the environment and relaxes out of equilibrium
+
+    - Replica tricks and the Thouless-Anderson Palmer approach give us a handle to understand equilibirum and metastable states as well as thermodynamic properties
+    - A dynamic treatment completes the picture explaining their relaxation and the relation with the free-energy landscape
+
+    - A quasi-complete analytic solution exists and a clear definition of many concepts that are not as sharply grasped in finite-dim cases -- such as metastable states -- can be given
+    - We simply highlight some of their properties and their relevance to the effective temperature notion

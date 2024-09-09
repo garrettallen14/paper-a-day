@@ -1,0 +1,34 @@
+Compact Language Models via Pruning and Knowledge Distillation
+
+19 Jul 2024
+
+Abstract
+    - We investigate if pruning an LLM and retraining it with a fraction of the original training data can be a suitable alternative to repeated, full retraining
+    - We develop Compression best practices for LLMs
+
+
+Pruning Methodology
+    - We start by computing the importance of each layer, neuron, head, and emb dim and sort these importance scores to compute a corresponding importance ranking
+Importance Analysis
+    - We propose a purely activation-based importance estimation strategy that Simultaneously computes sensitivity information for all the axes we consider using 1024 sample calibration dataset and only fwd prop passes
+Width:
+    - We compute the importance of each head, neuron, and emb channel by examining the activations produced by the MHA, MLP and LN layers, respectively
+Depth:
+    - For depth pruning, we evaluate the importance of each layer with two metrics:
+        1. Perplexity
+            - Remove a single layer and compute its effect on ppl
+        2. Block importance
+            - Cosine distance between the input and output of a layer to estimate layer sensitivity
+Iterative Importance
+    - We iteratively alternate between pruning and importance estimation for a given axis or combination of axes
+    - Given T iterations and source and target dims, we iteratively compute importance on ... dims and prune to ... dims
+Obtaining a Pruned Model
+    - First rank the elements of each axis according to computed importance and perform trimming (reshaping) of the corresponding weight matrices directly
+    - Neuron / head pruning:
+        - Trim MLP and MHA layer weights, respectively
+    - For embedding channels:
+        - We trim embedding dimension of the weight matrices in MLP, MHA, LN layers
+    - For attn heads:
+        - We add the residual info from the pruned heads back into the remaining heads, with the aim of preserving relevant knowledge from the pruned heads
+        - Formally: given L attn heads being pruned to K heads, each new head will have the form head_i + (head_i - head2k-i+1)
+        - For GQA, we apply this strategy only to the query heads

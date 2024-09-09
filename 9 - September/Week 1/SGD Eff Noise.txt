@@ -1,0 +1,114 @@
+The effective noise of Stochastic Gradient Descent
+
+1 Jun 2022
+
+Abstract
+    - Mini-batch sampling introduces a Stochastic dynamics to the gradient descent, with a non-trivial state-dependent noise
+    - We characterize the Stochasticity of SGD in a prototypical neural net
+    - Underparam, where final training is positive, the SGD dynamics reaches a stationary state and we define an effective temperature from the fluctuation-dissipation theorem, computed from dynamical mean-field theory
+
+    - We use the effective temperature to quantify the magnitude of the SGD noise as a function of the problem parameters
+
+    - In the over-param regime, we measure the noise magnitude of SGD by computing the avg distance between two replicas of the system with the same initialization and two different realizations of SGD noise
+    - We find that the two noise measures behave similarly as a function of the problem parameters
+    - Moreover, we observe that noisier algorithms lead to wider decision boundaries of the corresponding constraint satisfaction problem
+
+
+Introduction
+    - Training supervised learning model -> minimizing a cost function that depends on the params of the network + dataset
+    - Minimizing a cost function in a high-dim space is extremely complex already for general-purpose algorithms such as pure gradient descent
+    - Calculating the gradient of the loss function brings a great computational burden, requiring the evaluation of the current state of the NN weights on the full training set
+
+    - More efficient is SGD
+        - SGD, at variance with GD, approximates the gradient by evaluating it only on a mini-batch
+    - Over-param neural networks trained by SGD do not incur in over-fitting on real data
+        - Achieve excellent performance on previously unseen data: generalization
+
+    - Many current works invoke CLT to model SGD as an approximated gradient-descent dynamics perturbed by simple Gaussian Langevin noise, with a variance depending on the size of the mini batch and on the time step, or learning rate, dt
+
+    - This approach leads to a stochastic diffeq involving a hybrid, ill-defined continuous-time limit, where the learning rate is sent to zero dt->0+ in the dynamics, but at the same time it is kept finite in the noise variance
+
+    - The validity of the CLT in this context has been questioned
+    - Many experiments undermine the validity of the Gaussian approximation and suggest that in fact the SGD noise may be responisble for Levy flights in the phase space of the weights during training
+
+    - Tracking analytically the whole trajectory of the algorithm without resorting to approximations is more demanding
+
+    - Recent works show that the dynamical trajectory of SGD can be tracked analytically via DMFT from stat physics
+
+    - This description is not restricted to the cts-time limit: the discretized version of the DMFT equations is able to capture the dynamics of SGD also at finite learning rate, provided the weight increments betweentwo updates do not involve higher order terms than o(dt)
+
+    - We apply DMFT to characterize the late-time dynamics of SGD and quantify its algorithmic noise
+    - We decouple the effect of SGD noise on optimization from that of network architecture and datastructure by focusin gon a single-layer networks and a simple loss landscape
+
+    - We consider a prototypical supervised-classification problem and integrate the DMFT equations in this setting up to times when the dynamics has reached stationary or stopped...
+
+    - We highlight the difference between these two possible scenarios
+        1. UNSAT
+            - network cannot achieve zero training error
+            - dynamics goes to stationary state
+            - By computing correlation and response functions of the network weights, we characterize the stationary state by defining an effective temperature Teff from the fluctuation-dissipation relation
+                - We then extrapolate numerically the value of Teff, which relates correlation and response at stationary and quantifies the magnitude of SGD noise as a function of the problem hyperparameters
+        2. SAT
+            - dynamics stops at one solution with zero training error
+            - extrapolated temperature approaches zero at large times
+            - This result aligns with the intuitive picture that SGD implements a self-annealing procedure while navigating the loss landscape
+
+            - To assess the noise magnitude in the SAT phase, we introduce an alternative measure that we can access both analytically--via DMFT--and from numerical simulations
+            - We consider the dynamics of two copies of the system, starting from same init, but subjected to two different realizations of stoch noise
+            - We track the avg distance d(t) between these two trajectories as they evolve in the weight space and when they finally land on a border of the zero-training-error region
+
+            - We use this distance to quantify the noise of the SGD algorithm as a function of the problem hyper-parameters
+
+    - A higher noise is associated to a smaller fraction of support vectors at the end of training => more robust solution
+
+    - The role of various hyper-params in the SAT and UNSAT phase could provide theoretically informed guidance for practical implementations
+
+    - We find qualitative agreement of the two different measures of noise magnitude, Teff and d(t) as a function of the hyper-parameters
+
+
+Model and Methods
+    - We study a prototypical binary classification problem in high-dims
+    - The network is presented with M training in dim N
+    - Goal is learn classification rule
+
+    - We have added a soft constraint on the `2−norm of the weights, called ridge regularization
+        - So this increases the temperautre ... .???
+
+    - Main quantities of interest are C(t,t') = 1/N w(t)^T*w(t')
+    - Linear response function R(t,t') = lim Hj -> 0 ...
+        - Hj is an infinitesimal local field coupled to the jth weight
+        - ie, one considers the dynamics where L(w(t)) is shifted as L(w(t)) - sum(Hi(t)*wi)
+    - In high dim limit, these two-point functions concentrate to a deterministic value
+
+    - In generic equilibrium stochastic processes, correlation and response are related by the fluctuation dissipation theorem (FDT)
+        R(t,t') = 1/T ...
+        T indicates the equilibrium temperature that enters in the stationary Gibbs measure
+
+    - For a generic stochastic process that may be out of equilibriumm FDT does not hold and the stationary state is not given by the Gibbs measure
+    - One can define an effective temperature which in general will be a function of t and t'
+    - This concept has proven useful across a variety of systems, ranging from glasses to, more recently, active matter
+    - It is convenient to work with the integrated response:
+        chi(t,t') = integral(dsR(s,t'))
+        that can be computed from the DMFT equations
+
+    - By integrateing both side of (5), we obtain, for t >= t',
+        _chi(t,t')  = 1/T (1-C(t,t'))
+        where we have defined _chi(t,t') = chi(t,t')/C(t,t') and _C(t,t')=C(t,t')/C(t',t')
+    - At equilibirum, _chi eqn implies that the parametric plot of _chi versus _C gives direct access to the equilibrium temperature
+    - We apply the same construction to the SGD learning dynamics:
+
+        - We define the effective temperature Teff by plotting parametrically the rescaled integrated response _chi vs the rescaled correlation _C and measuring th eslop of this function in the stationary state, meaning for large t' and t and large time diff t-t'
+        - We dub the corresponding plot as the FDT plot
+        
+    - This slope is essentially constant for vanilla-SGD
+        - In the stationary state, the algorithm is characterized by an effective FDT with a well defined effective temperature that we can compute
+
+    - To quantify the noise magnitude in the SAT, we consider the rescaled distance between two realizations of the SGD and p-SGD dynamics, starting at the same initialization point
+
+
+Results
+    - We discuss our results for UNSAT phase, where the landscape has a unique minimum in which the SGD noise induces a non-equilibrium steady state
+
+    - We compute the integrated response _chi(t+tw, tw) and the correlation function C(t+tw,tw)
+    - We let the system evolve until a waiting time tw such that the stationary state has been reached
+    - At fixed tw, we display the FDT plot _chi(...) vs _C parameterized by the time shift t

@@ -1,0 +1,37 @@
+LLM Pruning and Distillation in Practice: The Minitron Approach
+
+26 Aug 2024
+
+Pruning
+    - Focus on structured pruning: blocks (or channels) of nonzero elements are removed at once from model weights
+        - Neuron, attn head, conv filter, depth pruning
+    - With LLMs, we start the pruning process by first computing the importance of each layer, neuron, head, and embedding dimension
+        - We sort these importance scores to compute a corresponding importance ranking
+Importance Estimation
+    - We use a purely activation-based importance estimation strategy
+        - Simultaneously compute sensitivity information for all axes we consider (depth, neuron, head, emb channel) with a small calibration dataset
+        - Only fwd prop passes
+    - Depth pruning considered a special case and do not combine it with compressing other dims
+
+    - We compute the importance by examining the activations produced by MHA, MLP, and LN layers, respectively
+    - We use a small calibration dataset (1024 samples) for this purpose
+
+    - For depth pruning, we consider three distinct metrics for evaluating layer importance:
+        1. LM validation loss
+            - For loss-based ranking, we simply remobe a single or a block of contiguous layers and compute its effect on LM loss
+            - Serves as the "importance" or sensitivity of the layer
+        2. Block importance (BI)
+            - Use cosine distance between the input and output of a layer or a block of layers
+            - BI and LM loss metrics are highly correlated but do not produce the most accurate pruned model
+        3. Accuracy on downstream task
+            - Evaluate layer importance using the Winogrande benchmark
+Model Trimming
+    - We rank the elements of each axis according to computed importance and perform trimming (reshaping) of the corresponding weight matrices directly
+    - For neuron and head pruning, we trim MLP and MHA layer weights, respectively
+    - In the case of embedding channels, we trim the emb dim of the weight matrices in MLP. MHA, and LN layers
+    - The original approach uses Neural Architecture Search to find the best architecture... in this work we skip this step and instead utilize the network architecture-related learnings from the original paper
+Retraining with Distillation
+    - "Retraining" => accuracy recovery process following pruning
+        1. Conventional training
+        2. Knowledge distillation w/supervision from unpruned model
+    - For KD, we use fwd KL Divergence loss on the teacher and student logits only
