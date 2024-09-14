@@ -1,0 +1,18 @@
+Empowering Diffusion Models on the Embedding Space for Text Generation
+
+22 Apr 2024
+
+Abstract
+    - Study optimization challenges encountered with the embedding space and denoising model for diffusion text gen.
+    - Firstly, the data distribution is learnable for embeddings, which may lead to the collapse of the embedding space and unstable training
+    - We propose a new objective called the anchor loss, a more efficient loss than previous methods.
+    - Difformer, an embedding diffusion model based on Transformer
+
+
+Introduction
+    - We explore the embedding diffusion model from two perspectives separately:
+        1. The embedding space
+        2. The denoising model
+    - Firstly, for diffusion models on image and audio gen, the ground truth data is stationary during training.
+    - In contrast, it is learnable for the textual data, which may cause the collapse of the embedding space and introduce instability to the training of the model
+    - We propose an anchor loss function to attain well-distributed embeddings and stabilize the training process

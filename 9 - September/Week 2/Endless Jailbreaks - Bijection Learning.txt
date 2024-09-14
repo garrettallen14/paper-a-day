@@ -1,0 +1,41 @@
+Endless Jailbreaks with Bijection Learning: a Powerful, Scale-Agnostic Attack Method
+
+26 Aug 2024
+
+Abstract
+    - When jailbroken, bigger models => bigger misuse
+    - Emergent vulnerabilities
+    - We design an instruction-based attack w/hyperparameters that modulate its complexity
+    - This design pattern is an effective way to make scale-agnostic attacks, which can be optimized towards models of varying capabilities with light hyperparameter tuning
+    - Common method: leetspeak, Base64, binary, ASCII, Morse code...
+    - We utilize more complex and previously unseen encodings by programmatically creating new encoding languages on the fly...
+    - In our bijection learning scheme, we generate a mapping from each Eng alphabet letter to other characters/strings
+
+
+The Bijection Learning Scheme
+    - We teach the model a custom, encoded language
+    - A random mapping of English characters to another set of tokens, programmatically generated
+    - Bijection type:
+        - Major impact on how learnable the bijection language is for the model
+    - Fixed size:
+        - Number of letters in the alphabet that we map back to themselves
+    - For stronger models, we create much more complex languages using difficult bijection types with very few fixed points
+    - After generating a new mapping, we teach the model the bijection language wit an extensive multi-turn prompt
+
+Bijection Learning Attacks Are…
+Automated
+    - We perform an automated best-of-n attack
+    - We randomly generate a mapping and attempt a bijection learning jailbreak up to n times
+    - Evaluate on two benchmarks:
+        1. 50-behavior subset of AdvBench
+        2. Full test set of HarmBench containing 320 behaviors
+    - We attack the full GPT-4o and Claude 3 model families
+        - Elicit responses on 86.3% of the behavior set!!!
+Universal
+Stronger With Scale
+    - Larger hyperparam sweeps confirm our suspicions about how model capabilities affect the potency of bijection learning attacks
+    - If the fixed size is too low or too high for a given model, our attacks are ineffective, and its at an intermediate sweet-spot setting where bijection learning is a strong jailbreak!
+    - The stronger the model, the more potent the bijection learning jailbreak is!
+    - Bijection learning causes poorer performance on MMLU
+        - Smoothly declies as fixed size is turned from 26 to 0
+    - 

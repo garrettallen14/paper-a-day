@@ -1,0 +1,81 @@
+MASTERKEY: Automated Jailbreaking of Large Language Model Chatbots
+
+25 Oct 2023
+
+Abstract
+    - MASTERKEY, an end-to-end framework to explore the facinating mechanisms behind jailbreak attacks and defenses
+    - We reverse-engineer the defense strategies behind mainstream LLM chatbot services
+    - Glean valuable insights into the operational properties of these defenses
+    - Automatically generate jailbreak prompts against well-protected LLM chatbots
+    - We fine-tune an LLM with jailbreak prompts, we demonstrate the possibility of automated jailbreak generation targeting a set of well-known commercialized LLM chatbots
+    - Our approach generates attack prompts that boast an average success rate of 21.58%, significantly exceeding the success rate of 7.33% achieved with existing prompts
+
+
+Introduction
+    - Jailbreaking => strategic manipulation of input prompts to LLMs, devised to outsmart the chatbot's safeguards and generate content otherwise moderated or blocked
+    - A malicious user can induce LLM chatbots to produce harmful outputs that contravene the defined policies
+    - Past efforts have been made to investigate the jailbreak vulnerabilities of LLMs
+    - Mitigation measures are black-box nature
+    - We present MasterKey, an end-to-end framework to advance the jailbreak study
+    - We make major two contributions in MasterKey:
+        1. Methodology to infer the internal defense designs in LLM
+        2 ....
+
+    - Three steps:
+        1. Dataset Building and Augmentation
+            - Curate and refine a unique dataset of jailbreak prompts
+        2. Continuous Pre-training and Task Tuning
+            - Employ this enriched dataset to train a specialized LLM proficient in jailbreaking chatbots
+        3. Reward Ranked Fine-Tuning
+            - We apply a rewarding strategy to enhance the model's ability to bypass various LLM chatbot defenses
+    - We comprehensively evaluate 5 SOTA LLM chatbots, with a total of 850 generated jailbreak prompts
+    - We carefully examine the performance of MasterKey from two crucial perspectives: 
+        1. Query success rate: successful queries / total testing queries
+        2. Prompt success rate: proportion of prompts->successful jailbreaks / all generated prompts
+    
+    - We obtain a query success rate of 21.58% and a prompt success rate of 26.05%
+
+
+Empirical Study
+    - RQ1 (Scope): What are the usage policies set forth by LLM chatbot service providers?
+    - RQ2 (Motivation): How effective are the existing jailbreak prompts against the commercial LLM chatbots?
+Usage Policy (RQ1)
+    - We ensure that every provider examined has a comprehensive usage policy that clearly delineates the actions or practices that would be considered violations
+    - There are four common prohibited scenarios:
+        1. Illegal usage against law
+        2. Generation of harmful/abusive contents
+        3. Violation of rights/privace
+        4. Generation of adult contents
+Jailbreak Effectiveness (RQ2)
+Prompt Preparation
+    - We collect 85 prompts for our experiment
+Experiment Setting
+    - Our empirical study aims to gauge the effectiveness of jailbreak prompts in bypassing the selected LLMs
+    - We run each question with every jailbreak prompt for 10 rounds, accumulating to a total of 68k queries
+    - Following the acquisition of results, we conduct a manual review to evaluate the success of each jailbreak attempt by checking whether the response contravenes the identified prohibited scenario
+Results
+    - Finding: The existing jailbreak prompts seem to be effective towards ChatGPT only, while demonstrating limited success with others
+    - OpenAI models return the exact policies violated in their responses... This level of transparency is lacking in others.
+
+
+Overview of MasterKey
+    - Reverse engineer the hidden defense mechanisms, and further identify their ineffectiveness
+    - Decompiling the jailbreak defense mechanisms employed by various LLM services
+    - We find that existing LLM service providers adopt dynamic content moderation over generated outputs with keyword filtering
+
+    - With this newfound understanding of defenses, we engineer a proof-of-concept jailbreak prompt that is effective across GPT...
+    - We devise a three-stage methodology to train a robust LLM which can automatically generate effective jailbreak prompts
+    - We adopt the RLHF mechanisms
+
+
+Methodology of Revealing Jailbreak Defenses
+    - Jailbreak attempts will be rejected directly by services like Bard and Bing Chat
+Design Insights
+    1. Service response time could be an interesting indicator:
+        - Time taken to return a response varies, even for failed jailbreak attempts
+        - We speculate that this is because, despite rejecting the jailbreak attempt, the LLM still undergoes a generation process
+        - We posit that response time may reflect when generation process is halted
+    2. There exists a parallel between web apps and LLM services
+Time-based LLM Testing
+    - Several uncertainties persist within blackbox
+

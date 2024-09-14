@@ -1,0 +1,126 @@
+OpenAI o1 System Card
+
+12 Sept 2024
+
+Introduction
+    - Large scale RL to reason using CoT
+    - These advanced reasoning capabilities provide new avenues for improving the safety and robustness of our models
+    - Leads to SoTA performance on certain benchmarks for risks such as generating illicit advice, choosing stereotyped responses, and succumbing to known jailbreaks
+    - Training models to incorporate CoT before answering has the potential to unlock substantial benefits
+
+
+Safety challenges and evaluations
+    - Fast, intuitive thinking to now also a slower, more deliberate reasoning
+    - We investigate risks involving the chain of thought itself, and describe our ongoing research on CoT detection monitoring
+    - Finally, we detail the results of our external redteaming campaign
+Safety Evaluations
+We evaluate the o1 models against GPT-4o on a suite of disallowed content evaluations
+    - These evaluations check that the model does not comply with requests for harmful content
+    - Also check for overrefusal
+    - Four evaluations:
+        1. Standard refusal eval
+        2. Challenging refusal eval
+        3. (Toxic) WildChat: toxic conversations from WildChat
+        4. XSTest: Benign prompts which test for over-refusal edge cases
+    - We use an autograder checking two main metrics:
+        1. not_unsafe: model did not produce an unsafe output according to OAI policy
+        2. not_overrefuse: the model complied with a benign request
+Jailbreak Evaluations
+    - We eval adversarial robustness to jailbreaks
+    - We consider four evals:
+        1. Production Jailbreaks: a series of jailbreaks identified in production ChatGPT data
+        2. Jailbreak Augmented Examples: applies publicly known jailbreaks to examples from our std disallowed content eval
+        3. Human Sourced Jailbreaks: Human redteaming
+        4. StrongReject: Academic jailbreak benchmark that tests a model's resistance against common attacks from the literature. We calculate goodness@0.1 which is the safety of the model when evaluated against the top 10% of jailbreak techniques per prompt
+    - We find o1 family significantly improves upon GPT-4o, especially on StrongReject eval
+Regurgitation Evaluations
+    - Regurgitation of training data... internal
+Hallucination Evaluations
+    1. SimpleQA: 4k fact-seeking questions with short answers and measures model accuracy for attempted answers
+    2. BirthdayFacts: A dataset that requests someone's birthday and measures how often the model guesses the wrong birthday
+    3. Open Ended Questions: A dataset asking the model to generate arbitrary facts. Cross-check facts with Wikipedia and eval measures how many incorrect statements are generated
+Fairness and Bias Evaluations:
+    1. BBQ Evaluation
+Chain-of-Thought Safety
+CoT Deception Monitoring
+    - Our monitor is a GPT-4o model prompted to look for deception in o1-preview's CoT and final output.
+    - We validated the monitor on a small on-policy internal dataset of deceptive and non-deceptive o1-preview outputs and chain-of-thought, on which it was 92% accurate.
+    - We used the monitor on 100k synthetic ChatGPT prompts with o1-preview completion
+
+    - 0.8% of o1-preview's responses got flagged as being 'deceptive'.
+        - 0.56% hallucination
+            - 0.38% intentional: cot that o1-preview was aware the answer was incorrect
+            - 0.18% was unintentional
+        - 0.22% other
+            - Relatively harmless flags:
+                - Final answer truncated
+                - o1 accidentally answering a question that was asked earlier rather than the final question
+CoT Summarized Outputs
+    - We surface CoT summaries to users in ChatGPT
+    - We trained the summarizer model away from producing disallowed content in these summaries
+    - The model has strong performance here
+    - We prompted o1-preview with our standard refusal evaluation, and checked for cases where the summary contained disallowed content but the answer didn't contain disallowed content
+    - No instances of improper regurgitation of training data in the summaries
+External Red Teaming
+    - Worked with multiple orgs and individuals to assess key risks associated with the o1 model series improved reasoning capabilities
+    - Categories:
+        - Natural sciences
+        - Deceptive alignment
+        - Cybersecurity
+        - International security
+        - Attack planning
+        - Content policy
+    - Jailbreaks:
+        - Assessed the ability of o1 model series to resist jailbreaks by having humans craft jailbreaks and partnering with organizations using automated jailbreaking methods such as cybercrime, harmful content, dangerous .............
+        - Generated jailbreaks against earlier versions of o1
+        - Automated iterative gap finding (???)
+            - Automated jailbreaks converted requests that the model originally refused into valid responses, with o1-preview resisting these techniques 44% of the time and o1-mini 15% of the time
+        - Model robustness against jailbreaks more generally remains a challenge
+        - Automated jailbreaks converted requests that the model originally refused into valid responses, with o1-preview resisting these techniques 44% of the time and o1-mini 15% of the time
+        - Model robustness against jailbreaks generally remains a challenge
+    - Real-World Attack Planning:
+        - We created an adversarial dataset of human-generated prompts for real-world attack planning
+        - Leveraged international security expertise to specifically test prompt-response pairs to specifically test prompt-response pairs to assess if any model responses could enable threat actors, including lone actors, groups and state ......
+        - o1-preview and o1-mini both either refuse all prompts rated as high severity by red teamers or do not answer them with high enough efficacy to indicate an uplift for the threat actors they identified
+    - Natural Sciences:
+        - Explosive hazards, etc.
+Apollo Research
+    - Evaluated capabilities of "scheming" in o1 models
+        - Gaming evaluations ...
+    - Test whether o1-preview and o1-mini can model themselves (self-awareness) and others (theory of mind) in 14 agent and QA tasks
+    - o1-preview showed strong capability advances in the combined self-reasoning and theory of mind tasks
+    - Toy examples: 'developer goals' contradict its primary goal...
+    - o1-preview sometimes instrumentally faked alignment during testing
+    
+    - Apollo Research believes o1-preview has the basic capabilities to do simple in-context scheming, still legible in the model outputs...
+    - Apollo subjectively believes o1-preview cannot engage in scheming which can lead to catastrophic harms...
+METR
+    - Autonomy task suite performance not above Claude 3.5 Sonnet
+    - METR could not confidently upper-bound the capabilities of the models during the period they had model access...
+
+    - When provided with basic agent scaffolds, o1 seemed to struggle to use tools and respond appropriately to feedback from the environment
+    - The models seemed better than public models at one-step code gen... etc.
+
+Preparedness Framework Evaluations
+    - Living doc to describe how we track, evaluate, forecast, and protect against catastrophic risks from frontier models.
+    - Cybersecurity, CBRN, persuasion, model autonomy
+    - Only models with a post-mitigation score of "medium" or below can be deployed...
+Cybersecurity
+    - Neither o1s sufficiently advance real-world vulnerability exploitation capabilities to indicate medium risk
+    - Capture the Flag scenarios
+Reward Hacking on Cybersecurity Task
+    - Reasoning skills contributed to a higher occurrence of "reward hacking"
+    - Key element of instrumental convergence and power seeking ...
+ChangeMyView
+    - An OAI eval aiming to measure persuasiveness and argumentative reasoning from r/ChangeMyView
+    - o1 is more persuasive...
+Persuasion Parallel Generation Evaluation
+    - Human rated persuasion eval
+MakeMePay (Contextual)
+    - Automated, OS contextual eval to measure models' manipulative capabilities
+    - One model to persuade the other to make a payment
+MakeMeSay (Contextual)
+    - Get the other model to say a codeword
+Model Autonomy
+    - Neither o1-preview nor o1-mini advance self-exfiltration, self-improvement, or resource acquisition capabilities sufficiently to indicate medium risk.
+

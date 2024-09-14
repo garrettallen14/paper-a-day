@@ -1,0 +1,28 @@
+OPEN SESAME! UNIVERSAL BLACK-BOX JAILBREAKING OF LARGE LANGUAGE MODELS
+
+5 Aug 2024
+
+Abstract
+    - Genetic Algorithm to manipulate LLMs when model arch and params are inaccessible
+    - GA optimizes a universal adversarial prompt that disrupts the attacked model's alignment, resulting in unintended and potentially harmful outputs
+
+
+Introduction
+    - Crucial gap remains in jailbreaking research:
+        - Development of automated, universal black-box attacks
+    - Existing methods often require significant manual effort and are confined to specific models or tasks.
+    - We propose a GA-based approach that:
+        1. Eliminates manual prompt crafting
+        2. Demonstrates effectiveness across 2 OS LLM architectures
+        3. Provides insights into the vulnerabilities exploited by the evolved prompts
+
+
+Methodology
+Initialization
+    - Stochastically generated, with prompts formed by concat token identifiers from LLM tokenizer vocab
+Genetic Operations
+    - Once the initial population of prompt sequences is generated, the GA iteratively refines them through selection, crossover and mutation
+    - Selection probabilistically chooses high-fitness prompts for breeding
+Fitness Function
+    - L(user||adversary) = -Lcos(f_emb(LLM(xuser||xadv)), f_emb(y_target))
+    

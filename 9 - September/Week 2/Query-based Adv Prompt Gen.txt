@@ -1,0 +1,15 @@
+Query-Based Adversarial Prompt Generation
+
+19 Feb 2024
+
+Abstract
+    - Existing attacks work in the white-box setting, or through transferability
+    - We improve with a query-based attack that leverages API access to a remote LM to emit harmful strings than with transfer-only attack
+
+
+GCQ: Greedy Coordinate Query
+    - Method:
+        - Our main attack strategy is similar to GCG... makes greedy updates to an adversarial string
+        - At each iteration, we perform an update based on the best adv string found so far, and after a fixed num of iterations, return the best adv example
+
+        - The key difference in our algorithm is in how we choose the updates to apply

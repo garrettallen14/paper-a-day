@@ -1,0 +1,6 @@
+Neural Mode Decomposition based on Fourier neural network and frequency clustering
+
+26 Aug 2021
+
+Abstract
+    - This paper propose a new mode decomposition algorithm NMD based on Fourier neural network and frequency clustering

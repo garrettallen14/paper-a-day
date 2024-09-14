@@ -1,0 +1,150 @@
+The empirical mode decomposition and the Hilbert spectrum for nonlinear and non-stationary time series analysis
+
+4 Nov 1996
+
+Abstract
+    - A new method for analysing nonlinear and non-stationary data
+    - EMD => any complicated set can be decomposed into a finite and often small number of 'intrinsic mode functions' that admit well-behaved Hilbert transforms
+    - This decomposition method is adaptive and highly efficient
+
+    - 'Intrinsic mode functions' yield instantaneous frequencies as functions of time that give sharp identifications of imbedded structures
+    - The final presentation of the results is an energy-frequency-time distribution... the Hilbert spectrum
+
+    - The main conceptual innovations are the introduction of intrinsic mode functions based on local properties of the signal, which makes the instantaneous frequency meaningful; and the introduction of the instantaneous frequencies for complicated datasets which eliminate the need for spurious harmonics to represent nonlinear equation systems and data representing natural phenomena are given to demonstrate the power of this new method
+
+    - Classical nonlinear system data are especially interesting, for they serve to illustrate the roles played by the nonlinear and non-stationary effects in the energy-frequency-time distribution
+
+
+Introduction
+    - Data analysis is necessary
+        - Determines params needed to construct the necessary model, and confirm the model 
+    - The data, whether from physical measurements or numerical modelling, most likely will have one or more following problems:
+        a. total data span too short
+        b. data are non-stationary
+        c. the data represent nonlinear processes
+    - Fourier spectral analysis has provided a general method for examining the global energy-frequency distributions
+    - As a result, the term 'spectrum' has become almost synonymous with the Fourier transform of the data
+        - For fourier spectral analysis, the system must be linear and the data must be periodic or stationary
+
+    - A time series X(t) is stationary in the wide sense, if, for all t:
+    
+    - In this paper, we present a new data analysis method based on the empirical mode decomposition (EMD) which will generate a collection of intrinsic mode functions (IMF)
+    - The decomp is based on the direct extraction of the energy associated with various intrinsic time scales, the most important parameters of the system
+    - Expressed in IMFs, they have well-behaved Hilbert transforms, from which the instantaneous frequencies can be calculated
+    - Thus, we can localize any event on the time as well as the frequency axis...
+
+    - These IMFs can serve as the basis of that expansion which can be linear or nonlinear as dictated by the data, and it is complete and almost orthogonal!
+        - And adaptive!
+    - Locality and adaptivity are the necessary conditions for the basis for expanding nonlinear and non-stationary time series; orthogonality is not a necessary criterion for our basis selection for a nonlinear system
+
+
+Review of non-stationary data processing methods
+Spectrogram
+Wavelet analysis
+Wigner-Ville distribution
+Empirical orthogonal function expansion (EOF) := PCA
+
+
+Instantaneous Frequency
+    - Instantaneous energy / envelope of the signal is well accepted
+    - Instantaneous frequency is controversial...
+    
+    - Hilbert transform provides a unique way of defining the imaginary part st the result is an analytic function.
+        - The Hilbert transform is a specific singular integral that takes a function u(t) of a real variable and produces another function of a real variable H(u)(t)
+        - Cauchy principal value of the convolution with the function 1/pit
+        - Has a particularly simple representation in the frequency domain: It imparts a phase shift to every frequency component of a function, the sign of the shift depending on the sign of the frequency... The Hilbert transform is important in signal processing, where it is a component of the analytic representation of a real-valued signal u(t)
+
+        - The Hilbert transform of u is the convolution of u(t) with the function h(t) = 1/(pi*t) ... h := the Cauchy Kernel.
+    
+    - With X and Y, form the complex conjugate pair => we can have an analytic signal:
+        - Z(t) = X(t) + iY(t) = a(t)e^itheta(t)
+
+    - Hilbert transform is the convolution of X(t) with 1/t... therefore is emphasizes the local properties of X(t).
+    - Even with the Hilbert transform, there is still considerable controversy in defining the instantaneous frequency as: w = dtheta(t) / dt
+
+    - Cohen introduces 'monocomponent function'
+
+    - There are two definitions of bandwidth:
+        1. Study of probability properties of the signals and waves, where the processes are assumed to be stationary and Gaussian.
+            - The bandwidth can be defined in terms of spectral moments as follows:
+                - ...
+                - ...
+        2. More general: based on moments of the spectrum, but in a different way. Take a complex valued function in polar coords as:
+            z(t) = a(t)e^itheta(t)
+
+    - dtheta can be treated as an instantaneous frequency...
+    - With these notations, the bandwidth can be defined as:
+        - ...
+
+    - For a narrow band signal, this value has to be small, then both a and theta have to be gradually varying functions.
+    - Unfortunately, both eqns defined the bandwidth in the global sense; they are both overly restrictive and lack precision...
+    - Consequently, the bandwidth limitation on the Hilbert transform give a meaningful instantaneous frequency has never been firmly established.
+
+    - We examine the function x(t) = sint
+        - The Hilbert transform => cost
+        - The phase plot of x-y is a simple circle of unit radius
+        - The phase function is a straight line
+        - The instantaneous frequency is a constant as expected
+
+    - If we move the mean off by an amount alpha: x(t) = alpha + sint
+        - Phase plot of x-y is still simple circle independent of value of alpha, but the center of the circle is displaced by alpha
+
+    - For a simple signal such as a sine function, the instantaneous frequency can be defined only if we restrict the function to be symmetric locally wrt the zero mean level.
+    - For general data, any riding waves would be equivalent to the case of alpha > 1 locally
+        - Any asymmetric wave form will be equivalent to the case of alpha < 1 but non-zero, locally
+    - To have a meaningful instantaneous frequency, this local restriction should be used in lieu of the global requirements given previously
+
+    - We can use this local restriction to decompose the data into components which the instantaneous frequency can be defined
+
+    - Examples above lead us to the defn of a class of functions, based on its local properties, IMF for which the instantaneous freq can be defined everywhere
+    - The limitation of interest here is not on the existence of the Hilbert transform, but the existence of a meaningful instantaneous freq which is restrictive and local
+
+
+Intrinsic mode functions
+    - Necessary to define a meaningful instantaneous freq: the functions are symmetric wrt the local zero mean and have the same numbers of zero crossings and extrema
+
+    - IMF is a function satisfying:
+        1. In the whole data set, the num of extrema and num of zero crossings must either equal or differ at most by one...
+        2. At any point, the mean value of the envelope defined by the local maxima and the envelope defined by the local minima is zero...
+
+    - We will show that even under the worst conditions, the instantaneous frequency so defined is still consistent with the physics of the system studied!
+
+    - IMF is adopted because it represents the oscillation mode imbedded in the data.
+    - With this definition, the IMF in each cycle, defined by the zero crossings, involves only one mode of oscillation, no complex riding waves are allowed.
+
+    - An IMF after the Hilbert transform can be expressed as (3.2)...
+
+    - In order to use this unique definition of instantaneous frequency, we have to reduce an arbitrary dataset into IMF components from which an instantaneous frequency value can be assigned to each IMF component
+    - Consequently, for complicated data, we can have more than one instantaneous frequency at a time locally
+        - We will introduce the empirical mode decomp method to reduce the data into the needed IMFs
+
+
+The empirical mode decomposition method: the sifting process
+    - Knowing the well-behaved Hilbert transforms of the IMF components is only the starting point
+    - Most of the data are not IMFs
+    - Data may involve more than one oscillatory mode
+        - Simple Hilbert transform cannot provide the full description of the frequency content for the general data
+    - We have to decompose the data into IMF components
+        - We introduce a new method to deal with both non-stationary and nonlinear data by decomposing the signal first, and discuss the physical meaning of this decomposition later...
+    - Decomposition is based on assumptions:
+        1. Signal has at least two extrema -- one max and one min
+        2. The characteristic time scale is defined by the time lapse between the extrema
+        3. If the data were totally devoid of extrema but contained only inflection points, then it can be differentiated once or more times to reveal the extrema
+
+    - The essence of the method is to identify the intrinsic oscillatory modes by their characteristic time scales in the data empirically, and then decompose the data accordingly...
+    - One can immediately identify the different scales directly in two ways:
+        1. By the time lapse between successive alternations of local maxima and minima
+        2. By the time lapse between the successive zero crossings
+    - The interlaced local extrema and zero crossings give us the complicated data:
+        - One undulation is riding on top of another, and they, in turn, are riding on still other undulations, and so on.
+        - Each of these undulations defines a characteristic scale of the data; it is intrinsic to the process
+    - We adopt the time lapse between successive extrema as the definition of the time scale for the intrinsic oscillatory mode
+        - Gives much finer resolution of oscillatory modes
+        - Can be applied to data with non-zero mean w/o zero crossings!
+
+    - By virtue of the IMF definition, the decomposition method can simply use the envelopes defined by the local maxima and minima separately
+    - Once the extrema are identified, all local maxima are connected by a cubic spline line as the upper envelope
+
+    - Repeat the procedure for the local minima to produce the lower envelope.
+    - The upper and lower envelopes should cover all the data between them
+    - Their mean is designated as m1 and the difference between the data and m1 is the first component, h1, ie: X(t) - m1 = h1.

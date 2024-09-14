@@ -1,0 +1,157 @@
+Gorilla: Large Language Model Connected with Massive APIs
+Berkeley Function-Calling Leaderboard
+
+19 Aug 2024
+
+Introduction
+    - BFCL: The first comprehensive eval on the LLM's ability to call functions and tools
+    - Consider function calls of various forms including parallel (one function input, multiple invocations of function output) and multiple (multiple functions input, one function output), diverse languages including Java, JS, etc.
+    - We execute these functions to execute the models, and we also evaluate the model's ability to withhold picking andy function when the correct function is not available
+    - Leaderboard now includes cost and latency for all different models
+
+
+Berkeley Function Calling Leaderboard
+    - 2000 q-function-answer pairs
+        - 100 Java, 50 JS, 70 REST API, 100 SQL, 1680 Python questions
+        - Various simple, parallel, multiple, executable functions calling scenarios as well as function relevance detection
+    - Multiple programming languages
+    - Diverse application domains and complex use cases
+
+
+Dataset Composition
+    - Gorilla OpenFunctions eval dataset grows from its previous OpenFunctions-v0 100 data points to 2000 datapoints
+    - Expanded dataset demonstrates diversity in:
+        - Domains of functions documentation
+        - Number of function documents and function call(s) pairs
+        - Data types of different programming languages
+        - Executability of real-world examples
+
+
+Evaluation Categories
+    - We break down the majority of the eval into two categories:
+        1. Python: Simple function, multiple function, parallel function, parallel multiple function...
+        2. Non-Python: Chatting capability, function relevance detection, REST API, SQL, Java, JS
+Python Evaluation
+    - Simple function: Single JSON function document -> only one function call generated
+    - Multiple function: User question that only invokes one function call out of 2-4 JSON function documentations.
+        - Model needs to be capable of selecting the best function to invoke according to user-provided context
+    - Parallel function: Invoking multiple function calls in parallel with one user query. Model needs to digest how many function calls need to be made and the question to the model can be a single sentence or multiple sentence...
+    - Parallel Multiple Function: Parallel Multiple function is the combination of parallel function and multiple function. Ie, the model is provided with multiple function documentation, and each of the corresponding function calls will be invoked zero or more times...
+
+    - Each category has both AST and its corresponding executable evals
+    - In the executable eval data, we manually write Python functions and functions that compute directly. The executable category is designed to understand whether the function call generation is able to be stably utilized in applications utilizing function calls in the real world...
+Non-Python Evaluation
+    - Chatting Capability: We design scenarios where no functions are passed in and users ask generic questions. We evaluate if the model is able to output chat messages and recognize that it does not need to invoke any functions... (?)
+    - Function Relevance Detection: We design scenarios where none of the provided functions are relevant and supposed to be invoked. We expect the model's output to be no function call.
+    - REST API ...
+    - SQL
+    - Java, JS
+Leaderboard Evaluation Categories
+    - Abstract Syntax Tree (AST) Evaluation
+    - Evaluation by Executing APIs
+    - Relevance Detection
+
+
+Evaluation Metrics
+    - Abstract Syntax Tree (AST) Evaluation
+        - For simple function evals, the eval process focuses on comparing a single model output function against its function doc and possible answers
+        - Parsing function through AST:
+            - func id
+            - args
+            - keywords
+            - values
+        - Multiple/parallel/parallel-multiple functions AST Evaluation
+            - The evaluation process first associates each possible answer with its function doc. Then it iterates over the model outputs and calls the simple function evaluation on each function (which takes in one model output, one possible answer, and one function doc)
+                - The order of multiple outputs relative to possible answers is not required
+                - A model output can match with any possible answer.
+    - Executable Function Evaluation
+        - We execute the generated API call to check for response correctness... the eval process differs for Non-REST and REST tests due to their distinct characteristics:
+            - Executable function (Non-REST) Evaluation:
+                - Involves running the specified function and examining its output
+                - Eval criteria:
+                    - Exact Match
+                    - Real-time Match (meh)
+                        - If API is live, then if within 20% of expected value......
+                    - Structural Match
+                        - The output must match the expected data type. For ex, [1,2,3] and [1.5,2.4,6] are accepted if the expected type is a list
+                - Executable Function (REST) Evaluation:
+                    - These tests involve executing API calls and assessing:
+                        - Effective execution: Success of API call executions
+                        - Response type accuracy: (list of JSON)
+                        - JSON key consistency: Checking for consistency in JSON key sets between generated and expected responses
+                    - Ground truth REST responses were initially gathered and stored in JSON format for comparison
+                    - Given the variable nature of REST responses, the executable evaluation focuses on structural invariance and real-time execution success rather than static values...
+                        - In particular, the executable eval verifies that the response type matches the ground truth and checks for consistency in the number of elements and JSON key sets.
+                        - We have an optional API sanity check to ensure that all APIs involved during the eval process are working as expected before running any executable category tests... Ground truth for the REST category are also reviewed and updated regularly to ensure the eval remains accurate and relevant
+                    - Multiple/Parallel/Parallel-Multiple Executable Functions Evaluation
+                        - M/P/PM exec function eval process extends the idea in the simple executable function evaluation
+                        - The evaluation process first executes each model-generated function call
+                        - It iterates over the real-time executed outputs with the ground truth execution outputs, and calls the simple executable function evaluation procedure on each pair
+                            - The order of model execution outputs relative to the ground truth execution outputs is not required
+                        - The evaluation employs an all-or-nothing approach
+                            - Failure to find a match across all model execution outputs for any given ground truth execution output with its respective eval criteria results in a failed evaluation.
+
+
+When to function-call (tool-call) and when to prompt?
+    - For function calling models, we toggle this and do no system prompt
+    - For non-function calling models, we use the prompt:
+        SYSTEM_PROMPT_FOR_CHAT_MODEL = """
+        You are an expert in composing functions. You are given a question and a set of possible functions.
+        Based on the question, you will need to make one or more function/tool calls to achieve the purpose.
+        If none of the function can be used, point it out. If the given question lacks the parameters required by the function, also point it out. You should only return the function call in tools call sections.
+        """
+        USER_MESSAGE_FOR_CHAT_MODEL = "Questions:{user_prompt}\nHere is a list of functions in JSON format that you can invoke:\n{functions}. Should you decide to return the function call(s), NO other text MUST be included."
+
+
+
+
+Notes:
+
+They have 3 main Evaluation Categories:
+    1. Abstract Syntax Tree Evaluation (AST) simply parses the LLM's response to check if it aligns with the ground truth function call.
+    2. Evaluation by Executing APIs will actually execute the LLM's response, making an API call. Scoring is done by comparing the API's executed response with the expected ground truth answer.
+    3. Relevance Detection measures how often a model will hallucinate a function call in the absence of relevant functions.
+
+Greater detail:
+    1. Abstract Syntax Tree Evaluation (AST)
+        - 1150 questions.
+        - Model is prompted, and generates a response.
+        - Hard-coded function will parse through the response:
+            - Find one of the following errors:
+                - Function mismatch
+                - Required parameters missing
+                - Parameter hallucination
+                - Type mismatch
+                - Parameter values mismatch
+            - Else, answer is a valid function call
+        - Example Answers:
+            - {"calculate_triangle_area": {"base": [10], "height": [5], "unit": ["units", "unit"]}}
+            - {"predict_house_price": {"bedrooms": [3], "bathrooms": [2], "area": [1800], "location": ["San Francisco", "San Francisco, CA"]}}
+    2. Evaluation by Executing APIs
+        - 310 questions.
+        - Model is prompted, and generates a response.
+        - Local environment will execute the LLM's function call response.
+        - We generate the following metrics by comparing the execution result with our expected ground truth value.
+        - Metrics:
+            - Non-REST API:
+                - Exact match: The API execution result exactly matches the expected ground truth.
+                - Real-time match: For live, dynamic APIs, the execution result must be within (20%) from the expected ground truth result.
+                - Structural match: The execution result simply matches the expected ground truth data type.
+            - REST API:
+                - Effective execution: API call successfully executed
+                - Response type accuracy: API execution result type matches the expected ground truth type
+                - JSON Key Consistency: Check for consistency in JSON key sets between generated and expected responses
+    3. Relevance Detection
+        - 240 questions.
+        - Design scenarios where none of the provided functions are relevant and supposed to be invoked. The expected ground truth is the model has no function call.
+
+    Prompts:
+        - For tool-based models, there is no system prompt, simply the user message.
+        - For non-tool-based models, the system prompt is included:
+            - SYSTEM_PROMPT_FOR_CHAT_MODEL = """
+            You are an expert in composing functions. You are given a question and a set of possible functions.
+            Based on the question, you will need to make one or more function/tool calls to achieve the purpose.
+            If none of the function can be used, point it out. If the given question lacks the parameters required by the function, also point it out. You should only return the function call in tools call sections.
+            """
+
+            - USER_MESSAGE_FOR_CHAT_MODEL = "Questions:{user_prompt}\nHere is a list of functions in JSON format that you can invoke:\n{functions}. Should you decide to return the function call(s), NO other text MUST be included."

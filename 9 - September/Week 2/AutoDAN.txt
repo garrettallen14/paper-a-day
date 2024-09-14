@@ -1,0 +1,36 @@
+AUTODAN: INTERPRETABLE GRADIENT-BASED ADVERSARIAL ATTACKS ON LARGE LANGUAGE MODELS
+
+14 Dec 2023
+
+Abstract
+    - Adversarial attacks generate unlimited but unreadable gibberish prompts, detectable by perplexity-based filters
+    - Manual jailbreak attacks craft readable prompts, but their limited number due to the necessity of human creativity allows for easy blocking
+    - AutoDAN, an interpretable, gradient-based adversarial attack that merges the strengths of both attack types!
+    - Guided by the dual goals of jailbreak and readability, AutoDAN optimizes and generates tokens one by one from left to right, resulting in readable prompts that bypass perplexity filters while maintaining high attack success rates
+    - These prompts, generated from scratch via gradients, are interpretable and diverse, with emerging strategies commonly seen in manual jailbreak attacks
+
+    - Generalize to unforseen harmful behaviors and transfer to black-box LLMs better than their unreadable counterparts
+
+
+AutoDAN: INTERPRETABLE ADVERSARIAL ATTACKS
+    - Optimization method for generating interpretable jailbreak prompts
+    - Inner loop:
+        - Optimizes a single token
+    - Outer loop:
+        - Generates tokens one by one, iteratively calling the inner loop
+Two Objectives: Jailbreaking and Readability
+    - Using optimization to generate interpretable attack prompts requires tractable surrogate objectives
+Jailbreaking
+    - We design the objective for jailbreaking the LLM and eliciting harmful behaviors
+    - Aim to put the model in a state that is more inclined to produce the desired target responses...
+        - Given prefix sys prompt, user req, frozen adversarial prompt, and connecting system prompt, this objective aims to find a new adversarial token x that maximizes the model's likelihood of outputting the target response xt
+Readability
+    - Modeling language by predicting the next token’s distribution is LLM’s core capability
+    - We leverage it to design the readability objective for attack prompt
+    - We find the new adversarial token x with highest output probability
+Inner loop: Single token Optimization
+Entropy Adaptive balancing of two objectives:
+    - The entropy of the new token dist varies due to syntax and previous tokens' semantics
+    - When high entropy, logit values are similar
+    - When entropy low, the logit values differ significantly
+    - 
