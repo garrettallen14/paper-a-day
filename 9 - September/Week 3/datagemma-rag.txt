@@ -1,0 +1,17 @@
+Knowing When to Ask - Bridging Large Language Models and Data
+
+12 Sep 2024
+
+Abstract
+    - We enhance accuracy of LLMs by integrating them with Data Commons, a vast, OS repository of public statistics from trusted organizations like the UN, CDC, ...
+    - Explore Retrieval Interleaved Generation (RIG), with LLM trained to produce NL queries to retrieve data from Data Commons
+    - RAG -> relevant data tables are fetched and used to augment the LLM's prompt
+
+    - We evaluate these methods on a diverse set of queries, demonstrating their effectiveness in improving the factual accuracy of LLM outputs
+
+RIG
+    - Produces queries to execute to get correct answers, in NL
+RAG
+    - User prompts w/the RAG already there
+
+Basically not a model release, but instead an evaluation of an approach
