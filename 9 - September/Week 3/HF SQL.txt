@@ -1,0 +1,26 @@
+Introducing the SQL Console on Datasets
+
+17 Sep 2024
+
+SQL Console for Datasets
+    - Every public dataset
+    - 100% local: SQL Console is powered by DuckDB WASM
+        - Can query dataset w/o any dependencies
+    - Full DuckDB Syntax: Full SQL syntax support, along with many built in functions for regex, lists, JSON, embeddings and more
+        - DuckDB syntax is very similar to PostgreSQL
+    - Export results: Can export results of your query to parquet
+    - Shareable: Can share your query results of public datasets with a link
+
+How it works
+    - Parquet Conversion
+        - Most datasets on HF are stored in Parquet
+        - SQL Console creates views for you to query based on your dataset splits and configs
+    - DuckDB WASM
+        - The engine that powers the SQL Console
+        - An in-process database engine that runs on Web Assembly in the browser. No server/backend needed
+        - Running solely in the browser -> user upmost flexibility to query data as they please w/o any dependencies
+    - SQL Console memory limit is ~3GB
+    - SQL Console can transform data into multi-turn dialogue format efficiently
+
+    - Looks like this is all within the web window ?
+    - 

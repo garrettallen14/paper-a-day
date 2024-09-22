@@ -1,0 +1,13 @@
+Negative Probability
+
+Feynman
+
+Abstract
+    - If you combine quantum and relativity plus certain tacit assumptions, you can produce theories which give infinity for the answer to some questions
+    - Infinities are kept in abeyance by the awkward process of renormalizaiton
+    - We look into the "tacit assumptions" to see if they could be altered
+    - One assumption: probability must always be a positive number.
+
+Letter
+    - Negative numbers are a fruitful invention
+    - Negative probabilities => negative numbers
