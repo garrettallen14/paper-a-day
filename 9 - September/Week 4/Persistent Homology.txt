@@ -1,0 +1,24 @@
+Persistent homology: a step-by-step introduction for newcomers
+
+Abstract
+    - Rooted in topological data analysis, which allows for retrieving the essential topological features of an object
+    - We provide an introduction
+
+
+Introduction
+    - Persistent homology is foundational tool for TDA
+
+
+Background notions
+    - We introduce the background notions at the basis of our work
+Simplicial complexes
+    - Classical way to represent discretized objects
+    - Simplicial complexes: a collection of well-glued bricks called simplices
+    - A k-simplex: the convex hull of k+1 affinely independent points
+        - 0-simplex: single point
+        - 1-simplex: an edge
+        - 2-simplex: triangle
+        - 3-simplex: tetrahedron
+        - k-simplex: dimension => k
+Homology and persistent homology
+    - Simplicial homology is a powerful tool in shape analysis, providing invariants
