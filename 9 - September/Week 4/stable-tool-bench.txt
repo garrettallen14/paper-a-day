@@ -1,0 +1,5 @@
+StableToolBench: Towards Stable Large-Scale Benchmarking on Tool Learning of LLMs
+
+Abstract
+    - Evolution of ToolBench, proposing a virtual API server and stable evaluation system
+    - The virtual API server contains a caching system and API simulators which are complementary

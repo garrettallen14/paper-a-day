@@ -1,0 +1,32 @@
+SWE-bench technical report
+
+15 Mar 2024
+
+Abstract
+    - SWE-bench deterministically evaluates a system's ability to solve issues in real world codebases, unlike benchmarks like HumanEval which are limited to standalone functions
+
+
+Background
+    - 2294 issues / pull requests
+    - Each SWE-bench instance consists of a GitHub issue and the pull request which resolved it
+    - Pull request includes a unit test which fails before the code change and passes after ("fail to pass" test)
+    - The diff is split into two parts, patch and test_patch, which contain the code changes and test changes, respectively
+    - System evaluated by asking to generate a diff given the GitHub issue description and the repository
+    - The example is considered successful if all of the unit tests pass after patching the edit
+
+    - In SWE-bench, LLMs are either given the set of correct files to edit ("assisted") or a separate system retrieves the files to edit based on similarity to the issue text ("unassisted")
+
+    - As an agent, Devin does not receive any list of files and instead navigates files on its own, which is more compatible to the "unassisted" LLM.
+
+    - Even assisted, best LLMs only achieve 4.80% success rate
+
+
+Methodology
+    - We adapt SWE-bench to evaluate agents, a more general setting than the original eval for LLMs
+Setup
+    - We run the agent end to end using a standardized prompt that asks it to edit code given only the GitHub issue description
+    - We do not give the agent any other user input during the run
+    - Repo is cloned in the agent's environment
+    - We only keep the base commit and ancestors in the git history to prevent information leakage to the agent. Notably, we remove the git remote so that git pull does not work
+Eval
+    - Once the agent's run exits, we reset all of the test files to the original state, in case the agent modified the tests. We take all other diffs in the file system and extract them as a patch.
