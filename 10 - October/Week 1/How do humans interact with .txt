@@ -1,0 +1,10 @@
+- Offering algorithmic recommendations significantly increased plan switching rates (by 8 percentage points) and reduced expected costs.
+- The effect was stronger in the "Information + Expert" arm compared to "Information Only".
+- Consumers exposed to algorithmic advice spent more time on decision-making but reported higher satisfaction.
+
+- This suggests algorithms can influence not just information, but preferences themselves.
+
+
+- Algorithmic advice can significantly influence consumer choices in complex financial decisions.
+- There are concerns about preference manipulation and distributional effects, as those who might benefit most are least likely to seek out such tools.
+- Simply offering algorithmic support may not reach those who need it most, suggesting a need for more targeted interventions.

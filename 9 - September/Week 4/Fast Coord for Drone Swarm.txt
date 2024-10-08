@@ -1,0 +1,94 @@
+A fast coordination approach for large-scale drone swarm
+
+17 Oct 2023
+
+Abstract
+    - Drone swarms will become commonplace
+    - Fully autonomous vs controlled methods w/human participation
+    - Large-scale drone framework is proposed firstly in this paper, which achieves global coordination through local interaction and reduces the impact of limited channel resources
+    - Secondly, this paper proposes a local interaction-based fast coord method and introduces a prediction mechanism, to ensure that large-scale drone swarms can quickly achieve coordination even in the presence of node loss
+    - The numerical integration method is used to update the consensus state, st the drones can increase the iteration period, reduce the number of packets, and further reduce the channel burden
+    - Large-scale drone swarms are usually composed of drone swarms launched at different locations and times... a consensus algorithm considering the merging behavior of drone swarms is also proposed
+
+    - The simulation results show that the large-scale drone swarm using the proposed architecture can achieve the leader-follower consensus in  a short time and even in a confrontational environment with poor communication conditions
+
+    - Besides, after the merger of multiple drone swarms, the consensus problem can still be solved in very few iteration cycles
+
+
+Introduction
+    - Due to limitations of payload / energy of each drone, the deployment of swarms is proposed
+    - Swarms perform missions collaboratively and have the potential of fast deployment and wild coverage to go beyond the individual capabilities of single drones
+
+    - In a swarm, the drone acts as a simple agent and is conjoined in a complex networking system, giving rise to collaborative or collective behaviors
+    - A drone swarm usually operates in a centrally controlled / self-organized manner
+
+    - In centrally controlled drone swarm, a drone / ground station makes decisions and assigns instructions to the drones in the swarm
+    - The Crazyswarm are centrally controlled by a single computer
+    - In self-organized swarm, drones achieve task goals and make collective decisions by sharing information
+
+    - Onboard monocular cameras / onboard audio-based localization systems achieve distributed information sharing for drones
+
+    - Perception, decision, action loops
+        - Communication and networking are crucial, as they enable information, including sensed data and decision instructions, to be disseminated in the drone swarm
+    - As swarm sizes grow, timely and effective communication becomes challenging due to the contention overhead, and congestion.
+    - Consequently, a centralized control mode only guarantees timely instruction and sensed data distribution for small-scale drone swarms
+
+    - Self-organized tobot swarms involving drone swarms that use local interaction to produce global behaviors hold great promise
+    - Some proposals have demonstrated successful implementations of self-organized robot swarms up to 1000 units
+
+    - Meanwhile, small-scale self-organized robot swarms have also received increasing scientific interest
+        - SWARM-BOTS presents a drone swarm with 6 tiny quadrotors autonomously exploring an unknown environment and back to the departure point
+
+    - We propose:
+        - A working architecture for large-scale drone swarm to achieve global consensus
+            - Local interaction + consensus
+            - Prioritizing the perception-decision-action cycle over reliable information transmission
+        - The architecture can effectively address the problem of lack of channel resources that arise from an increasing num of drones
+        - A fast coordination method for large-scale drone swarms in a confrontational environment with packet loss and dynamic topology
+        - The delay problem is addressed by introducing a prediction mechanism
+        - Considering the Zeno phenomenon in existing event-triggered consensus methods, we use Runge-Kutta to discretize the consensus algorithm for continuous systems
+            - Increase the iteration period, reduce the num of packets, and lighten channel burden
+        - A robust and time-limited algorithm is proposed to ensure consensus during the merging process of large-scale multiple drone swarms
+
+
+Related Work
+    - Drone swarm leverages shared information
+    - Dynamic topology => open wireless channels => confrontational environments, resulting in the rise of challenge to ensure efficient comms
+
+    - Networked comm tech => Mature network architectures...
+        - Enhance reliability and throughput of drone swarm networks
+        - Improving their performance under dynamic topology and confrontational circumstances
+        - Establish / maintain connectivity => robust network
+
+    - As size increases, data traffic grows exponentially... This poses a challenge caused by the shortage of spectrum resources ....
+
+    - For drone swarm coord, there are two modes:
+        1. Centrally controlled coord
+        2. Self-organized coord
+
+
+System architecture and problem statement
+System architecture
+    - During mission, the info transfer process is divided into bottom-up and top-down
+    - Bottom-up:
+        - Drone swarm needs to observe the environment, share situation information and make decisions based on consensus.
+    - Decision instructions are delivered in a top-down approach, enabling the drone to act effectively
+    - Platform Layer: The platform layer refers to the payload of software / hardware on the drone...
+    - Communication Layer: Connection, Media access, Networking
+    - Coordination Layer: Consensus, data fusion, decentralized decision
+    - Mission Layer: Mission decision, path planning, edge computing
+Problem statement
+    - Neighbor system: N is the set of drones neighboring drone i.
+    - Coordination: If the state of each drone satisfies the formula ...
+        - It can be viewed     L
+        - Swarm achieves global coordination when the drones in the swarm coordinate with the state of the leader ... 
+    - To achieve coordination between follower drones and the leader by maintainin the spanning tree, some problems should be solved:
+        a. How to achieve coordination in a confrontational environment ?
+        b. How to achieve fast coord based on local interaction ?
+        c. How to achieve coord with local interaction of long interval ?
+        d. How to achieve coord while multi-drone swarms merging ?
+
+
+Fast coordination approach for large-scale drone swarm
+    - Fast coord approach for largescale drone swarms
+    - To deal w/packet loss and dynamic topology, a semi-autonomous coordination mode for large-scale drone swarm is introduced ...

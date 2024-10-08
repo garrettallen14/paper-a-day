@@ -1,0 +1,49 @@
+EUREKA: Evaluating and Understanding Large Foundation Models
+
+13 Sep 2024
+
+Abstract
+    - Rigorous / reproducible eval of LLM is critical
+    - Eureka: open eval for standardizing evaluations
+    - Eureka-Bench as an extensible collection of benchmarks testing capabilities:
+        1. Still challenging
+        2. Represent fundamental but overlooked capabilities
+    - We use Eureka-Bench for 12 SOTA models for in-depth insights for failure understanding and model comparison by disaggregating the measurements across important subcategories of data
+    - Granular weaknesses of models
+
+
+Introduction
+    - Eureka is framework and collection
+    - Eval framework
+        - Eval process for complex & generative has made traditional practices for eval obsolete
+        - Fixed, closed-form definition of a metric does not apply to many capabilities either because several different sub metrics need to be computed before reaching a final score, or because many data transformations and answer extraction operations need to be applied to the output prior to computing a metric
+        - Leaves practitioners with the necessity of creating a rich combination of data processing steps, code execution, and model inferences as evaluators
+        - Eureka provides a flexible library for composing these functionalities into shareable eval pipelines and gives full control to practictioners
+    - Benchmark selection
+        - Many benchmarks are close to saturation
+        - Benchmarks are chosen so that either the whole benchmark or important experimental condition within that benchmark remains challenging for even the most capable models
+        - Overall model perf < 80%
+    - Methodology and analysis
+        - Rather than reporting overall single scores for each benchmark and model, we extract more granular and deeper insights that can better characterize failures of each model and also conduct meaningful comparisons
+        - Three distinct types of analysis:
+            1. Disaggregated reports of model perf across important experimental conditions and subcategories of data
+                - Single-score evals can hide important failure modes
+                - We disaggregate perf across input attributes (subcategories of data)
+                - Add another dimension that relates to the nature of the task itself or how the model is prompted to perform the task
+            2. Analysis of model non-determinism across identical runs
+                - For apps that use foundation models as a basis, determinism of the output is important for assuring reliable output
+                - Not guaranteed from most generative models (MoE ones////)
+            3. Backward compatibility analysis within model families for measuring progress and regress upon model updates
+                - Regressions can happen during updates even when overall acc increases
+
+
+Evaluation Framework
+    - Need to reuse existing pipelines w/minimal adjustments to efficiently accomodate new models and benchmarks
+    - Modular design that allows users to 
+    - Each experiment under Eureka is defined using a Pipeline
+    - Pipelines are comprised by a set of Components
+        - PromptProcessing: Prepare data for inference, apply data manipulations, etc.
+        - Inference: Performs model inference
+        - DataProcessing: Post-process
+        - EvalReporting: Facilitates the eval of the processed model outputs
+        - DataJoin: Joins model outputs with the ground truth data for evaluation

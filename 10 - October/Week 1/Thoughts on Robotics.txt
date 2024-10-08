@@ -1,0 +1,37 @@
+Some Thoughts on Robotics Startups
+
+01 Oct 2024
+
+Robotics Startups of the Past and Present
+    - Not many big exits in robotics
+    - Founders are good at building cool tech solutions, but not good at selling / monetizing that technology
+    
+    - US-based investorys fund companies founded by robotics experts
+        - Vertically integrated, often manufacturing robots in-house, building their own mapping, localization, navigation, and cloud-based fleet management
+        - Setting up their own direct sales channels
+    - "Recurring revenue" via RaaS
+    - Locus Robotics: 3rd party logistics experts
+
+Robotics is not SAAS
+    - RaaS is the new SaaS, but it's not
+    - Robotics is capital intensive
+    - Robots age worse than servers
+    - Robot is just one part of the business / product
+        - The starting point
+
+    - "Hardware is hard" => Hardware is slow
+    - Supply chains are better but still slow, inefficient
+
+Robotics Ecosystems
+    - If the current gen of robot startups are fully vertically integrated and founded solely by robotics people, what does the next gen look like ?
+
+    - Domain experts in whatever problem the robot is solving
+
+    - Healthcare automation, 3PL startups, etc...
+    - Not fully integrated
+
+Actionable Stuff
+    - CEO: Domain expert in whatever industry selling into. Significant product experience. Able to sell -- CEO industry connections will take the place of hiring a sales team initially
+    - CTO: Robotics expert, with product experience. CTO needs a solid grasp of hardware, web/enterprise software, and any other product specific technologies
+
+    

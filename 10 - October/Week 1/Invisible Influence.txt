@@ -1,0 +1,12 @@
+Invisible Influence
+Artificial Intelligence and the Ethics of Adaptive Choice Architectures
+
+2019
+
+Abstract
+    - AI (recommendation systems) are constructed based on information collected about our individual preferences, interests, aspirations, and vulnerabilities, with the goal of influencing our decisions
+    - This invisible layer of technological mediation renders us deeply susceptible to manipulation
+    - Absent a guarantee that these technologies are not being used to manipulate and exploit, individuals will have little reason to trust them
+
+
+    - Highlights the significant power wielded by those who create these adaptive choice architectures and argues they have special ethical responsibilities.

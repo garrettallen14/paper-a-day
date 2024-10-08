@@ -1,0 +1,21 @@
+Role of Artificial Intelligence in Shaping Consumer Demand in E-Commerce
+
+21 Oct 2020
+
+Abstract
+    - Ethical soundness is contentious
+
+Introduction
+    - Black box concept implies that AI predictions and decisions are similar to those of humans
+    - Fail to explain why such decisions have been made
+
+
+Proposed Method
+    - Word cloud analysis
+    - Data were collected from two databases
+    - Collected data were analyzed throguh normalization of the explanability term ...
+    - 
+
+XAI systems should be:
+    - Interpretable
+    - Comprehensible

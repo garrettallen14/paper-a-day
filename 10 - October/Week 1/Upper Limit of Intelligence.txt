@@ -1,0 +1,44 @@
+the upper limit of intelligence
+
+5 Oct 2024
+
+Abstract
+    - Sick of drawing plots w/intelligence going up forever
+    - There are limits
+
+The upper limit of intelligence
+    - You cannot scale indefinitely
+    - All exponential processes end
+    - We make arguments about an upper limit of trained AI systems, based on resources, physics and thermodynamics of compute
+    - That limit, without planet-scale upheaval, is about GPT-9 level (10**36 FLOP)
+    - No concerns of ecosystem / climate on Earth ...
+    - Hypothetical "terrestrial" superintelligence ... what about space ?
+
+Factors
+    - Energy: bounded by solar radiation on Earth and heat dissipation of plant.
+        - Compute limiter
+    - Compute: bounded by thermodynamics and tightly coupled w/intelligence
+        - Intelligence limiter
+    - Models: used to estimate intelligence output from compute input
+
+Energy
+    - Consider a few scenarios on a scale of increasing energy: E0 to E2:
+        1. E0 = 40 GW (4 x 10**10) => current energy capacity of datacenters in US
+        2. E1 = 10 TW (1 x 10**13) => scale of current global energy production
+        3. E2 = 1 PW (1 x 10**15) => attainable power by covering most land mass with solar panels
+    - Nuclear is discussed in more depth below, but main issue is heat dissipation
+    - Solar doesn't increase the heat dissipation burden on earth from compute, so a nice source to draw from in the near term
+    - Energy generation source doesn't matter for our calc, but if it exceeds E2 then heat dissipation problems => catastrophic heating of Earth
+
+    - E2 calculation:
+        - Assume: 20% efficiency (solar panel -> compute), 20% land can be covered
+        - Simply calculate via land mass to get 1 PW ...
+
+Limits of Compute
+    - There are a variety of compute bounds
+    - Earth's temp is a result of balancing solar irradiance and radiating heat into space
+    - Using some other form of planetary wide energy would actually increase the temp
+    - We're not inserting new energy into Earth, so temp is unlikely to deviate much from the current avg 290K
+    - Landauer's Principle:
+        - Experimentally verified compute bound that states erasing one bit of information in a computational process requires a minimum amount of energy: Emin = ...
+    - At 300K, the minimum energy per bit operations is...

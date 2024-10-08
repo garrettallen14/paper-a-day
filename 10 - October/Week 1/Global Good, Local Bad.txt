@@ -1,0 +1,18 @@
+“Global is Good, Local is Bad?”: Understanding Brand Bias in LLMs
+
+27 Sep 2024
+
+Abstract
+    - Brand bias received little attention
+    - Examine the biases exhibited by LLMs towards different brands, a significant concern given the widespread use of LLMs in affected use cases: product reccomendation and market analysis
+
+    - Curated dataset across four brand categories, we probe the behavior of LLMs in this space
+    - We find a consistent pattern of bias -- global brands -> positive attributes
+    - Disproportionately recommending luxury gifts for individuals in high-income countries
+    - LLMs are subject to country-of-origin effects which may boost local brand preference in LLM outputs in specific contexts
+
+
+Notes:
+    - Multiple choice answers
+    - Almost guiding the answer out
+    - Not aggregating, but simply measuring the bias which may be in the model towards XYZ brands...

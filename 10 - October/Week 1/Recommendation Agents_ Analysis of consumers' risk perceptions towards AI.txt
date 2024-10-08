@@ -1,0 +1,17 @@
+Recommendation agents: an analysis of consumers’ risk perceptions toward artificial intelligence
+
+3 Oct 2022
+
+Abstract
+    - Tools that use AI to improve consumer experiences and automate processes have been widely adopted by companies
+    - Can increase a user's perception of a risk to data privacy
+    - Aim to go more in-depth into what is known about the variables that impact this perception of risk related to recommendation agents
+    
+
+H1: A greater concern with the use of personal data has a positive influence 
+on the risk to privacy perception.
+
+H2: The perception of risk in an online purchase has a positive influence on 
+the risk to privacy perception.
+
+H3: Trust is a relationship mediator between knowledge of recommendation agents and the risk to privacy perception
