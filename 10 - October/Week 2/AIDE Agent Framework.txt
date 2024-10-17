@@ -1,0 +1,21 @@
+AIDE: Human-Level Performance in Data Science Competitions
+
+4 Apr 2024
+
+Abstract
+    - Kaggle competitions, human-level performance
+    - Outperforms half of human contestants on avg
+
+
+Inside AIDE: A Peek Under the Hood
+    - Solution Space Tree Search:
+        1. Solution Generator: Proposes new solutions by either creating novel drafts or making changes to existing solutions, such as fixing bugs or introducing improvements
+        2. Evaluator: Assesses the quality of each proposed solution by running it and comparing its performance against the objective
+        3. Solution Selector: Picks the most promising solution from the explored options to serve as the starting point for the next iteration of refinement
+
+
+Putting AIDE to the Test: Our Comprehensive Benchmarking Protocol
+    - What goes into each task in our benchmark?
+        1. Task Description: Provide AIDE with the same textual competition description that human data scientists would receive, ensuring a fair comparison
+        2. Dataset: Each task comes w/its own dataset, including an unlabeled test set for AIDE to make predictions on
+        3. Evaluation Function: To measure AIDE's performance, we developed evaluation functions that assess the quality of its solutions and compare them against a wide range of submissions from human data scientists

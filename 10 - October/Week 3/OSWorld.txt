@@ -1,0 +1,100 @@
+OSWORLD: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments
+
+30 May 2024
+
+Abstract
+    - OSWorld: Scalable, real computer environment for multimodal agents
+    - Supporting task setup, execution-based evaluation, and interactive learning across various operating systems
+    - Benchmark of 369 computer tasks involving real web and desktop apps
+        - Open domains
+        - OS file I/O
+        - Workflows spanning multiple applications
+    - Humans accomplsih over 72.36% of tasks
+    - Best model achieves 12.24% of tasks
+
+
+Introduction
+    - Other attempts penalize alternative correct answers, and miss opportunities for agent development methods like interactive learning and real-world exploration
+    - Building realistic interactive environments is a major challenge
+    - Each task is carefully annotated with an initial state setup configuration to simulate human work in progress and a custom execution-based evaluation script to verify task completion
+    
+    - Benchmark has a total of 134 unique evaluation functions, which are orders of magnitude larger than prior work
+    - We extensively evaluate SOTA LLM and VLM-based agent baselines, including ...
+
+    - Performance ranges from 0.99% to 12.24%, with subsets of applications even reaching 0%
+
+    - Current LLMs and VLMs are far from capable of serving as computer assistants
+    - Results show that while additional knowledge such as the accessibility tree and SoM can be helpful ...
+
+
+OSWorld Environment
+    - We introduce the task definition of autonomous agents, the components and implementation of the OSWorld environment, and the supported observation and action spaces
+Task Definition
+    - An autonomous digital agent task can be formalized as a partially ob ...
+    - An agent generates executable action at, press key combination, which results in a new state ...
+    - The interaction loop repeats until an action that marks termination (DONE or FAIL) is generated or the agent reaches the max number of steps
+
+    - We implement an execution-based reward function
+    - The reward function awards a value of 1 or a positive decimal under 1 at the final step if the state transitions meet the expectations of the task objective, or if the agent accurately predicts failure for an infeasible task... in all other scenarios, it returns 0
+Real Computer Environment Infrastructure
+    - OSWorld is an executable and controllable environment that supports task initialization, execution-based eval and interactive agent learning in a range of real operating systems using VM techniques
+
+    - Snapshot feature enables efficient reset of the VM
+    - Configured through a config file for interface initialization during the initialization phase, post-processing during the evaluation phase, and acquiring files and information for evaluation, as well as the evaluation functions and parameters used
+Overview
+    - OSWorld environment runs on the host machine.
+    - Coordinator accepts a config file at the initialization of a computer task, runs commands to automatically create a VM instance, and initializes the required state for the task thru the TM
+    - Config file specifies the snapshot of the VM to be used and also indicates the information needed for setup
+    - Once the environment is set up, agents start to interact with the environment, receiving observations such as screenshots, the accessibility tree, and customized streams such as terminal outputs
+
+    - Agents subsequently generate executable actions that manipulate the keyboard and mouse
+    - Each action of the agent is input into the environment as a code string, and the environment's Simulator executes them in the virtual machine
+    - After the completion of a task, the Task Manager performs post-processing according to the task's post-config, retrieves data to the host machine and then runs evaluation scripts to assess the completion of the task...
+
+    - Multiple VMs can run simultaneously on a single host machine, thereby parallelizing training and evaluations
+Initial Task Environment Setup
+    - We aim to simulate intermediate steps as closely as possible to replicate real-world scenarios
+    - The naturalness we bring in also leads to more challenges for agents to model and explore
+    - We adopted a hybrid approach for configuration instead of solely relying on example-wise snapshots for restoration since it would store much unnecessary hardware state information, resulting in each example requiring gigabytes of space
+
+    - Three stages:
+        1. Start the VM Emulator
+        2. Prepare files
+        3. Execute reprocesing commands
+    - We provide convenient APIs to configure initial conditions and world settings, standardizing our tasks to make this process user-friendly and easily extendable for scaling
+Execution-Based Evaluation
+    - Evaluating the successful execution of general computer tasks presents a significant challenge, as these tasks defy reduction to a uniform pattern or measurement by a single metric
+    - To ensure a thorough assessment, we design example-specific evaluation metrics and evaluation scripts :D
+
+    - We construct a vast collection of functions that make final wrangling and retrieve files and data information of varying types, categories, and granularities from the cloud and software from VMs as well as evaluation functions .....
+Observation Space
+    - The observation space in OSWorld contains a complete screenshot of the desktop screen
+    - OSWorld provides XML-format accessibility (a11y) tree which can support additional information for modeling
+    - These raw observations allow rich interactions between multiple applications but induce challenges in long-horizon decision-making from high-resolution images and structured long text
+
+    - For more detailed information on observation space appendix...
+Action Space
+    - functions with descriptions
+
+
+OSWorld Benchmark
+    - 369 real computing tasks defined and executed on Ubuntu
+    - 43 tasks for Windows built on the OSWorld environment
+Tasks
+    - Carefully annotated:
+        - Natural language instruction
+        - Setup config w/corresponding files and setup actions for initialization of states upon our provided VM image
+        - Manually crafted evaluation script to check if the task is successfully executed
+Data Statistics
+    - Total: 369
+        - Multi-app Workflow: 101
+        - Single-app: 268
+        - Integrated: 84
+        - Infeasible: 30
+    - Supp. tasks (Windows): 43
+    - Initial States: 302
+    - Eval. Scripts: 134
+
+
+Benchmarking LLM and VLM Agent Baselines
+    - 

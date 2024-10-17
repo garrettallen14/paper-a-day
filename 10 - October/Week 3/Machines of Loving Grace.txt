@@ -1,0 +1,133 @@
+Machines of Loving Grace
+
+Oct 2024
+
+Introduction
+    - What does a world with powerful AI look like if everything goes right
+    - Maximize leverage: Basic dev of AI tech seems inevitable
+    - Avoid perception of propaganda
+    - Avoid grandiosity
+    - Avoid "sci-fi" baggage
+    
+    - Many implications of powerful AI are adversarial or dangerous, but there must be something we're fighting for ...
+
+    - We need hope
+
+    - List of positive applications of powerful AIs... 5 most excited about are:
+        1. Biology + physical health
+        2. Neuroscience + mental health
+        3. Economic development and poverty
+        4. Peace and governance
+        5. Work and meaning
+
+
+Basic assumptions and framework
+    - Powerful AI as early as 2026
+    - What happens in the 5-10 years after that ?
+
+    - Powerful AI: An AI model similar to today's LLMs in form with the following properties:
+        - Pure intelligence, smarter than a Nobel Prize winner across most relevant fields
+            - Prove unsolved theorems, write great novels, write difficult codebases from scratch
+        - Has all "interfaces" available to a human working virtually:
+            - Text, audio, video, mouse + keyboard control, internet access
+            - Engage in actions, communications, or remote operations enabled by this interface ...
+            - Remote working skill exceeding that of the most capable humans in the world
+        - Does not passively answer questions:
+            - Given tasks that take N time to complete, then goes off and does those autonomously in the way a smart employee would, asking for clarification as necessary
+        - No physical embodiment, but can control existing physical tools, robots, or laboratory equipment through a computer; in theory it could even design robots or equipment for itself to use
+        - Millions of instances
+            - 10-100x human speed
+        - Each copy can act independently on unrelated tasks, or if needed can all work together in the same way humans would collaborate
+    
+    - A country of geniuses in a datacenter
+
+    - Marginal returns to intelligence: what are the other factors that are complementary to intelligence that become limiting factors when intelligence is very high ?
+        - "How much does being smarter help with this task, and on what timescale?"
+
+    - A list of factors that limit or are complementary to intelligence:
+        - Speed of the outside world:
+            - Intelligent agents need to operate interactively in the world in order to accomplish things and also to learn
+            - The world only moves so fast
+            - The speed at which a major project can be completed may have an irreducible minimum that cannot be decreased further even as intelligence continues to increase
+        - Need for data:
+            - Raw data sometimes is lacking and in its absence, more intelligence does not help
+            - Today's particle physicists are very ingenious and have developed a wide range of theories, but lack the data to choose between them because particle accelerator data is so limited
+        - Intrinsic complexity:
+            - Some things are inherently unpredictable or chaotic
+        - Constraints from humans:
+            - Many things cannot be done without breaking laws, harming humans, messing up society
+        - Physical laws
+    - There is a further distinction based on timescales...
+        - Some things are hard constraints in the short run may become more malleable to intelligence in the long run.
+        - Experimental paradigm allowing us to learn in vitro what used to require live animal experiments
+
+    - We should imagine a picture where intelligence is initially heavily bottlenecked by the other factors of production, but over time intelligence itself increasingly routes around the other factors, even if they never fully dissolve
+    - How fast does this happen and in what order ?
+
+
+1. Biology and health
+    - Limiting factors: data, speed of physical world, intrinsic complexity
+    
+    - It is a virtual biologist who performs all the tasks biologists do
+
+    - A large fraction of the progress in biology has come from a tiny number of discoveries, often related to broad measurement tools or techniques that allow precise but generalized or programmable intervention in biological systems
+    - There's perhaps ~1 of these major discoveries per year and collectively they arguable drive >50% of progress in biology
+
+    - The rate of discovery of these major discoveries could be 10x or more if there were a lot more talented, creative researchers
+        - The returns to intelligence are high for these discoveries
+
+    - Some discoveries have "serial dependence" many are independent and can be worked on in parallel
+
+    - 50-100 years of biological progress in 5-10 years
+    - Why not 100x ?
+        - Serial dependence and experiment times
+        - Open to the idea that we could get 1000 years of progress in 5-10 years but very skeptical to get 100 years in 1 year
+
+    - A list of what we might expect. This is not based on any rigorous methodology, and will almost certainly prove wrong in the details, but it's trying to get across the general level of radicalism we should expect:
+        - Reliable prevention / treatment of nearly all natural infectious disease
+        - Elimination of most cancer
+        - Prevention / effective cures for genetic disease
+        - Prevention of Alzheimer's
+        - Improved treatment of most other ailments
+        - Biological freedom:
+            - Weight, physical appearance, reproduction, other biological processes will be fully under people's control
+        - Doubling of human lifespan
+
+
+2. Neuroscience and mind
+    - Acceleration routes:
+        - Traditional molecular biology, chemistry, genetics research
+        - Fine-grained neural measurement and intervention
+        - Advanced computational neuroscience
+        - Behavioral interventions: "AI Coach"
+    - Guesses:
+        - Most mental illnesses cured
+        - Conditions that are very "structural" may be more difficult, but not impossible
+        - Effective genetic prevention of mental illness seems possible
+        - Everyday problems that we don't think of as clinical disease will also be solved
+        - Human baseline experience can be much better
+
+
+3. Economic development and poverty
+    - Skeptical that an AI could solve the famous "socialist calculation problem"
+    - Guesses about how I think things may go in the developing world:
+        - Distribution of health interventions
+        - Economic growth
+        - Food security
+        - Mitigating climate change
+        - Inequality within countries
+        - The opt-out problem
+
+
+4. Peace and governance
+    - Two parts to the issue:
+        - International conflict:
+            - Democracies should have the upper hand
+        - Internal structure of nations
+    - "Entente strategy": a coalition of democracies seek to gain a clear advantage on powerful AI
+    - Should act as a strong protector of individual freedom
+
+
+5. Work and meaning
+    - How will Humans have meaning ?
+    - How will they survive economically ?

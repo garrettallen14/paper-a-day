@@ -1,0 +1,87 @@
+MLE-BENCH: EVALUATING MACHINE LEARNING AGENTS ON MACHINE LEARNING ENGINEERING
+
+9 Oct 2024
+
+Abstract
+    - How well do Agents perform at MLE ?
+    - 75 ML engineering-related competitions from Kaggle
+    - Establish human baselines for each competition using Kaggle's publicly available leaderboards
+    - OS agent scaffolding methods to eval o1
+    - o1-preview w/AIDE scaffolding achieves at least the level of Kaggle bronze medal in 16.9% of competitions
+
+    - We investigate various forms of resource-scaling for AI agents and the impact of contamination from pre-training
+    - We OS our benchmark code to facilitate future research
+
+
+MLE-bench
+    - 75 MLE tasks
+    - Day-to-day skills that ML engineers use in frontier labs
+Dataset Curation
+    - Each sample in MLE-bench:
+        - Description scraped from the "Overview" and "Data" tabs of the competition website
+        - Competition dataset, in most cases using a new train-test split
+        - Grading code used to eval submissions locally
+        - Snapshot of the competition's leaderboard used to rank submissions against humans
+    - To arrive at the set of competitions constituting MLE-bench, we begin with the 5673 completed Kaggle competitions listed on the Meta Kaggle
+    - Manually annotate the problem type
+        - Low: 2 hrs MLE work
+        - Medium: 2-10 hrs MLE work
+        - High: 10+ hrs MLE work
+        - All excluding training time
+
+    - Select 75 competitions to include in MLE-bench.
+        - 22 low, 32 medium, 15 high
+        - 7 for dev split
+
+    - We use original dataset if publicly available, although Kaggle does not release test set even after the competition ends
+Metrics
+    - Leaderboards: We contextualize MLE-bench perf using the leaderboards of each Kaggle competition
+        - On Kaggle, competitions may have two leaderboards: "Public" and "Private"
+        - We found that Kaggle submissions sometimes overfit to the Public leaderboard, so we opt to use the Private leaderboard
+
+    - Medals:
+        - Depends on size of competitons
+        - Bronze: Top 40% - Top 10%
+        - Silver: Top 20% - Top 5%
+        - Gold: Top 10% - Top 10
+
+    - Headline metric: We calculate the percentage of attempts that are awarded any medal
+    - Raw scores: We also report the raw score achieved by models on each competition
+Setup
+    - MLE-bench is agnostic to the methods used to solve it
+    - Requires only a CSV file to be submitted to each competition for Grading
+    - We encourage devs to report certain details when evaluating their agents on this benchmark
+
+    - Validating submissions:
+        - Real life Kaggle comps allow participants to make 5 submissions per day to the Public leaderboard, checking the validity of their submission
+        - We allow agents to access a local validation server to check the validity of their submission, though the tool does not provide a score (our tool uses the grader to check if a submission is valid, or provides an error message in the case of invalid submissions)
+Rules
+    - Must be produced by a model separate from the agent; the agent is forbidden from writing predictions directly to its submission file w/o using a model, 
+
+    - This prevents agents from simply recalling labels from pretraining data that it may have memorized (???)
+
+    - Agents forbidden from viewing solutions online, which can often be found on Kaggle or GitHub
+
+    - Rule-breaking detection: To ensure agents adhere to the rules, we provide a tool that inspects agent logs w/ GPT-4o
+        - Tool checks if the agent has broken the rules by manually writing the submission file w/o using a model
+    - Plagiarism detection ... Dolos
+
+
+Experiments and Results
+    - Run agents in an Ubuntu 20.04 Docker container:
+        - Dataset, validation server, Python packages which may be useful for ML engineering
+    - Containers are executed in a secure cluster environment. For each of the 75 competitions, agents have a maximum of 24 hours to produce a submission
+    - On each run, agents have access to a machine w/36 vCPUs, 440GB RAM, 4095 GB SSD, and a single Nvidia A10 GPU
+
+    - We repeat all experiments with 3 seeds (3 runs per competition) to compute the mean and std error unless otherwise specified
+Main experiment
+    - Varying scaffolding: To determine the best-performing scaffold, we eval GPT-4o using 3 OS scaffolds: AIDE, ResearchAgent "MLAB", CodeActAgent "OpenHands"
+    - We make minor modifications to each scaffold to enhance their performance on the benchmark
+    - We find that GPT-4o (AIDE) achieves more medals on average than both MLAB and OpenHands
+        - Despite making a similar number of valid submissions
+
+    - Varying models: We take AIDE and use o1 ...
+
+    - Discussion: All agents often failed to create valid submissions, despite access to the validation server ...
+Increasing the number of attempts
+    - 
