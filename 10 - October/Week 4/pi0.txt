@@ -1,0 +1,59 @@
+π0: A Vision-Language-Action Flow Model for General Robot Control
+
+31 Oct 2024
+
+Abstract
+    - Robot learning holds tremendous promise to unlock robot systems
+    - We propose a novel flow matching architecture built on top of a pre-trained vision-language model (VLM) to inherit Internet-scale semantic knowledge
+    - We discuss how this model can be trained on a large and diverse dataset from multiple dexterous robot platforms, including single-arm robots, dual-arm ... mobile manipulators
+    - We evaluate our model in terms of its ability to perform tasks in zero shot after pre-training, follow language instructions from people and from a high-level VLM policy, and its ability to acquire new skills via fine-tuning
+
+    - Our results cover a wide variety of tasks, such as laundry folding, table cleaning, and assembling boxes
+
+
+Introduction
+    - Human intelligence outpaces machine intelligence in versatility:
+        - The ability to solve diverse tasks situated in varied physical environments
+
+    - We present a prototype model and learning framework which we call pi0 that illustrates how each of these bottlenecks could be tackled
+    - We illustrate our model and system in Fig 1
+
+    - We begin w/ a VLM to import internet-scale experience
+    - We employ cross-embodiment training, where data from many robot types have different configuration spaces and action representations
+        - Single, dual-arm systems
+
+    - Our model controls robots at frequencies of up to 50 Hz for dexterous tasks such as laundry folding
+    - To combine flow matching with VLMs, we use a novel action expert that augments the standard VLM with flow-based outputs
+
+    - The architecture is only part of our method... we need the right training recipe
+        - Pre-training / post-training echos
+
+    - We pre-train on 10k hours of robot data and fine-tune to a variety of dexterous tasks, including laundry folding, clearing a table, putting dishes in a microwave, stacking eggs into a carton, assembling a box, and bagging groceries
+
+
+Overview
+    - Pre-training phase: weighted combination of our own dexterous manipulation datasets collected on 7 different robot configurations for 68 different tasks and the entire OXE dataset, which contains data from 22 robots
+
+    - The pre-training phase also uses diverse language labels: task names and segment annotations
+    - The purpose of the pretraining phase is to train a base model that exhibits broad capabilities and generalization but is not necessarily specialized for high performance on any one task
+
+
+pi0 model
+    - LM transformer backbone
+    - Image encoders embed the robot's image observations into the same embedding space as language tokens
+    - We further augment this backbone with robotics-specific inputs and outputs--namely, proprioceptive state and robot actions
+    
+    - Use a separate set of weights for the robotics-specific (action and state) tokens led to an improvement in performance (!!!)
+
+    - PaliGemma + 300M params for the action expert (init from scratch)
+
+
+
+APPENDIX
+B. Model Architecture Details
+    - Follow PaliGemma, but with:
+        1. Additional input and output projections for the robot-specific tokens, including state vector qt and action vectors At = [at,...,at+H-1]
+        2. An additional MLP for incorporating the flow matching timestep information tau
+        3. A second, smaller set of weights for the action expert
+    - Standard PaliGemma architecture takes in a sequence of images [It1,...,Itn] followed by a language prompt lt
+    - We add an input qt for the robot's proprioceptive state, which is mapped to the transformer embedding dimension using a linear projection

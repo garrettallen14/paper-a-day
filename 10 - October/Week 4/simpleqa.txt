@@ -1,0 +1,47 @@
+Measuring short-form factuality in large language models
+
+31 Oct 2024
+
+Abstract
+    - Present SimpleQA to evaluate the ability to answer short, fact-seeking questions
+    - SimpleQA is challenging as it is adversarially collected against GPT-4 responses
+    - Responses are easy to grade
+        - Options: correct, incorrect, not attempted
+    - A model with ideal behavior would get as many questions correct as possible while not attempting questions for which it is not confident it knows the correct answer
+    - Do models "know what they know"?
+
+
+Introduction
+    - 4326 short, fact-seeking questions
+
+
+Data collection and verification
+    - AI trainers (human annotators) create q/a pairs
+    - Questions independently answered by another AI trainer
+Question answer criteria
+    - Single answer
+    - Answers unchanged over time
+    - Supported by evidence
+    - Challenging
+Data quality
+    - Detected AI trainer questions that violated criteria
+    - We estimate the error rate of our benchmark is ~3% assuming no false positives
+Dataset diversity
+    - Science & tech, politics, art, other, geography, sports, music, tv shows, history, video games
+
+
+Measuring calibration
+    - Calibration => whether models "know what they know"
+    - Ask them to put out a % of their confidence
+
+    - LMs may produce different answers upon repeated attempts
+    - We assess whether the frequency of an answer corresponds to its correctness
+    - Higher frequency typically indicates that the model is more confident in its answers, as the model is giving the same answer repeatedly
+    
+    - A calibrated model would have the same accuracy as answer frequency (!!!)
+
+    - We show the calibration of LMs as measured by the frequency of their responses.
+    - For each question, we only consider the most-frequent answer
+    - We see across all models that accuracy increases with frequency
+        - o1-preview has the highest level of calibration
+        - 
