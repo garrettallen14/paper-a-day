@@ -1,0 +1,21 @@
+Language Models (Mostly) Know What They Know
+
+21 Nov 2022
+
+Abstract
+    - We show larger models are well-calibrated on diverse multiple choice and T/F questions when provided in the proper format
+    - We can approach self-evaluation on open-ended sampling tasks by asking models to propose answers then evaluate the probability P(True)
+
+
+Introduction
+    - Calibration
+        - We show that when we use a format with visible lettered answer options, large models are very well calibrated on diverse multiple choice questions
+        - Calibration improves with model size and also improves when we pass from zero-shot to few-shot eval
+        - Replacing an option with 'none of the above' reduces accuracy and calibration significantly
+
+
+Larger Models are Calibrated on Diverse MCQ
+    - Model makes calibrated predictions if the prob it assigns to outcomes coincides with the frequency with which these outcomes occur
+    - LMs are known to produce calibrated token-level probabilities
+    - In this section we see that LLMs can produce well-calibrated probabilities when asked to choose the correct answer from several explicit options
+    - 

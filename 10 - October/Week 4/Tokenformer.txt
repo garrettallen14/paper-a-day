@@ -1,0 +1,8 @@
+TOKENFORMER: RETHINKING TRANSFORMER SCALING WITH TOKENIZED MODEL PARAMETERS
+
+30 Oct 2024
+
+Abstract
+    - Scaling cost issue
+    - Tokenformer, natively scalable architecture that leverages the attn mechanisms not only for computations among input tokens but also for interactions between tokens and model parameters
+    - Tokenformer, a natively scalable 
