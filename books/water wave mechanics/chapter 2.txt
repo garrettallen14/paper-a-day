@@ -1,0 +1,20 @@
+Chapter 2 - A Review of Hydrodynamics and Vector Analysis
+
+Introduction
+    - If a continuous function f(x,y) is known at x, then it can be approximated at x + dx by the Taylor series
+    - Through the use of the Taylor series, we can develop relationships between the fluid properties at two closely spaced locations
+
+Review of Hydrodynamics
+Conservation of Mass
+    - In a real fluid, mass must be conserved
+Surface Stresses on a Particle
+    - The motion of a fluid particle is induced by the forces that act on the particle
+    - These forces are of two types:
+        - Surface forces: pressure and shear stresses which act on the surface of the volume
+        - Body forces: act throughout the volume of the cube... gravity, magnetic and other forces
+Hydrostatic Pressure
+    - Fluid deforms continuously under the action of shear stresses
+    - Occurs by the fluid's flowing
+    - For a still fluid, there are no shear stresses / normal stresses must be present bc we know that a fluid column has a weight and this weight must be supported by a pressure times the area of the column
+
+    - 

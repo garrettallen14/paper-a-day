@@ -1,0 +1,101 @@
+The Science of Surfing Waves and Surfing Breaks - A Review
+
+3 Apr 2003
+
+Abstract
+    - Defining terminology for surf breaks
+
+
+History of Surfing Wave and Surfing Break Research
+    - Summary of surfing science and artificial surfing reef construction knowledge was presented in Journal of Coastal Research Special Issue No 29:
+        - Effects of submerged reefs on sediment transport and salient formation
+        - Releationship of surfers to surfing waves
+        - Bathymetric shape of surf breaks
+        - Prediction of wave-driven currents
+        - Prediction of breaker intensity of surfing waves
+        - Prediction of beach surfability
+    - Study of surfing waves: different characteristics of waves
+    - Study of surfing breaks: how seafloor bathymetry transforms ordinary waves into surfing waves
+
+
+Characteristics of Surfing Waves
+    - Desire waves where the break point "peels" along the wave crest
+
+
+Surfing Wave Parameters
+    - Four most important parameters for analysis of surfing waves:
+        1. Breaking wave height
+        2. Wave peel angle
+        3. Wave breaking intensity
+        4. Wave section length
+    - Any surfing wave can be described by these four variables
+Wave Height
+    - Measured from crest to trough
+    - HUTT recommends to use the avg top 10% of waves when measuring wave statistics for surfing H1/10 rather than significant wave height H1/3
+Wave Peel Angle
+    - The angle between the trail of the broken whitewater and the crest of the unbroken wave as it propagates shoreward
+    - Peel angles range between 0 and 90 degrees
+    - High angles => fast surf
+    - Low angles => slow surf
+    - Angle of 0 degrees => closeout
+
+    - Wave peel rate => how fast the wave breakpoint advances laterally along the wave crest
+    - Surfers must surf at least as fast as the wave peel rate in order to stay in front of the wave break point
+    - Peel angle is closely related to wave peel rate, as they both relate to how fast a wave is breaking
+    - Peel angle can control maneuver type, while no relationship could be found with peel rate
+Wave Breaking Intensity
+    - Orthogonal seabed gradient is the dominant variable controlling wave breaker intensity
+    - Waves will break as spilling, plunging, surging, or collapsing breakers, depending on the orthogonal seabed gradient
+    - A cubic curve is fitted to the barrel shape => the wave vortex
+    - The ratio between height+width of the vortex is called the vortex ratio
+        - Good indicator of breaker intensity
+    - A linear relationship is seen when the vortex ratio was plotted against orthogonal seabed gradient for each surfing site
+        - Y = 0.065X + 0.821
+        - X is the orthogonal seabed gradient, Y is the breaker intensity
+    - Wind strength + direction affect breaking intensity
+Wave Section Length
+    - Peaks in wave crests form unorganized swells and wave focusing from undulating bathymetry cause waves to break in sections
+    - Waves breaking in sections create interesting and challenging surfing rides because surfers can perform different maneuvers on the various sections
+    - The section must not be so long or fast that the surfer is trapped behind the wave pocket
+    - A new section begins when there is a change in the wave height (Hb), peel angle, or breaking intensity
+    - Section length of SL
+
+
+
+Surfing Maneuvers
+    - Range of peel angles that are suitable for different surfing maneuvers:
+        - Take Off: 45-60 deg
+        - Cutback: 52-61 deg
+        - Reo: 46-56 deg
+        - Speed Section: 35-45 deg
+    - For a given peel angle, a surfer may perform a top turn on a wave with a medium breaking intensity, a reo or vertical re-entry if the breaking is higher, or a barrel if breaking intensity is extreme
+
+
+
+Configuration of Wave Sections
+    - Variation in any of the four surfing wave parameters creates a new section
+    - Maneuver type for a section is also dependent on the previous section
+    - A surfer riding a section with a low peel angle will be traveling fast to keep up tiwht the wave break point
+    - If the next section dramatically increases in peel angle, then the surfer will perform a move like a cutback to lose speed and stay in the powerful pocket of the wave
+
+
+
+Characteristics of Surfing Breaks
+    - Planar beaches w/parallel contours do not produce good surfing breaks. Peel angle is too low => waves closeout as the wave crest breaks all at once rather than peeling
+    - The major surfing wave parameter that differentiates a surfable vs. non-surfable wave is peel angle
+    - The role of a surfing break is to increase peel angle to within surfable limits
+Surfing Reef/Break Components
+    - "Favored orthogonal direction": the wave alignment that produces the best quality surfing waves over a reef component
+    - Any deviation from the optimum alignment will cause an increase or decrease in ideal peel angle
+    - Waves break more quickly or slowly than desired for high-perf surfing
+Definitions
+    - Ramp: causes waves to refract and organize themselves. The directional spread of offshore waves is aligned orthogonally to ramp contours prior to breaking on another morphological component. Good quality surfing waves do not break on a ramp
+    - Focus: seabed ridge that causes a peak in wave height and lowers the effective seabed gradient ... easier takeoffs
+        - Can occur at any section of a surfing ride
+        - Peaks will cause wave breaking or increase the wave height of an advancing wave prior to its breaking over another reef component
+    - Platform: flat, horizontal plane
+        - Join different components without altering wave orientation or causing excessive shoaling
+        - Two main functions: maintain wave orthogonals established by a ramp/focus and allow sufficient depth of water for waves to break above a ledge
+    - Wedge:
+        - A planar component, tilted downward in the offshore direction
+        - 
