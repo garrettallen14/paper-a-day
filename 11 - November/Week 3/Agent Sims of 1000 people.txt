@@ -1,0 +1,16 @@
+Generative Agent Simulations of 1,000 People
+
+Abstract
+    - Novel agent architecture that simulates attitudes / behaviors of 1052 real individuals
+    - Generative agents replicate participants' responses on the GSS 85% as accurately as participants replicate their own answers two weeks later
+    - Perform comparably in predicting personality traits and outcomes in experimental replications
+
+
+Main Text
+    - Present a gen agent architecture that simulates more than 1000 real individuals using 2hr qualitative interviews
+    - Agent bank: open access to aggregated responses on fixed tasks for general researc use, and restricted access to individual responses on open tasks for researchers following a review process, ensuring the agents are accessible while minimizing risks associated with the source interviews
+Creating 1k Gen Agents of Real People
+    - Human participants (2hr audio interview)
+    - Actual participant responses (177 items, 44 items, 5 items, 5 items)
+    - Generative Agents (interview transcript -> agent memory)
+    - Simulated participant responses ...

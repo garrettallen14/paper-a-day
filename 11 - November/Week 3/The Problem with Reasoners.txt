@@ -1,0 +1,34 @@
+The Problem with Reasoners
+
+20 Nov 2024
+
+Abstract
+    - o1 reasoners suck on problems you should care about
+
+RL is Magic Until is Isn't
+    - Sparse reward environments
+    - o1 guess:
+        - Take GPT-4, generate a large dataset of questions with known answers
+        - Spin up an RL environment where reasoning steps are actions, previous tokens are observations and reward is the solution's correctness
+
+    - Language is open-ended but we constrain to env with fixed rules
+        - "Domains with easy verification"
+    
+    - o1 uses RL, which works best in domains with clear/frequent reward, and most domains lack clear/frequent reward
+    
+Praying for Transfer Learning
+    - Trained o1 on domains of easy verification but hope they generalize to all domains
+        - Take: o1-style reasoners do not meaningfully generalize beyond their training
+
+    - Transfer learning is the idea that models trained in one area may improve elsewhere
+    - We thought training our models on images or audio would enable better visual or language understanding, but we were wrong.
+        - THIS IS FALSE !!!!!!!!!!!!!!!!!!! Prove with Chess !!!!!!!!!!!!!!!!!!!!
+
+
+Domains Without Easy Verification
+    - Corporate Strategy
+    - Soothing hurt friend
+    - Advising governments
+    - ...
+    - Startup investment
+    - ...
