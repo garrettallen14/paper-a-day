@@ -1,0 +1,7 @@
+POLKADOT: VISION FOR A HETEROGENEOUS MULTI-CHAIN FRAMEWORK
+
+Abstract
+    - Present day blockchain arch suffer from num of issues
+    - Two parts of consensus arch: canonicality + validity
+        - Too close together
+    - Heterogenous multi-chain
