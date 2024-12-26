@@ -1,0 +1,48 @@
+Flash Boys 2.0: Frontrunning, Transaction Reordering, and Consensus Instability in Decentralized Exchanges
+
+Abstract
+    - Document and quantify the widespread and rising deployment of arbitrage bots in blockchain systems, specifically in decentralized exchanges (DEXes)
+    - Pay high transaction fees and optimize network latency to frontrun trades
+    - We study the breadth of DEX arb bots in a subset of transactions that yield quantifiable revenue to these bots.
+    - We study bots' profit-making strategies, with a focus on blockchain-specific elements
+    - Priority Gas Auctions, competitively bid up transaction fees to obtain priority ordering
+
+    - High fees paid for priority transaction ordering poses a systemic risk to consensus-layer security.
+    - Miner extractable value (MEV)
+
+Introduction
+    - In a DEX a smart contract executes exchange functionality
+    - At first glance, decentralized exchanges seem ideally designed, appear to provide effective price discovery and fair trading, while doing away with the drawbacks of centralized exchanges
+    - Trades are atomically executed by a smart contract and visible on Eth blockchain
+
+    - Trades are slow. Traders may attempt to take orders that have already been taken or canceled but appear active due to their views of messages sent on the network
+
+
+Background
+Smart Contracts
+    - Small computer programs executed w/o user intervention, often by a system that allows all participants to verify these programs' correct execution
+    - Ethereum is turing-complete and allows the encoding of arbitrary smart-contract functionality
+Gas and Fees in Ethereum
+    - Either sends money to a non-executing account address or sends input data to a smart contract address, representing a program stored in the network's state
+    - Transactions are gossiped to all of the nodes in the underlying p2p network to signal their availability for inclusion in a future mined block
+    - Transactions: unconfirmed, confirmed, refjected
+    - Eth transactions consume gas
+
+    - Every transaction specifies a gas price, the per-gas-unit rate the sender will pay in ETH
+    - Gas limit prevents infinite loops and other DoS vectors
+
+    - Clients can also perform a "gas replacement" transaction, resubmitting a transaction with a higher transaction fee in the hope that miners will more quickly incorporate the transaction into a block
+    - The mechanism for doing this is nonce-based. Each transaction issued on the network carries a nonce, and valid canonical blockchains
+    - A higher gas price only corresponds to a higher fee if the reissued transaction uses the same amount of gas as the replaced one, which may not be true.
+Continuous-Limit Exchanges
+    - Classic exchanges for trading stocks, commodities and even crypto generally share an accepted and common exchange design known as a continuous-limit orderbook
+    - Consists of all open offers from buyers and sellers in the system
+    - Prospective buyers place a limit buy order, which specifies a maximum price at which they are willing to buy an asset; sellers correspondingly place limit sell orders
+    - A centralized counterparty, the exchange operator, matches buyers and sellers, completing transactions automattically when there is a sell order on the books with a lower price than a buy order on the books
+
+    - Orders are matched and/or placed on the book continuously by the exchange operator, processing orders as quickly as possible in the order receieved... As soon as orders match, they are processed by the operator and trigger balance changes
+DEXes
+    - Manage continuous-limit order books using smart contracts
+    - Traders / users hold their assets on chain and the smart contract plays the role of exchange operator
+    - Order books are maintained off-chain
+    - 

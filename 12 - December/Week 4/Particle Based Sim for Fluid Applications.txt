@@ -1,0 +1,78 @@
+Particle-Based Fluid Simulation for Interactive Applications
+
+2003
+
+Abstract
+    - We propose an interactive method based on Smoothed Particle Hydrodynamics (SPH) to simulate fuilds with free surfaces
+    - Particle-based approach makes mass conservation equations and convection terms dispensable
+        - Reduces the complexity of the simulation
+    - The particles can be used to render the surface of the fluid
+
+    - We propose methods to track and visualize the free surface using point splatting and marching cubes-based surface reconstruction
+
+
+Introduction
+    - Computational Fluid Dynamics has a long history
+    - Claude Navier and George Stokes formulated the Navier-Stokes equation which describes conservation of momentum, 2 additional equations (a continuitiy equation describing mass conservation and a state equation describing energy conservation)
+    - Since those equations are known, a large number of methods have been proposed to sim
+
+    - Here we propose a particle-based approach on SPH to animate arbitrary fluid motion
+Our Contribution
+    - We propose a method based on Smoothed Particles Hydrodynamics to simulate fluids with free surfaces.
+
+    - Stam and Fiume first introduced SPH to the graphics community to depict fire and other gaseaous phenomena ... then animate highly deformable bodies
+    - We extend to focus on the simulation of fluids
+
+
+Smoothed Particle Hydrodynamics
+    - An interpolation method for particle systems
+    - Field quantities that are only defined at discrete particle locations can be evaluated anywhere in space
+    - SPH distributes quantities in a local neighborhood of each particle using radial symmetrical smoothing kernels
+
+    - According to SPH, a scalar quantity A is interpolated at location r by a weighted sum of contributions from all particles:
+        AS(r) = sum(mj Aj/roj)*W(r-rj,h) (1)
+    - W(r.h) is the smoothing kernel with core radius h
+    - Since we only use kernels with finite support, we use h as the radius of support in our formulation
+
+    - If W is even and normalized, the interpolation is of second order accuracy (integral(W(r)dr) = 1)
+
+    - Particle mass and density appear in Eqn (1) because each particle represents a certain volume Vi = mi/roi
+    - Mass mi is constant throughout the simulation and the same for all the particles. The density pho i varies and needs to be evaluated at all time step
+
+    - So, thru substitution into Eqn (1). we get for the density at location r:
+        phoS(r) = ...
+
+        ...
+
+    - Inherent problems with SPH:
+        - When using SPH to derive fluid equations for particles, these equations are not guaranteed to satisfy certain physical principles such as symmetry of forces and conservation of momentum
+
+
+Modelling Fluids with Particles
+    - Eulerian (grid based): isothermal fluids are described by a velocity field v, density field rho and pressure field p
+    - The evolution of these quantities over time is given by:
+        - Conservation of mass
+        - Navier stokes (conservation of momentum)
+
+    - The use of particles instead of grids simplifies our equations ...
+        1. The number of particles is constant and each particle has a constant mass => mass conservation is guaranteed
+        2. dv/dt+v*Dv on the left hand side can be replaced by the substantial derivative Dv/Dt
+
+    - There are three force density fields left on the right hand side modeling pressure, external forces and viscosity
+        - The sum of these force density fields determines the change of momentum of the particles on the left hand side
+
+    - ai = dvi/dt = fi/rhoi
+        - vi is velocity of particle i and fi and prho i are the force density field and density field evaluated at the location of particle i, respectively
+Pressure
+    - Application of the SPH rule to the pressure term -Dp yields: fpressure i = -deltap(ri) = -sum...
+    - This force is not symmetric and can be seen only when two particles interact
+
+    - Since the gradient of the kernel is zero at the center, particle i only uses the pressure of particle j to compute its pressure force and vice versa
+    - Because the pressures at the locations of the two particles are not equal in general, the pressure forces will not be symmetrical
+
+    - Different ways of symmetrization have been proposed
+
+    - We suggest a very simple solution which we found to be best suited for our purposes of speed and stability fpressure i = -sum(...)
+
+    - The computed pressure force is symmetric bc it uses the arithmetic mean of the pressures of interacting particles
+    - Since particles only carry the three quantities mass, position and velocity, the pressure at particle locations has to be evaluated first
